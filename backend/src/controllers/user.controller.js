@@ -4,6 +4,7 @@ import APIResponse from "../utils/ApiResponse.js";
 import validator from "validator";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/Cloudinary.js";
+import jwt from "jsonwebtoken"
 
 const generateAccessAndRefreshToken = async (userId) => {
     try {
@@ -21,6 +22,57 @@ const generateAccessAndRefreshToken = async (userId) => {
         throw new APIError(500, "Something went wrong!")
     }
 }
+
+const refreshAccessToken = asyncHandler(async (req, res) => {
+    try {
+        // get refresh token from cookies
+        const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
+
+        // if no refresh token throw error
+        if (incomingRefreshToken) {
+            throw new APIError(401, "Unauthorized")
+        }
+
+        // decode refresh token
+        const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET)
+
+        // find user
+        const user = await User.findById(decodedToken?._id);
+
+        // if no user is found, throw error
+        if (!user) {
+            throw new APIError(401, "Invalid Token")
+        }
+
+        // verify refresh token
+        if (incomingRefreshToken !== user?.refreshToken) {
+            throw new APIError(401, "Refresh Token is expired")
+        }
+
+        // generate new access and refresh token
+        const options = {
+            httpOnly: true,
+            secure: true
+        }
+        const { accessToken, newRefreshToken } = await generateAccessAndRefreshToken(user._id);
+
+        return res
+            .status(200)
+            .cookie("accessToken", accessToken, options)
+            .cookie("newRefreshToken", newRefreshToken, options)
+            .json(
+                new APIResponse(200, {
+                    accessToken,
+                    refreshToken: newRefreshToken
+                },
+                    "Access Token Refreshed Successfully"
+                )
+            )
+    } catch (error) {
+        throw new APIError(401, error?.message || "Invalid refresh token")
+    }
+})
+
 
 const registerUser = asyncHandler(async (req, res) => {
     // get user details from frontend
@@ -195,4 +247,5 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 })
 
-export { registerUser, loginUser, logoutUser };
+
+export { registerUser, loginUser, logoutUser, refreshAccessToken };
