@@ -11,8 +11,8 @@ const generateAccessAndRefreshToken = async (userId) => {
         if (!user) {
             throw new APIError(404, "User not found for this id");
         }
-        const accessToken = user.generateAccessToken();
-        const refreshToken = user.generateRefreshToken();
+        const accessToken = await user.generateAccessToken();
+        const refreshToken = await user.generateRefreshToken();
         // already validated user in login
         return { accessToken, refreshToken }
 
@@ -51,7 +51,7 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new APIError(400, "Invalid email")
     }
 
-    // check if user already exists with username or password
+    // check if user already exists with username or email
     const existingUser = await User.findOne({
         $or: [                               // MongoDB syntax
             { username: username }, { email: email }
@@ -106,7 +106,7 @@ const registerUser = asyncHandler(async (req, res) => {
 })
 
 const loginUser = asyncHandler(async (req, res) => {
-    // get user deatils from frontend
+    // get user details from frontend
     // validate user details for empty fields
     // check if user exists with username or email
     // check password
@@ -137,7 +137,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const isPasswordCorrect = await user.isPasswordCorrect(password)
 
-    if (isPasswordCorrect) {
+    if (!isPasswordCorrect) {
         throw new APIError(401, "Invalid password")
     }
 
@@ -145,6 +145,10 @@ const loginUser = asyncHandler(async (req, res) => {
 
     user.refreshToken = refreshToken;
     await user.save();
+
+    const loggedInUser = user.toObject();
+    delete loggedInUser.password;
+    delete loggedInUser.refreshToken;
 
     const options = {
         httpOnly: true, // these allow cookies to be modified only via server, not via client
@@ -157,7 +161,7 @@ const loginUser = asyncHandler(async (req, res) => {
         .json(
             new APIResponse(201,
                 {
-                    user, accessToken, refreshToken,
+                    loggedInUser, accessToken, refreshToken,
                 },
                 "User logged in successfully"
             )
@@ -168,7 +172,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     // reset refresh token in user
     // clear cookies
 
-    User.findByIdAndUpdate(req.user._id,
+    await User.findByIdAndUpdate(req.user._id,
         {
             $set: {
                 refreshToken: undefined
