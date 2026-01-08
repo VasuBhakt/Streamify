@@ -29,8 +29,8 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
 
         // if no refresh token throw error
-        if (incomingRefreshToken) {
-            throw new APIError(401, "Unauthorized")
+        if (!incomingRefreshToken) {
+            throw new APIError(401, "Unauthorized request")
         }
 
         // decode refresh token
@@ -54,7 +54,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
             httpOnly: true,
             secure: true
         }
-        const { accessToken, newRefreshToken } = await generateAccessAndRefreshToken(user._id);
+        const { accessToken, refreshToken: newRefreshToken } = await generateAccessAndRefreshToken(user._id);
 
         return res
             .status(200)
@@ -125,8 +125,8 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     // upload to cloudinary
-    const avatar = await uploadOnCloudinary(avatarLocalPath);
-    const coverImage = (coverImageLocalPath) ? await uploadOnCloudinary(coverImageLocalPath) : null;
+    const avatar = await uploadOnCloudinary(avatarLocalPath, "avatar", username.toLowerCase());
+    const coverImage = (coverImageLocalPath) ? await uploadOnCloudinary(coverImageLocalPath, "coverImage", username.toLowerCase()) : null;
 
     // if avatar upload fails throw error
     if (!avatar) {
@@ -311,7 +311,7 @@ const updateAvatar = asyncHandler(async (req, res) => {
         throw new APIError(404, "Bad Request")
     }
 
-    const avatar = await uploadOnCloudinary(avatarLocalFilePath)
+    const avatar = await uploadOnCloudinary(avatarLocalFilePath, "avatar", req.user.username)
 
     if (!avatar) {
         throw new APIError(500, "Avatar upload failed")
@@ -343,7 +343,7 @@ const updateCoverImage = asyncHandler(async (req, res) => {
         throw new APIError(404, "Bad Request")
     }
 
-    const coverImage = await uploadOnCloudinary(coverImageLocalFilePath)
+    const coverImage = await uploadOnCloudinary(coverImageLocalFilePath, "coverImage", req.user.username)
 
     if (!coverImage) {
         throw new APIError(500, "Cover Image upload failed")
