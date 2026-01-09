@@ -5,6 +5,7 @@ import validator from "validator";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/Cloudinary.js";
 import jwt from "jsonwebtoken"
+import mongoose from "mongoose";
 
 const generateAccessAndRefreshToken = async (userId) => {
     try {
@@ -283,6 +284,12 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 
     if (!fullName && !email) {
         throw new APIError(400, "All fields are required");
+    }
+
+    const ifEmailExists = await User.findOne({ email: email });
+
+    if (ifEmailExists) {
+        throw new APIError(400, "Email already exists. Please use a different email");
     }
 
     const user = await User.findByIdAndUpdate(req.user._id,
