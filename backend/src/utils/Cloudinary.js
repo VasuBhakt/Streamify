@@ -1,4 +1,5 @@
 import { v2 as cloudinary } from "cloudinary"
+import { response } from "express";
 import fs from "fs"
 
 cloudinary.config({
@@ -67,4 +68,17 @@ const uploadImageOnCloudinary = async (localFilePath, publicId) => {
     }
 }
 
-export { uploadOnCloudinary, uploadVideoOnCloudinary, uploadImageOnCloudinary };
+const deleteVideoFromCloudinary = async (publicId) => {
+    try {
+        if (!publicId) return null;
+        const video = await cloudinary.uploader.destroy(publicId, { resource_type: "video" }); // specify resource type for video
+        const thumbnail = await cloudinary.uploader.destroy(`${publicId}_thumbnail`, { resource_type: "image" });
+        console.log(`File deleted successfully from Cloudinary!`);
+        console.log(`Thumbnail deleted successfully from Cloudinary!`);
+        return { video, thumbnail };
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
+export { uploadOnCloudinary, uploadVideoOnCloudinary, uploadImageOnCloudinary, deleteVideoFromCloudinary };

@@ -2,7 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { Video } from "../models/video.model.js";
 import APIResponse from "../utils/ApiResponse.js";
 import APIError from "../utils/ApiError.js";
-import { uploadVideoOnCloudinary, uploadImageOnCloudinary } from "../utils/Cloudinary.js";
+import { uploadVideoOnCloudinary, uploadImageOnCloudinary, deleteVideoFromCloudinary } from "../utils/Cloudinary.js";
 import mongoose from "mongoose";
 
 const getAllVideos = asyncHandler(async (req, res) => {
@@ -175,10 +175,11 @@ const updateVideo = asyncHandler(async (req, res) => {
         throw new APIError(404, "Video not found");
     }
     // get update details from body
-    const { title, description } = req.body;
+    const { title, description, isPublished } = req.body;
     // update details
     video.title = title || video.title;
     video.description = description || video.description;
+    video.isPublished = isPublished || video.isPublished;
 
     // get local paths for video and thumbnail
     const newVideoLocalPath = req.files?.video?.[0]?.path;
@@ -214,4 +215,28 @@ const updateVideo = asyncHandler(async (req, res) => {
         )
 })
 
-export { getAllVideos, publishVideo, getVideoById, updateVideo }
+const deleteVideo = asyncHandler(async (req, res) => {
+    // get videoId from params
+    const { videoId } = req.params;
+    // get video from db
+    const video = await Video.findById(videoId);
+    // if video is not there, throw error
+    if (!video) {
+        throw new APIError(404, "Video not found");
+    }
+    // delete video from cloudinary
+    const deletedVideo = await deleteVideoFromCloudinary((video._id).toString());
+    // delete video from db
+    await video.deleteOne();
+    return res
+        .status(200)
+        .json(
+            new APIResponse(
+                200,
+                video,
+                "Video deleted successfully"
+            )
+        )
+})
+
+export { getAllVideos, publishVideo, getVideoById, updateVideo, deleteVideo }
