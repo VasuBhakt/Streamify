@@ -13,7 +13,9 @@ const uploadOnCloudinary = async (localFilePath, desc, username) => {
         if (!localFilePath) return null;
         const response = await cloudinary.uploader.upload(localFilePath, {
             resource_type: "auto",
-            public_id: `${desc}_${username}`
+            public_id: `${desc}_${username}`,
+            overwrite: true,
+            invalidate: true
         })
         console.log(`File uploaded successfully on Cloudinary! ${response.public_id}`);
         fs.unlinkSync(localFilePath);
@@ -25,13 +27,16 @@ const uploadOnCloudinary = async (localFilePath, desc, username) => {
     }
 }
 
-// For videos and thumbnails
-const uploadFileOnCloudinary = async (localFilePath, publicId) => {
+// For videos, upload large will not work due to uploading in chunks, better keep upload for now
+const uploadVideoOnCloudinary = async (localFilePath, publicId) => {
     try {
         if (!localFilePath) return null;
+        // for large videos
         const response = await cloudinary.uploader.upload(localFilePath, {
-            resource_type: "auto",
-            public_id: publicId
+            resource_type: "video",
+            public_id: publicId,
+            overwrite: true,
+            invalidate: true
         })
         console.log(`File uploaded successfully on Cloudinary! ${response.public_id}`);
         fs.unlinkSync(localFilePath);
@@ -42,4 +47,24 @@ const uploadFileOnCloudinary = async (localFilePath, publicId) => {
         return null;
     }
 }
-export { uploadOnCloudinary, uploadFileOnCloudinary };
+
+const uploadImageOnCloudinary = async (localFilePath, publicId) => {
+    try {
+        if (!localFilePath) return null;
+        const response = await cloudinary.uploader.upload(localFilePath, {
+            resource_type: "image",
+            public_id: publicId,
+            overwrite: true,
+            invalidate: true
+        })
+        console.log(`File uploaded successfully on Cloudinary! ${response.public_id}`);
+        fs.unlinkSync(localFilePath);
+        return response;
+    } catch (error) {
+        fs.unlinkSync(localFilePath);
+        console.log(error);
+        return null;
+    }
+}
+
+export { uploadOnCloudinary, uploadVideoOnCloudinary, uploadImageOnCloudinary };

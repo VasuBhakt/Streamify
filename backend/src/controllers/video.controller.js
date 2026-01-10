@@ -2,7 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { Video } from "../models/video.model.js";
 import APIResponse from "../utils/ApiResponse.js";
 import APIError from "../utils/ApiError.js";
-import { uploadFileOnCloudinary } from "../utils/Cloudinary.js";
+import { uploadVideoOnCloudinary, uploadImageOnCloudinary } from "../utils/Cloudinary.js";
 import mongoose from "mongoose";
 
 const getAllVideos = asyncHandler(async (req, res) => {
@@ -43,6 +43,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
                     $project: {
                         username: 1,
                         fullName: 1,
+                        _id: 0
                     }
                 }
             ]
@@ -109,8 +110,8 @@ const publishVideo = asyncHandler(async (req, res) => {
     const videoPublicId = new mongoose.Types.ObjectId()
 
     // upload video to cloudinary
-    const videoFile = await uploadFileOnCloudinary(videoLocalPath, videoPublicId);
-    const thumbnailFile = await uploadFileOnCloudinary(thumbnailLocalPath, `${videoPublicId}_thumbnail`);
+    const videoFile = await uploadVideoOnCloudinary(videoLocalPath, videoPublicId);
+    const thumbnailFile = await uploadImageOnCloudinary(thumbnailLocalPath, `${videoPublicId}_thumbnail`);
     // if video upload fails throw error
     if (!videoFile) {
         throw new APIError(500, "Video upload failed")
@@ -144,7 +145,73 @@ const publishVideo = asyncHandler(async (req, res) => {
 })
 
 const getVideoById = asyncHandler(async (req, res) => {
-
+    // get videoId from params
+    const { videoId } = req.params;
+    // fetch from db
+    const video = await Video.findById(videoId);
+    // if video is not there, throw error
+    if (!video) {
+        throw new APIError(404, "Video not found");
+    }
+    // return video
+    return res
+        .status(200)
+        .json(
+            new APIResponse(
+                200,
+                video,
+                "Video fetched successfully"
+            )
+        )
 })
 
-export { getAllVideos, publishVideo }
+const updateVideo = asyncHandler(async (req, res) => {
+    // get videoId from params
+    const { videoId } = req.params;
+    // get video from db
+    const video = await Video.findById(videoId);
+    // if video is not there, throw error
+    if (!video) {
+        throw new APIError(404, "Video not found");
+    }
+    // get update details from body
+    const { title, description } = req.body;
+    // update details
+    video.title = title || video.title;
+    video.description = description || video.description;
+
+    // get local paths for video and thumbnail
+    const newVideoLocalPath = req.files?.video?.[0]?.path;
+    const newThumbnailLocalPath = req.files?.thumbnail?.[0]?.path;
+
+    if (newVideoLocalPath) {
+        const videoFile = await uploadVideoOnCloudinary(newVideoLocalPath, video._id);
+        if (!videoFile) {
+            throw new APIError(500, "Video upload failed");
+        }
+        video.videoFile = videoFile.secure_url;
+        video.duration = videoFile.duration;
+    }
+
+    if (newThumbnailLocalPath) {
+        const thumbnailFile = await uploadImageOnCloudinary(newThumbnailLocalPath, `${video._id}_thumbnail`);
+        if (!thumbnailFile) {
+            throw new APIError(500, "Thumbnail upload failed");
+        }
+        video.thumbnail = thumbnailFile.secure_url;
+    }
+
+    await video.save({ validateBeforeSave: false });
+
+    return res
+        .status(200)
+        .json(
+            new APIResponse(
+                200,
+                video,
+                "Video updated successfully"
+            )
+        )
+})
+
+export { getAllVideos, publishVideo, getVideoById, updateVideo }
