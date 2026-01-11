@@ -28,6 +28,7 @@ import userRouter from "./routes/user.routes.js";
 import videoRouter from "./routes/video.routes.js"
 import playlistRouter from "./routes/playlist.routes.js"
 import subscriptionRouter from "./routes/subscription.routes.js"
+import likeRouter from "./routes/like.routes.js"
 
 // routes declaration
 
@@ -35,5 +36,6 @@ app.use("/users", userRouter)
 app.use("/videos", videoRouter)
 app.use("/playlists", playlistRouter)
 app.use("/subscriptions", subscriptionRouter)
+app.use("/likes", likeRouter)
 
 export { app }
