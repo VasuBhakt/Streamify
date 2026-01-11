@@ -27,11 +27,13 @@ app.use(cookieParser())
 import userRouter from "./routes/user.routes.js";
 import videoRouter from "./routes/video.routes.js"
 import playlistRouter from "./routes/playlist.routes.js"
+import subscriptionRouter from "./routes/subscription.routes.js"
 
 // routes declaration
 
 app.use("/users", userRouter)
 app.use("/videos", videoRouter)
 app.use("/playlists", playlistRouter)
+app.use("/subscriptions", subscriptionRouter)
 
 export { app }
