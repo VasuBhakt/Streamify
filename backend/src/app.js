@@ -30,6 +30,8 @@ import playlistRouter from "./routes/playlist.routes.js"
 import subscriptionRouter from "./routes/subscription.routes.js"
 import likeRouter from "./routes/like.routes.js"
 import commentRouter from "./routes/comment.routes.js"
+import dashboardRouter from "./routes/dashboard.routes.js"
+import healthCheckRouter from "./routes/healthcheck.routes.js"
 
 // routes declaration
 
@@ -39,5 +41,7 @@ app.use("/playlists", playlistRouter)
 app.use("/subscriptions", subscriptionRouter)
 app.use("/likes", likeRouter)
 app.use("/comments", commentRouter)
+app.use("/dashboard", dashboardRouter)
+app.use("/healthcheck", healthCheckRouter)
 
 export { app }
