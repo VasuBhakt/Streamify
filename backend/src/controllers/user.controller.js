@@ -460,19 +460,38 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
 })
 
 const getWatchHistory = asyncHandler(async (req, res) => {
-    const user = await User.aggregate([
+    const { page = 1, limit = 10 } = req.query;
+
+    const historyAggregate = User.aggregate([
         {
             $match: {
                 _id: new mongoose.Types.ObjectId(req.user._id),
             }
         },
         {
+            $project: {
+                watchHistory: 1
+            }
+        },
+        {
+            $unwind: "$watchHistory"
+        },
+        {
             $lookup: {
                 from: "videos",
                 localField: "watchHistory",
                 foreignField: "_id",
-                as: "watchHistory",
+                as: "video",
                 pipeline: [
+                    {
+                        $project: {
+                            _id: 1,
+                            title: 1,
+                            thumbnail: 1,
+                            owner: 1,
+                            views: 1
+                        }
+                    },
                     {
                         $lookup: {
                             from: "users",
@@ -498,15 +517,28 @@ const getWatchHistory = asyncHandler(async (req, res) => {
                     }
                 ]
             }
-        }
-    ])
+        },
+        {
+            $unwind: "$video"
+        },
+        {
+            $replaceRoot: { newRoot: "$video" }
+        },
+    ]);
+
+    const options = {
+        page: parseInt(page),
+        limit: parseInt(limit),
+    };
+
+    const result = await User.aggregatePaginate(historyAggregate, options);
 
     return res
         .status(200)
         .json(
             new APIResponse(
                 200,
-                user[0].watchHistory,
+                result,
                 "Watch history fetched successfully"
             )
         )

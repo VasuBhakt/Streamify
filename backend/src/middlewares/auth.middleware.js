@@ -26,3 +26,23 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
         throw new APIError(401, error?.message || "Invalid access token");
     }
 })
+
+export const getOptionalUser = asyncHandler(async (req, res, next) => {
+    try {
+        const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "");
+        if (!token) {
+            return next();
+        }
+
+        const decodedToken = await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+        const user = await User.findById(decodedToken._id).select("-password -refreshToken")
+
+        if (user) {
+            req.user = user;
+        }
+        next();
+    } catch (error) {
+        // If token is invalid, we still want to show the video, just without user context
+        next();
+    }
+})

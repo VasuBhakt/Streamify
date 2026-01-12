@@ -147,12 +147,46 @@ const publishVideo = asyncHandler(async (req, res) => {
 const getVideoById = asyncHandler(async (req, res) => {
     // get videoId from params
     const { videoId } = req.params;
-    // fetch from db
-    const video = await Video.findById(videoId);
+
+    if (!mongoose.isValidObjectId(videoId)) {
+        throw new APIError(400, "Invalid video ID");
+    }
+
+    // fetch from db and increment views
+    const video = await Video.findByIdAndUpdate(
+        videoId,
+        {
+            $inc: { views: 1 }
+        },
+        { new: true }
+    );
+
     // if video is not there, throw error
     if (!video) {
         throw new APIError(404, "Video not found");
     }
+
+    // Add to watch history if user is logged in
+    if (req.user) {
+        await User.findByIdAndUpdate(
+            req.user._id,
+            {
+                $pull: { watchHistory: videoId } // pull the video id from watch history if watched previously
+            }
+        );
+        await User.findByIdAndUpdate(
+            req.user._id,
+            {
+                $push: {
+                    watchHistory: {
+                        $each: [videoId],  //pushed into watch history
+                        $position: 0
+                    }
+                }
+            }
+        );
+    }
+
     // return video
     return res
         .status(200)
