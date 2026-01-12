@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { Comment } from "../models/comment.model.js";
+import { Video } from "../models/video.model.js";
 import APIError from "../utils/ApiError.js";
 import APIResponse from "../utils/ApiResponse.js";
 
@@ -41,6 +42,10 @@ const addComment = asyncHandler(async (req, res) => {
     }
     if (!content || content.trim() === "") {
         throw new APIError(400, "Comment cannot be empty");
+    }
+    const video = await Video.findById(videoId);
+    if (!video) {
+        throw new APIError(404, "Video not found");
     }
     const comment = await Comment.create({
         video: videoId,

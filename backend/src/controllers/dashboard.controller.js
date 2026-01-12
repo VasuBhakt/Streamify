@@ -43,7 +43,7 @@ const getChannelStats = asyncHandler(async (req, res) => {
     return res
         .status(200)
         .json(
-            new APIResponse(200, stats, "Profile Stats fetched successfully")
+            new APIResponse(200, stats[0], "Profile Stats fetched successfully")
         )
 })
 
