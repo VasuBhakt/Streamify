@@ -62,7 +62,7 @@ const toggleLikeComment = asyncHandler(async (req, res) => {
 })
 
 const userLikedVideos = asyncHandler(async (req, res) => {
-    const { page = 1 } = req.query;
+    const { page = 1, limit = 10 } = req.query;
     const pipelines = [];
     pipelines.push({
         $match: {
@@ -115,7 +115,7 @@ const userLikedVideos = asyncHandler(async (req, res) => {
     const likedVideosAggregate = Like.aggregate(pipelines);
     const options = {
         page: parseInt(page),
-        limit: 20,
+        limit: parseInt(limit),
         sort: {
             createdAt: -1
         }

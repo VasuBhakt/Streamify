@@ -5,7 +5,7 @@ export class AuthService {
     async registerUser({ fullName, email, username, password, avatar, coverImage }) {
         try {
             // use formData to upload files
-            const formData = new FormData();
+            let formData = new FormData();
             formData.append("fullName", fullName);
             formData.append("email", email);
             formData.append("username", username);
