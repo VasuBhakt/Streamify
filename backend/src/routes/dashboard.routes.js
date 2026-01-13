@@ -4,7 +4,7 @@ import { getAllVideosOfChannel, getChannelStats } from "../controllers/dashboard
 
 const router = Router();
 
-router.route("/").get(verifyJWT, getChannelStats)
+router.route("/stats").get(verifyJWT, getChannelStats)
 router.route("/videos").get(verifyJWT, getAllVideosOfChannel)
 
 export default router

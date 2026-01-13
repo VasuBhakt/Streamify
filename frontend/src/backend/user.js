@@ -1,10 +1,10 @@
-import axios from "axios";
+import axios from "../utils/axios.js";
 
 export class UserService {
 
     async changeUserPassword({ oldPassword, newPassword }) {
         try {
-            const response = await axios.post("/users/change-password", { oldPassword: oldPassword, newPassword: newPassword });
+            const response = await axios.post("/users/change-password", { oldPassword, newPassword });
             return response.data;
         } catch (error) {
             console.log("UserService :: changeUserPassword :: error", error);
@@ -14,7 +14,7 @@ export class UserService {
 
     async updateUserAccountDetails({ fullName, email }) {
         try {
-            const response = await axios.patch("/users/update-details", { fullName: fullName, email: email });
+            const response = await axios.patch("/users/update-details", { fullName, email });
             return response.data;
         } catch (error) {
             console.log("UserService :: updateUserAccountDetails :: error", error);
@@ -22,7 +22,7 @@ export class UserService {
         }
     }
 
-    async updateUserAvatar({ avatar }) {
+    async updateUserAvatar(avatar) {
         try {
             let formData = new FormData();
             formData.append("avatar", avatar);
@@ -31,14 +31,14 @@ export class UserService {
                     "Content-Type": "multipart/form-data"
                 }
             });
-            return response.data
+            return response.data;
         } catch (error) {
             console.log("UserService :: updateUserAvatar :: error", error);
             throw error;
         }
     }
 
-    async updateUserCoverImage({ coverImage }) {
+    async updateUserCoverImage(coverImage) {
         try {
             let formData = new FormData();
             formData.append("coverImage", coverImage);
@@ -47,16 +47,16 @@ export class UserService {
                     "Content-Type": "multipart/form-data"
                 }
             });
-            return response.data
+            return response.data;
         } catch (error) {
             console.log("UserService :: updateUserCoverImage :: error", error);
             throw error;
         }
     }
 
-    async getUserChannelProfile({ username }) {
+    async getUserChannelProfile(username) {
         try {
-            const response = await axios.get(`users/c/${username}`);
+            const response = await axios.get(`/users/c/${username}`);
             return response.data;
         } catch (error) {
             console.log("UserService :: getUserChannelProfile :: error", error);
@@ -64,10 +64,10 @@ export class UserService {
         }
     }
 
-    async getUserWatchHistory({ page = 1, limit = 1 }) {
+    async getUserWatchHistory({ page = 1, limit = 10 }) {
         try {
-            const response = await axios.get(`users/history?page=${page}&limit=${limit}`);
-            return response.data
+            const response = await axios.get(`/users/history?page=${page}&limit=${limit}`);
+            return response.data;
         } catch (error) {
             console.log("UserService :: getUserWatchHistory :: error", error);
             throw error;
@@ -76,11 +76,11 @@ export class UserService {
 
     async getUserChannelStats() {
         try {
-            const response = await axios.get(`/dashboard`);
+            const response = await axios.get(`/dashboard/stats`);
             return response.data;
         } catch (error) {
             console.log("UserService :: getUserChannelStats :: error", error);
-            throw error
+            throw error;
         }
     }
 
@@ -90,8 +90,21 @@ export class UserService {
             return response.data;
         } catch (error) {
             console.log("UserService :: getUserAllVideos :: error", error);
-            throw error
+            throw error;
+        }
+    }
+
+    async getLikedVideos({ page = 1, limit = 10 }) {
+        try {
+            const response = await axios.get(`/likes/videos?page=${page}&limit=${limit}`);
+            return response.data;
+        } catch (error) {
+            console.log("UserService :: getLikedVideos :: error", error);
+            throw error;
         }
     }
 
 }
+
+const userService = new UserService();
+export default userService;
