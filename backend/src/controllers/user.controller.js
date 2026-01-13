@@ -15,12 +15,15 @@ const generateAccessAndRefreshToken = async (userId) => {
         }
         const accessToken = await user.generateAccessToken();
         const refreshToken = await user.generateRefreshToken();
-        // already validated user in login
+
+        user.refreshToken = refreshToken;
+        await user.save({ validateBeforeSave: false });
+
         return { accessToken, refreshToken }
 
     } catch (error) {
         console.log("Refresh Token Error");
-        throw new APIError(500, "Something went wrong!")
+        throw new APIError(500, "Something went wrong while generating tokens")
     }
 }
 
@@ -179,8 +182,8 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const user = await User.findOne({
         $or: [
-            { email: email },
-            { username: username }
+            { email: email || username },
+            { username: (username || email).toLowerCase() }
         ]
     })
 
@@ -195,9 +198,6 @@ const loginUser = asyncHandler(async (req, res) => {
     }
 
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
-
-    user.refreshToken = refreshToken;
-    await user.save();
 
     const loggedInUser = user.toObject();
     delete loggedInUser.password;

@@ -28,7 +28,45 @@ export class AuthService {
         }
     }
 
+    async loginUser({ email, username, password }) {
+        try {
+            const response = await axios.post("/users/login", { email, username, password });
+            return response.data;
+        } catch (error) {
+            console.error("AuthService :: loginUser :: error", error);
+            throw error;
+        }
+    }
 
+    async logoutUser() {
+        try {
+            const response = await axios.post("/users/logout");
+            return response.data;
+        } catch (error) {
+            console.log("AuthService :: logoutUser :: error", error);
+            throw error;
+        }
+    }
+
+    async getCurrentUser() {
+        try {
+            const response = await axios.get("/users/current-user");
+            return response.data;
+        } catch (error) {
+            console.log("AuthService :: getCurrentuser :: error", error);
+            throw error;
+        }
+    }
+
+    async refreshAccessToken() {
+        try {
+            const response = await axios.post("/users/refresh-token");
+            return response.data;
+        } catch (error) {
+            console.log("AuthService :: refreshAccessToken :: error", error);
+            throw error;
+        }
+    }
 }
 
 const authService = new AuthService();
