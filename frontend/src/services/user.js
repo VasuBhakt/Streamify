@@ -66,7 +66,7 @@ export class UserService {
 
     async getUserWatchHistory({ page = 1, limit = 10 }) {
         try {
-            const response = await axios.get(`/users/history?page=${page}&limit=${limit}`);
+            const response = await axios.get(`/users/history`, { params: { page: page || 1, limit: limit || 10 } });
             return response.data;
         } catch (error) {
             console.log("UserService :: getUserWatchHistory :: error", error);
@@ -86,7 +86,7 @@ export class UserService {
 
     async getUserAllVideos({ page = 1, limit = 10 }) {
         try {
-            const response = await axios.get(`/dashboard/videos?page=${page}&limit=${limit}`);
+            const response = await axios.get(`/dashboard/videos`, { params: { page: page || 1, limit: limit || 10 } });
             return response.data;
         } catch (error) {
             console.log("UserService :: getUserAllVideos :: error", error);
@@ -96,7 +96,7 @@ export class UserService {
 
     async getLikedVideos({ page = 1, limit = 10 }) {
         try {
-            const response = await axios.get(`/likes/videos?page=${page}&limit=${limit}`);
+            const response = await axios.get(`/likes/videos`, { params: { page: page || 1, limit: limit || 10 } });
             return response.data;
         } catch (error) {
             console.log("UserService :: getLikedVideos :: error", error);

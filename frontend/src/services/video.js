@@ -4,7 +4,7 @@ export class VideoService {
 
     async getAllVideos({ page, limit, query, sortBy, sortType }) {
         try {
-            const response = await axios.get(`/videos?page=${page}&limit=${limit}&query=${query}&sortBy=${sortBy}&sortType=${sortType}`)
+            const response = await axios.get(`/videos`, { params: { page: page || 1, limit: limit || 10, query: query || "", sortBy: sortBy || "createdAt", sortType: sortType || "desc" } })
             return response.data
         } catch (error) {
             console.log("VideoService :: getAllVideos :: error", error)
