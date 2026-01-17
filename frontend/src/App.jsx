@@ -2,15 +2,20 @@ import { Camera, Search } from "lucide-react";
 import Button from "./components/button/Button";
 import Input from "./components/input/Input";
 import Container from "./components/container/Container";
+import Sidebar from "./components/sidebar/Sidebar";
 
 function App() {
     return (
-        <>
-            <Container>
-                <Input label="Search" placeholder="Your videos..." icon={Search} type="number" />
-                <Button label="Button" variant="secondary" className="bg-green-700 hover:bg-green-600 " size="lg" type="submit" icon={Camera} />
-            </Container>
-        </>
+        <div className="flex bg-background min-h-screen text-text-main">
+            <Sidebar />
+
+            <main className="flex-1">
+                <Container>
+                    <Button icon={Camera} label="Create" />
+                    <Input placeholder="Search" icon={Search} />
+                </Container>
+            </main>
+        </div>
     )
 }
 

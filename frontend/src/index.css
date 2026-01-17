@@ -1,1 +1,19 @@
 @import "tailwindcss";
+
+@theme {
+  /* Brand Colors */
+  --color-primary: #2563eb; /* blue-600 */
+  --color-primary-hover: #1d4ed8; /* blue-700 */
+  
+  /* Backgrounds */
+  --color-background: #020617; /* slate-950 */
+  --color-surface: #0f172a; /* slate-900 */
+  --color-surface-hover: #1e293b; /* slate-800 */
+  
+  /* Text */
+  --color-text-main: #f8fafc; /* slate-50 */
+  --color-text-secondary: #94a3b8; /* slate-400 */
+  
+  /* Borders */
+  --color-border: #1e293b; /* slate-800 */
+}

@@ -13,11 +13,11 @@ const Input = React.forwardRef(({
     const id = useId();
 
     return (
-        <div className="w-full flex flex-col gap-1.5 text-slate-200">
+        <div className="w-full flex flex-col gap-1.5 text-text-main">
             {label && (
                 <label
                     htmlFor={id}
-                    className="text-sm font-medium text-slate-700 ml-1"
+                    className="text-sm font-medium text-text-secondary ml-1"
                 >
                     {label}
                 </label>
@@ -25,7 +25,7 @@ const Input = React.forwardRef(({
 
             <div className="relative group">
                 {Icon && (
-                    <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-500 transition-colors duration-200">
+                    <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-secondary group-focus-within:text-primary transition-colors duration-200">
                         <Icon size={18} />
                     </div>
                 )}
@@ -36,10 +36,10 @@ const Input = React.forwardRef(({
                     ref={ref}
                     placeholder={placeholder}
                     className={tw(
-                        "w-full bg-transparent border border-slate-800 rounded-xl py-2.5 text-sm transition-all duration-200",
-                        "placeholder:text-slate-600",
-                        "focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-neutral-100",
-                        "text-slate-700 focus:text-slate-900",
+                        "w-full bg-transparent border border-border rounded-xl py-2.5 text-sm transition-all duration-200",
+                        "placeholder:text-text-secondary",
+                        "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-surface-hover",
+                        "text-text-main focus:text-text-main",
                         Icon ? "pl-11 pr-4" : "px-4",
                         error ? "border-red-500/50 focus:ring-red-500/20 focus:border-red-500" : "",
                         className
