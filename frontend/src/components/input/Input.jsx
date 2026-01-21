@@ -1,5 +1,5 @@
-import React, { useId } from "react";
-import tw from "../../utils/tailwindUtil";
+import React, { useId } from 'react';
+import tw from '../../utils/tailwindUtil';
 
 const Input = React.forwardRef(({
     label,
@@ -13,23 +13,18 @@ const Input = React.forwardRef(({
     const id = useId();
 
     return (
-        <div className="w-full flex flex-col gap-1.5 text-text-main">
+        <div className='w-full flex flex-col gap-1.5 text-text-main'>
             {label && (
-                <label
-                    htmlFor={id}
-                    className="text-sm font-medium text-text-secondary ml-1"
-                >
+                <label htmlFor={id} className='text-sm font-medium text-text-secondary ml-1'>
                     {label}
                 </label>
             )}
-
-            <div className="relative group">
+            <div className='relative group'>
                 {Icon && (
-                    <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-secondary group-focus-within:text-primary transition-colors duration-200">
+                    <div className='absolute left-3.5 top-1/2 -translate-y-1/2 text-text-secondary group-focus-within:text-primary transition-colors duration-200'>
                         <Icon size={18} />
                     </div>
                 )}
-
                 <input
                     id={id}
                     type={type}
@@ -47,7 +42,6 @@ const Input = React.forwardRef(({
                     {...props}
                 />
             </div>
-
             {error && (
                 <p className="text-xs text-red-500 mt-1 ml-1 flex items-center gap-1.5">
                     <span className="w-1 h-1 rounded-full bg-red-500" />

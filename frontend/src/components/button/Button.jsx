@@ -14,6 +14,7 @@ const Button = React.forwardRef(({
     disabled,
     ...props
 }, ref) => {
+
     const variants = {
         primary: "bg-gradient-to-r from-primary to-indigo-600 text-white hover:from-primary-hover hover:to-indigo-700 shadow-lg shadow-blue-500/25",
         secondary: "bg-surface-hover text-text-main hover:bg-surface border border-border",
@@ -44,11 +45,9 @@ const Button = React.forwardRef(({
             {isLoading && (
                 <Loader2 className="h-4 w-4 animate-spin" />
             )}
-
             {!isLoading && Icon && (
                 <Icon className={tw("h-4 w-4", size === "lg" && "h-5 w-5")} />
             )}
-
             <span className="relative">
                 {label || children}
             </span>
@@ -59,4 +58,3 @@ const Button = React.forwardRef(({
 Button.displayName = "Button";
 
 export default Button;
-

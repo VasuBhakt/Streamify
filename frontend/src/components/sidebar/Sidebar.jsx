@@ -1,18 +1,8 @@
-import { useSelector, useDispatch } from 'react-redux'
-import { NavLink } from 'react-router-dom'
-import {
-    Home,
-    ThumbsUp,
-    History,
-    Video,
-    Folder,
-    Users,
-    Menu,
-    Settings,
-    HelpCircle
-} from 'lucide-react'
-import { toggleSidebar } from '../../features/uiSlice'
-import tw from '../../utils/tailwindUtil'
+import { useSelector, useDispatch } from "react-redux";
+import { toggleSidebar } from "../../features/uiSlice";
+import { NavLink } from "react-router-dom";
+import { Home, ThumbsUp, History, Video, Folder, Users, Menu, Settings, HelpCircle } from "lucide-react";
+import tw from "../../utils/tailwindUtil";
 
 const SidebarItem = ({ icon: Icon, label, to, isExpanded }) => {
     return (
@@ -32,7 +22,6 @@ const SidebarItem = ({ icon: Icon, label, to, isExpanded }) => {
                 {label}
             </span>
 
-            {/* Tooltip for collapsed state */}
             {!isExpanded && (
                 <div className="absolute left-16 px-3 py-1.5 bg-surface text-text-main text-sm rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 whitespace-nowrap shadow-xl border border-border">
                     {label}
@@ -50,14 +39,13 @@ const Sidebar = () => {
         { icon: Home, label: 'Home', to: '/' },
         { icon: ThumbsUp, label: 'Liked Videos', to: '/liked-videos' },
         { icon: History, label: 'History', to: '/history' },
-        { icon: Video, label: 'My Content', to: '/my-content' },
-        { icon: Folder, label: 'Collections', to: '/collections' },
-        { icon: Users, label: 'Subscribers', to: '/subscribers' },
+        { icon: Video, label: 'My Content', to: `/c` },
+        { icon: Users, label: 'Dashboard', to: '/dashboard' }
     ]
 
     const bottomNavItems = [
         { icon: Settings, label: 'Settings', to: '/settings' },
-        { icon: HelpCircle, label: 'Support', to: '/support' },
+        { icon: HelpCircle, label: 'Support', to: '/support' }
     ]
 
     return (
@@ -66,7 +54,6 @@ const Sidebar = () => {
                 "fixed left-0 top-0 h-screen bg-surface border-r border-border transition-all duration-300 ease-in-out z-40 flex flex-col",
                 isExpanded ? "w-64" : "w-20"
             )}>
-                {/* Header / Toggle Area */}
                 <div className="h-16 flex items-center px-4 border-b border-border">
                     <button
                         onClick={() => dispatch(toggleSidebar())}
@@ -74,8 +61,6 @@ const Sidebar = () => {
                     >
                         <Menu size={24} />
                     </button>
-
-                    {/* Logo Area - Only visible when expanded */}
                     <div className={tw(
                         "ml-3 font-bold text-xl text-text-main flex items-center gap-2 overflow-hidden transition-all duration-300",
                         !isExpanded ? "w-0 opacity-0" : "w-auto opacity-100"
@@ -84,7 +69,6 @@ const Sidebar = () => {
                     </div>
                 </div>
 
-                {/* Navigation Items */}
                 <div className="flex-1 overflow-y-auto py-4 px-3 space-y-1 scrollbar-hide">
                     {mainNavItems.map((item) => (
                         <SidebarItem
@@ -95,7 +79,6 @@ const Sidebar = () => {
                     ))}
                 </div>
 
-                {/* Bottom Section */}
                 <div className="p-3 border-t border-border space-y-1">
                     {bottomNavItems.map((item) => (
                         <SidebarItem
@@ -106,8 +89,6 @@ const Sidebar = () => {
                     ))}
                 </div>
             </aside>
-
-            {/* Main Content Spacer - Pushes content to the right */}
             <div className={tw(
                 "transition-all duration-300 ease-in-out",
                 isExpanded ? "ml-64" : "ml-20"

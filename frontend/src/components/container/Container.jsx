@@ -8,4 +8,4 @@ const Container = ({ children, className }) => {
     )
 }
 
-export default Container
+export default Container;
