@@ -131,8 +131,10 @@ function VideoPlayer({ video, className }) {
         if (videoRef.current) {
             videoRef.current.volume = volume;
             if (volume === 0) {
+                videoRef.current.muted = true;
                 setIsMuted(true);
             } else {
+                videoRef.current.muted = false;
                 setIsMuted(false);
             }
         }
