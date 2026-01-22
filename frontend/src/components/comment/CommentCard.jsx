@@ -104,7 +104,7 @@ const CommentCard = ({ comment }) => {
             {/*Content Section*/}
             <div className="flex flex-col flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                    <span className='text-text-main text-sm font-bold leading-none hover:text-primary cursor-pointer transition-color'>
+                    <span className='text-text-main text-sm font-bold leading-none hover:text-primary-hover cursor-pointer transition-color'>
                         @{owner?.username || "user"}
                     </span>
                     <span className='text-text-secondary text-[11px] font-medium pt-0.5'>
@@ -119,16 +119,16 @@ const CommentCard = ({ comment }) => {
                 {/*Actions*/}
                 <div className='flex items-center gap-4 text-text-secondary'>
                     <div className='flex items-center gap-1.5'>
-                        <button className={tw("p-1.5 -ml-1.5 hover:bg-surface-hover rounded-full transition-all duration-200", isLiked ? "text-primary" : "hover:text-text-main")}>
+                        <button className={tw("p-1.5 -ml-1.5 hover:bg-surface-hover rounded-full transition-all duration-200 cursor-pointer", isLiked ? "text-primary" : "hover:text-text-main")}>
                             <ThumbsUp className={tw("w-4 h-4", isLiked ? "fill-primary" : "")} />
                         </button>
-                        <button className="px-3 py-1 text-xs font-bold text-text-main hover:bg-surface-hover rounded-full transition-all duration-200">
+                        <button className="px-3 py-1 text-xs font-bold text-text-main hover:bg-surface-hover rounded-full transition-all duration-200 cursor-pointer">
                             <Reply />
                         </button>
-                        <button className={tw(isDeletable ? "px-3 py-1 text-xs font-bold text-text-main hover:bg-surface-hover rounded-full transition-all duration-200" : "hidden")}>
+                        <button className={tw(isDeletable ? "px-3 py-1 text-xs font-bold text-text-main hover:bg-surface-hover rounded-full transition-all duration-200 cursor-pointer" : "hidden")}>
                             <Trash className="w-4 h-4" />
                         </button>
-                        <button className={tw(isEditable ? "px-3 py-1 text-xs font-bold text-text-main hover:bg-surface-hover rounded-full transition-all duration-200" : "hidden")}>
+                        <button className={tw(isEditable ? "px-3 py-1 text-xs font-bold text-text-main hover:bg-surface-hover rounded-full transition-all duration-200 cursor-pointer" : "hidden")}>
                             <Pencil className="w-4 h-4" />
                         </button>
                     </div>
