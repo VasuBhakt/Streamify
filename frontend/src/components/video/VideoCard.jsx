@@ -1,52 +1,5 @@
 import tw from '../../utils/tailwindUtil'
-
-function formatDuration(seconds) {
-    if (!seconds) return "00:00";
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = Math.floor(seconds % 60);
-
-    if (h > 0) {
-        return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-    }
-
-    return `${m}:${s.toString().padStart(2, '0')}`
-}
-
-function timeAgo(dateString) {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    const now = new Date();
-    const seconds = Math.floor((now - date) / 1000);
-
-    let interval = Math.floor(seconds / 31536000);
-    if (interval >= 1) return interval + " year" + (interval === 1 ? "" : "s") + " ago";
-
-    interval = Math.floor(seconds / 2592000);
-    if (interval >= 1) return interval + " month" + (interval === 1 ? "" : "s") + " ago";
-
-    interval = Math.floor(seconds / 86400);
-    if (interval >= 1) return interval + " day" + (interval === 1 ? "" : "s") + " ago";
-
-    interval = Math.floor(seconds / 3600);
-    if (interval >= 1) return interval + " minute" + (interval === 1 ? "" : "s") + " ago";
-
-    interval = Math.floor(seconds / 60);
-    if (interval >= 1) return interval + " minute" + (interval === 1 ? "" : "s") + " ago";
-
-    return Math.floor(seconds) + " second" + (seconds === 1 ? "" : "s") + " ago";
-}
-
-function formatViews(views) {
-    if (!views) return "0 views";
-    if (views >= 1000000) {
-        return (views / 1000000).toFixed(1) + 'M views';
-    }
-    if (views >= 1000) {
-        return (views / 1000).toFixed(1) + 'K views';
-    }
-    return views + ' views';
-}
+import { formatDuration, timeAgo, formatViews } from '../../utils/format'
 
 function VideoCard({ video, className }) {
     if (!video) return null;
@@ -67,7 +20,7 @@ function VideoCard({ video, className }) {
                 <div className='absolute inset-0 bg-background/0 group-hover:bg-background/10 transition-colors duration-300' />
 
                 {/*Duration Badge*/}
-                <div className="absolute bottom-2 right-2 bg-background/80 backdrop-blur-sm texdt-white text-xs font-medium px-1.5 py-0.5 rounded-md">
+                <div className="absolute bottom-2 right-2 bg-background/80 backdrop-blur-sm text-text-main text-xs font-medium px-1.5 py-0.5 rounded-md">
                     {formatDuration(duration)}
                 </div>
             </div>
@@ -77,7 +30,7 @@ function VideoCard({ video, className }) {
                 <div className="shrink-0">
                     <div className="h-9 w-9 rounded-full overflow-hidden bg-surface-hover border border-border">
                         {owner?.avatar ? (
-                            <img src={owner.avatar} alt={owner.fullName || "User"} className="h-full w=full object-cover" />
+                            <img src={owner.avatar} alt={owner.fullName || "User"} className="h-full w-full object-cover" />
                         ) : (
                             <div className="h-full w-full flex items-center justify-center text-xs text-text-secondary font-bold bg-linear-to-br from-surface to-surface-hover">
                                 {owner?.fullName?.[0]?.toUpperCase() || "?"}

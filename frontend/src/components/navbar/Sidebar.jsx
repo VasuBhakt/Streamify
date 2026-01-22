@@ -10,7 +10,7 @@ const SidebarItem = ({ icon: Icon, label, to, isExpanded }) => {
             to={to}
             className={({ isActive }) => tw(
                 "flex items-center gap-4 px-3 py-3 rounded-xl transition-all duration-200 group hover:bg-surface-hover",
-                isActive ? "bg-primary text-text-main hover:bg-primary-hover" : "text-text-secondary hover:text-text-main",
+                isActive ? "bg-primary text-text-main hover:bg-secondary-hover" : "text-text-secondary hover:text-text-main",
                 !isExpanded && "justify-center px-2"
             )}
         >
