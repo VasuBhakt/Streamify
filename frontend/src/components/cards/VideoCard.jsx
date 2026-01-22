@@ -1,4 +1,4 @@
-import tailwindUtil from '../../utils/tailwindUtil';
+import tw from '../../utils/tailwindUtil'
 
 function formatDuration(seconds) {
     if (!seconds) return "00:00";
@@ -9,7 +9,8 @@ function formatDuration(seconds) {
     if (h > 0) {
         return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
     }
-    return `${m}:${s.toString().padStart(2, '0')}`;
+
+    return `${m}:${s.toString().padStart(2, '0')}`
 }
 
 function timeAgo(dateString) {
@@ -28,12 +29,12 @@ function timeAgo(dateString) {
     if (interval >= 1) return interval + " day" + (interval === 1 ? "" : "s") + " ago";
 
     interval = Math.floor(seconds / 3600);
-    if (interval >= 1) return interval + " hour" + (interval === 1 ? "" : "s") + " ago";
+    if (interval >= 1) return interval + " minute" + (interval === 1 ? "" : "s") + " ago";
 
     interval = Math.floor(seconds / 60);
     if (interval >= 1) return interval + " minute" + (interval === 1 ? "" : "s") + " ago";
 
-    return Math.floor(seconds) + " seconds ago";
+    return Math.floor(seconds) + " second" + (seconds === 1 ? "" : "s") + " ago";
 }
 
 function formatViews(views) {
@@ -49,7 +50,6 @@ function formatViews(views) {
 
 function VideoCard({ video, className }) {
     if (!video) return null;
-
     const {
         thumbnail,
         duration,
@@ -60,54 +60,43 @@ function VideoCard({ video, className }) {
     } = video;
 
     return (
-        <div className={tailwindUtil("group w-full flex flex-col gap-3 cursor-pointer", className)}>
-            {/* Thumbnail Section */}
-            <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-gray-800">
-                <img
-                    src={thumbnail}
-                    alt={title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+        <div className={tw("group w-full flex flex-col gap-3 cursor-pointer", className)}>
+            {/*Thumbnail Section*/}
+            <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-surface">
+                <img src={thumbnail} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" />
+                <div className='absolute inset-0 bg-background/0 group-hover:bg-background/10 transition-colors duration-300' />
 
-                {/* Duration Badge */}
-                <div className="absolute bottom-2 right-2 bg-black/80 backdrop-blur-sm text-white text-xs font-medium px-1.5 py-0.5 rounded-md">
+                {/*Duration Badge*/}
+                <div className="absolute bottom-2 right-2 bg-background/80 backdrop-blur-sm texdt-white text-xs font-medium px-1.5 py-0.5 rounded-md">
                     {formatDuration(duration)}
                 </div>
             </div>
-
-            {/* Info Section */}
+            {/*Info Section*/}
             <div className="flex gap-3 items-start px-1">
-                {/* Avatar */}
+                {/*Avatar*/}
                 <div className="shrink-0">
-                    <div className="h-9 w-9 rounded-full overflow-hidden bg-gray-700 border border-gray-700/50">
+                    <div className="h-9 w-9 rounded-full overflow-hidden bg-surface-hover border border-border">
                         {owner?.avatar ? (
-                            <img
-                                src={owner.avatar}
-                                alt={owner.fullName || "User"}
-                                className="h-full w-full object-cover"
-                            />
+                            <img src={owner.avatar} alt={owner.fullName || "User"} className="h-full w=full object-cover" />
                         ) : (
-                            <div className="h-full w-full flex items-center justify-center text-xs text-gray-400 font-bold bg-linear-to-br from-gray-700 to-gray-800">
+                            <div className="h-full w-full flex items-center justify-center text-xs text-text-secondary font-bold bg-linear-to-br from-surface to-surface-hover">
                                 {owner?.fullName?.[0]?.toUpperCase() || "?"}
                             </div>
                         )}
                     </div>
                 </div>
-
-                {/* Details */}
+                {/*Details*/}
                 <div className="flex flex-col flex-1 min-w-0">
-                    <h3 className="text-gray-100 font-bold text-base leading-tight line-clamp-2 mb-1 group-hover:text-purple-400 transition-colors duration-200">
+                    <h3 className="text-text-main font-bold text-base leading-tight line-clamp-2 mb-1 group-hover:text-primary-hover transition-colors duration-200">
                         {title}
                     </h3>
-
-                    <div className="text-gray-400 text-sm flex flex-col">
-                        <span className="hover:text-gray-300 transition-colors duration-200 truncate">
-                            {owner?.fullName || owner?.username || "Unknown Channel"}
+                    <div className='text-text-secondary text-sm flex flex-col'>
+                        <span className='hover:text-text-main transition-colors duration-200 truncate'>
+                            {owner?.fullName || owner?.username || "Unknown"}
                         </span>
-                        <div className="flex items-center gap-1 text-xs text-gray-500 mt-0.5">
+                        <div className='flex items-center gap-1 text-xs text-text-secondary mt-0.5'>
                             <span>{formatViews(views)}</span>
-                            <span className="w-0.5 h-0.5 rounded-full bg-gray-500"></span>
+                            <span className="w-0.5 h-0.5 rounded-full bg-text-secondary"></span>
                             <span>{timeAgo(createdAt)}</span>
                         </div>
                     </div>
@@ -118,3 +107,4 @@ function VideoCard({ video, className }) {
 }
 
 export default VideoCard;
+

@@ -36,15 +36,15 @@ const Input = React.forwardRef(({
                         "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-surface-hover",
                         "text-text-main focus:text-text-main",
                         Icon ? "pl-11 pr-4" : "px-4",
-                        error ? "border-red-500/50 focus:ring-red-500/20 focus:border-red-500" : "",
+                        error ? "border-error/50 focus:ring-error/20 focus:border-error" : "",
                         className
                     )}
                     {...props}
                 />
             </div>
             {error && (
-                <p className="text-xs text-red-500 mt-1 ml-1 flex items-center gap-1.5">
-                    <span className="w-1 h-1 rounded-full bg-red-500" />
+                <p className="text-xs text-error mt-1 ml-1 flex items-center gap-1.5">
+                    <span className="w-1 h-1 rounded-full bg-error" />
                     {error}
                 </p>
             )}

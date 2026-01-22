@@ -2,13 +2,13 @@ import { Camera, Search, Video } from "lucide-react";
 import Button from "./components/button/Button";
 import Input from "./components/input/Input";
 import Container from "./components/container/Container";
-import Sidebar from "./components/sidebar/Sidebar";
+import Sidebar from "./components/navbar/Sidebar";
 import VideoCard from "./components/cards/VideoCard";
 import VideoPlayer from "./components/cards/VideoPlayer";
 
 function App() {
     return (
-        <div className="flex bg-[#121212] min-h-screen text-white font-sans">
+        <div className="flex bg-background-page min-h-screen text-white font-sans">
             <Sidebar />
 
             <main className="flex-1">
