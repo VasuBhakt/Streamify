@@ -165,7 +165,7 @@ function VideoPlayer({ video, className }) {
                             {/*Buttons & Time */}
                             <div className="flex items-center justify-between text-text-main mt-1">
                                 <div className="flex items-center gap-3">
-                                    <button onClick={togglePlay} className="hover:text-secondary-hover transition-colors">
+                                    <button onClick={togglePlay} className="hover:text-secondary-hover transition-colors cursor-pointer">
                                         {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
                                     </button>
                                     {/*Volume Control Container*/}
@@ -174,7 +174,7 @@ function VideoPlayer({ video, className }) {
                                         onMouseLeave={() => setIsVolumeHovered(false)}
                                         onClick={(e) => e.stopPropagation()}
                                     >
-                                        <button onClick={toggleMute} className="hover:text-secondary-hover transition-colors">
+                                        <button onClick={toggleMute} className="hover:text-secondary-hover transition-colors cursor-pointer">
                                             {isMuted || currentVolume === 0 ? <VolumeX className='w-6 h-6' /> : (currentVolume < 0.5 ? <Volume1 className='w-6 h-6' /> : <Volume2 className='w-6 h-6' />)}
                                         </button>
                                         {/* Volume Slider Container */}

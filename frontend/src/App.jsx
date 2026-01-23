@@ -3,6 +3,7 @@ import Button from "./components/button/Button";
 import Input from "./components/input/Input";
 import Container from "./components/container/Container";
 import Sidebar from "./components/navbar/Sidebar";
+import Navbar from "./components/navbar/Navbar";
 import VideoCard from "./components/video/VideoCard";
 import VideoPlayer from "./components/video/VideoPlayer";
 import VideoDescription from "./components/video/VideoDescription";
@@ -52,68 +53,72 @@ function App() {
     ];
 
     return (
-        <div className="flex bg-background-page min-h-screen text-text-main font-sans">
-            <Sidebar />
+        <div className="flex flex-col bg-background-page min-h-screen text-text-main font-sans">
+            <Navbar />
 
-            <main className="flex-1">
-                <Container className="py-6 flex flex-col gap-8">
+            <div className="flex flex-1 pt-16">
+                <Sidebar />
 
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        {/* Main Content (Left Column) */}
-                        <div className="lg:col-span-2 space-y-6">
-                            <div className="w-full">
-                                <VideoPlayer video={mainVideo} />
+                <main className="flex-1">
+                    <Container className="py-8 flex flex-col gap-8">
+
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            {/* Main Content (Left Column) */}
+                            <div className="lg:col-span-2 space-y-6">
+                                <div className="w-full">
+                                    <VideoPlayer video={mainVideo} />
+                                </div>
+
+                                <VideoDescription video={mainVideo} />
+
+                                {/* Comments Section */}
+                                <div className="pt-6 border-t border-border">
+                                    <h3 className="text-xl font-bold mb-6 flex items-center gap-3">
+                                        {comments.length} Comments
+                                    </h3>
+                                    <div className="space-y-6">
+                                        {comments.map((comment, index) => (
+                                            <CommentCard key={index} comment={comment} />
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
 
-                            <VideoDescription video={mainVideo} />
-
-                            {/* Comments Section */}
-                            <div className="pt-6 border-t border-border">
-                                <h3 className="text-xl font-bold mb-6 flex items-center gap-3">
-                                    {comments.length} Comments
-                                </h3>
-                                <div className="space-y-6">
-                                    {comments.map((comment, index) => (
-                                        <CommentCard key={index} comment={comment} />
-                                    ))}
+                            {/* Sidebar Content (Right Column - Recommendations) */}
+                            <div className="space-y-6">
+                                <h2 className="text-xl font-bold">Up Next</h2>
+                                <div className="flex flex-col gap-6">
+                                    <VideoCard video={{
+                                        title: "Building a YouTube Clone with React & Node.js",
+                                        thumbnail: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=2070&auto=format&fit=crop",
+                                        duration: 1250,
+                                        views: 125000,
+                                        createdAt: new Date(Date.now() - 86400000 * 2),
+                                        owner: {
+                                            fullName: "Code Master",
+                                            username: "codemaster",
+                                            avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1780&auto=format&fit=crop"
+                                        }
+                                    }} />
+                                    <VideoCard video={{
+                                        title: "Top 10 Places to Visit in Japan",
+                                        thumbnail: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=2070&auto=format&fit=crop",
+                                        duration: 840,
+                                        views: 89000,
+                                        createdAt: new Date(Date.now() - 86400000 * 5),
+                                        owner: {
+                                            fullName: "Travel Guide",
+                                            username: "travelguide",
+                                            avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1770&auto=format&fit=crop"
+                                        }
+                                    }} />
                                 </div>
                             </div>
                         </div>
 
-                        {/* Sidebar Content (Right Column - Recommendations) */}
-                        <div className="space-y-6">
-                            <h2 className="text-xl font-bold">Up Next</h2>
-                            <div className="flex flex-col gap-6">
-                                <VideoCard video={{
-                                    title: "Building a YouTube Clone with React & Node.js",
-                                    thumbnail: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=2070&auto=format&fit=crop",
-                                    duration: 1250,
-                                    views: 125000,
-                                    createdAt: new Date(Date.now() - 86400000 * 2),
-                                    owner: {
-                                        fullName: "Code Master",
-                                        username: "codemaster",
-                                        avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1780&auto=format&fit=crop"
-                                    }
-                                }} />
-                                <VideoCard video={{
-                                    title: "Top 10 Places to Visit in Japan",
-                                    thumbnail: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=2070&auto=format&fit=crop",
-                                    duration: 840,
-                                    views: 89000,
-                                    createdAt: new Date(Date.now() - 86400000 * 5),
-                                    owner: {
-                                        fullName: "Travel Guide",
-                                        username: "travelguide",
-                                        avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1770&auto=format&fit=crop"
-                                    }
-                                }} />
-                            </div>
-                        </div>
-                    </div>
-
-                </Container>
-            </main>
+                    </Container>
+                </main>
+            </div>
         </div>
     )
 }

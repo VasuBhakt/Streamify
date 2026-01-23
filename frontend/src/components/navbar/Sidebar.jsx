@@ -51,23 +51,9 @@ const Sidebar = () => {
     return (
         <>
             <aside className={tw(
-                "fixed left-0 top-0 h-screen bg-background border-r border-border transition-all duration-300 ease-in-out z-40 flex flex-col",
+                "fixed left-0 top-16 h-[calc(100vh-64px)] bg-background border-r border-border transition-all duration-300 ease-in-out z-40 flex flex-col",
                 isExpanded ? "w-64" : "w-20"
             )}>
-                <div className="h-16 flex items-center px-4 border-b border-border">
-                    <button
-                        onClick={() => dispatch(toggleSidebar())}
-                        className="p-2 hover:bg-surface-hover rounded-lg text-text-secondary hover:text-text-main transition-colors"
-                    >
-                        <Menu size={24} />
-                    </button>
-                    <div className={tw(
-                        "ml-3 font-bold text-xl text-text-main flex items-center gap-2 overflow-hidden transition-all duration-300",
-                        !isExpanded ? "w-0 opacity-0" : "w-auto opacity-100"
-                    )}>
-                        <span className="text-primary">Stream</span>ify
-                    </div>
-                </div>
 
                 <div className="flex-1 overflow-y-auto py-4 px-3 space-y-1 scrollbar-hide">
                     {mainNavItems.map((item) => (
@@ -90,8 +76,8 @@ const Sidebar = () => {
                 </div>
             </aside>
             <div className={tw(
-                "transition-all duration-300 ease-in-out",
-                isExpanded ? "ml-64" : "ml-20"
+                "transition-all duration-300 ease-in-out shrink-0",
+                isExpanded ? "w-64" : "w-20"
             )} />
         </>
     )

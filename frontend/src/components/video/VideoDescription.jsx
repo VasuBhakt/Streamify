@@ -51,7 +51,7 @@ const VideoDescription = ({ video }) => {
                         <Button
                             variant={isSubscribed ? "secondary" : "primary"}
                             size="md"
-                            className="ml-4 rounded-full px-6 cursor-pointer"
+                            className="ml-4 rounded-full px-6 cursor-pointer font-semibold"
                             label={isSubscribed ? "Subscribed" : "Subscribe"}
                             icon={isSubscribed ? Bell : null}
                         />
