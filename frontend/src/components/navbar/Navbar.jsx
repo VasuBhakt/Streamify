@@ -18,7 +18,7 @@ const Navbar = () => {
     }
 
     return (
-        <nav className="fixed top-0 left-0 right-0 h-16 bg-background/80 backdrop-blur-md border-b border-border z-50 px-4 flex items-center justify-between">
+        <nav className="fixed top-0 left-0 right-0 h-16 bg-background/80 backdrop-blur-md z-50 px-4 flex items-center justify-between">
             {/* Left: Logo & Menu */}
             <div className="flex items-center gap-4">
                 <button

@@ -51,7 +51,7 @@ const Sidebar = () => {
     return (
         <>
             <aside className={tw(
-                "fixed left-0 top-16 h-[calc(100vh-64px)] bg-background border-r border-border transition-all duration-300 ease-in-out z-40 flex flex-col",
+                "fixed left-0 top-16 h-[calc(100vh-64px)] bg-background border-r border-none transition-all duration-300 ease-in-out z-40 flex flex-col",
                 isExpanded ? "w-64" : "w-20"
             )}>
 
