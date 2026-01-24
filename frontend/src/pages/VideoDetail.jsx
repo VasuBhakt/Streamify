@@ -1,0 +1,243 @@
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useParams } from "react-router-dom";
+import videoService from "../services/video";
+import commentService from "../services/comment";
+import Container from "../components/container/Container";
+import VideoCard from "../components/video/VideoCard";
+import VideoPlayer from "../components/video/VideoPlayer";
+import VideoDescription from "../components/video/VideoDescription";
+import CommentCard from "../components/comment/CommentCard";
+import Input from "../components/input/Input";
+import Button from "../components/button/Button";
+import { Loader2, AlertCircle } from "lucide-react";
+import { useSelector } from "react-redux";
+
+const VideoDetail = () => {
+    const { videoId } = useParams();
+    const [video, setVideo] = useState(null);
+    const [relatedVideos, setRelatedVideos] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // Comments State
+    const [comments, setComments] = useState([]);
+    const [commentsPage, setCommentsPage] = useState(1);
+    const [hasMoreComments, setHasMoreComments] = useState(false);
+    const [commentsLoading, setCommentsLoading] = useState(false);
+    const [totalComments, setTotalComments] = useState(0);
+
+    const user = useSelector((state) => state.auth.userData);
+
+    // Observer for infinite scroll on comments
+    const observer = useRef();
+    const lastCommentElementRef = useCallback(node => {
+        if (commentsLoading) return;
+        if (observer.current) observer.current.disconnect();
+
+        observer.current = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && hasMoreComments) {
+                setCommentsPage(prev => prev + 1);
+            }
+        });
+
+        if (node) observer.current.observe(node);
+    }, [commentsLoading, hasMoreComments]);
+
+    const fetchVideoData = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+
+            const response = await videoService.getVideoById({ videoId });
+            if (response?.data) {
+                setVideo(response.data);
+            } else {
+                setError("Video not found");
+            }
+
+            // Fetch related videos
+            const relatedResponse = await videoService.getAllVideos({ limit: 12 });
+            if (relatedResponse?.data?.docs) {
+                // Filter out current video
+                setRelatedVideos(relatedResponse.data.docs.filter(v => v._id !== videoId));
+            }
+
+        } catch (err) {
+            console.error("Error fetching video detail:", err);
+            setError("Failed to load video details.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchComments = async () => {
+        if (!videoId) return;
+        try {
+            setCommentsLoading(true);
+            const response = await commentService.getVideoComments({
+                videoId,
+                page: commentsPage,
+                limit: 10
+            });
+
+            if (response?.data?.docs) {
+                setComments((prev) => [...prev, ...response.data.docs]);
+                setHasMoreComments(response.data.hasNextPage);
+                setTotalComments(response.data.totalDocs || 0);
+            }
+        } catch (err) {
+            console.error("Error fetching comments:", err);
+        } finally {
+            setCommentsLoading(false);
+        }
+    };
+
+    // Initial load for video and related videos
+    useEffect(() => {
+        window.scrollTo(0, 0);
+        if (videoId) {
+            fetchVideoData();
+            // Reset comments when video changes
+            setComments([]);
+            setCommentsPage(1);
+            fetchComments();
+        }
+    }, [videoId]);
+
+    // Fetch comments whenever commentsPage changes
+    useEffect(() => {
+        if (commentsPage > 1) {
+            fetchComments();
+        }
+    }, [commentsPage]);
+
+    if (loading) {
+        return (
+            <div className="flex-1 flex items-center justify-center min-h-[70vh]">
+                <div className="flex flex-col items-center gap-4">
+                    <Loader2 className="w-12 h-12 text-primary animate-spin" />
+                    <p className="text-text-secondary font-medium tracking-wide">Initializing theater mode...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error || !video) {
+        return (
+            <Container className="py-20 flex flex-col items-center justify-center text-center">
+                <AlertCircle className="w-16 h-16 text-error mb-4" />
+                <h2 className="text-2xl font-bold text-text-main mb-2">Video Unavailable</h2>
+                <p className="text-text-secondary mb-8 max-w-md">{error || "The video could not be loaded."}</p>
+                <button
+                    onClick={() => window.history.back()}
+                    className="px-6 py-2 bg-surface hover:bg-surface-hover border border-border rounded-full transition-all"
+                >
+                    Go Back
+                </button>
+            </Container>
+        );
+    }
+
+    return (
+        <div className="bg-background-page min-h-screen">
+            <Container className="py-6">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    {/* Main Content Column */}
+                    <div className="lg:col-span-8 space-y-6">
+                        {/* Player Section */}
+                        <div className="rounded-2xl overflow-hidden shadow-2xl bg-black aspect-video ring-1 ring-white/5">
+                            <VideoPlayer video={video} />
+                        </div>
+
+                        {/* Description Section */}
+                        <VideoDescription video={video} />
+
+                        {/* Comments Section */}
+                        <div className="bg-surface/10 rounded-2xl p-6 border border-border/40">
+                            <h3 className="text-xl font-bold mb-8 flex items-center gap-3">
+                                <span className="text-primary">{totalComments}</span> Comments
+                            </h3>
+
+                            {/* Comment Input */}
+                            <div className="flex gap-4 mb-10">
+                                <div className="w-10 h-10 rounded-full bg-surface-hover flex items-center justify-center shrink-0 border border-border">
+                                    <span className="text-text-secondary font-bold">{user?.fullName ? user.fullName.charAt(0).toUpperCase() : user?.username ? user.username.charAt(0).toUpperCase() : "U"}</span>
+                                </div>
+                                <div className="flex-1 group">
+                                    <Input
+                                        type="text"
+                                        readOnly
+                                        placeholder="Add a public comment (Sign in required)..."
+                                        className="w-full bg-transparent border-b border-border py-2 outline-none cursor-not-allowed text-text-muted"
+                                    />
+                                    {user && (<div className="flex justify-end gap-3 mt-3 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300">
+                                        <Button variant="ghost" className="px-4 py-1.5 text-sm font-semibold text-text-secondary hover:text-text-main transition-colors">Cancel</Button>
+                                        <Button varaint="ghost" className="px-4 py-1.5 text-sm font-semibold bg-primary text-white rounded-full hover:bg-secondary-hover transition-all">Comment</Button>
+                                    </div>)}
+                                </div>
+                            </div>
+
+                            <div className="space-y-8">
+                                {comments.map((comment, index) => {
+                                    if (comments.length === index + 1) {
+                                        return (
+                                            <div ref={lastCommentElementRef} key={comment._id}>
+                                                <CommentCard comment={comment} />
+                                            </div>
+                                        );
+                                    }
+                                    return <CommentCard key={comment._id} comment={comment} />;
+                                })}
+
+                                {commentsLoading && (
+                                    <div className="flex justify-center py-4">
+                                        <Loader2 className="w-6 h-6 text-primary animate-spin" />
+                                    </div>
+                                )}
+
+                                {!hasMoreComments && comments.length > 0 && (
+                                    <p className="text-center text-text-muted text-sm pt-4 border-t border-border/20">
+                                        No more comments to show.
+                                    </p>
+                                )}
+
+                                {comments.length === 0 && !commentsLoading && (
+                                    <p className="text-center text-text-muted text-sm py-10">
+                                        No comments yet. Be the first to start the conversation!
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Sidebar / Recommendations Column */}
+                    <div className="lg:col-span-4 space-y-6">
+                        <div className="flex items-center justify-between mb-4">
+                            <h2 className="text-lg font-bold flex items-center gap-2">
+                                <span className="w-1 h-6 bg-primary rounded-full"></span>
+                                Up Next
+                            </h2>
+                        </div>
+                        <div className="flex flex-col gap-5">
+                            {relatedVideos.length > 0 ? (
+                                relatedVideos.map((v) => (
+                                    <VideoCard
+                                        key={v._id}
+                                        video={v}
+                                        className="hover:bg-surface/30 p-2 rounded-xl transition-all duration-300 border border-transparent hover:border-border/40"
+                                    />
+                                ))
+                            ) : (
+                                <div className="text-center py-10 bg-surface/10 rounded-2xl border border-dashed border-border">
+                                    <p className="text-text-muted text-sm tracking-wide">Seeking more videos...</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </Container>
+        </div>
+    );
+};
+
+export default VideoDetail;

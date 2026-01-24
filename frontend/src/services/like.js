@@ -1,3 +1,5 @@
+import axios from "../utils/axios";
+
 export class LikeService {
 
     async toggleLikeVideo({ videoId }) {

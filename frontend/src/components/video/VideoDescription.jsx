@@ -30,7 +30,7 @@ const VideoDescription = ({ video }) => {
                 <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
                     {/*Owner info*/}
                     <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 md:h-12 md:w-12 rounded-full overflow-hidden bg-surface-hover border border=border">
+                        <div className="h-10 w-10 md:h-12 md:w-12 rounded-full overflow-hidden bg-surface-hover border border-border">
                             {owner?.avatar ? (
                                 <img src={owner.avatar} alt={owner.fullName} className="h-full w-full object-cover" />
                             ) : (
@@ -40,7 +40,7 @@ const VideoDescription = ({ video }) => {
                             )}
                         </div>
                         <div className="flex flex-col">
-                            <span className="text-text-main font-bold text-base leading-none hover:text-primary-hover cursor-pointer">
+                            <span className="text-text-main font-bold text-base leading-none hover:text-primary cursor-pointer transition-colors">
                                 {owner?.fullName || "Unknown Channel"}
                             </span>
                             <span className="text-text-secondary text-xs mt-1">
@@ -59,12 +59,12 @@ const VideoDescription = ({ video }) => {
                     {/*Action Buttons*/}
                     <div className="flex items-center gap-2">
                         <div className="flex items-center bg-surface-hover rounded-full overflow-hidden border border-border">
-                            <button className="flex items-center gap-2 px-4 py-2 hover:bg-surface transition-colors border-r border-border cursor-pointer">
-                                <Heart className="w-5 h-5" />
-                                <span className="text-sm font-medium">{likesCount}</span>
+                            <button className="flex items-center gap-2 px-4 py-2 hover:bg-surface transition-all border-r border-border cursor-pointer group/like text-text-main">
+                                <Heart className="w-5 h-5 transition-transform group-hover/like:scale-110" />
+                                <span className="text-sm font-bold tracking-tight">{likesCount}</span>
                             </button>
-                            <button className="px-4 py-2 hover:bg-surface transition-colors cursor-pointer">
-                                <Share2 className="w-5 h-5" />
+                            <button className="px-4 py-2 hover:bg-surface transition-colors cursor-pointer group/share">
+                                <Share2 className="w-5 h-5 group-hover/share:text-primary transition-colors" />
                             </button>
                         </div>
                         <button className="p-2 bg-surface-hover hover:bg-surface border border-border rounded-full transition-colors cursor-pointer">
