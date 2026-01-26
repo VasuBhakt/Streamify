@@ -20,7 +20,7 @@ const Button = React.forwardRef(({
         secondary: "bg-surface-hover text-text-main hover:bg-surface border border-border",
         outline: "bg-transparent border-2 border-border text-text-secondary hover:border-primary hover:text-white",
         ghost: "bg-transparent text-text-secondary hover:bg-surface-hover hover:text-white",
-        danger: "bg-error/10 text-error border border-error/20 hover:bg-error hover:text-text-main",
+        danger: "bg-error text-white border border-error/20 hover:bg-error/80 hover:text-text-white",
     };
 
     const sizes = {

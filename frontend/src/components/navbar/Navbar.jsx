@@ -1,20 +1,32 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../features/authSlice";
+import authService from "../../services/auth";
 import { toggleSidebar } from "../../features/uiSlice";
-import { Search, Bell, Video, User, Menu, X, LogIn } from "lucide-react"
+import { Search, Bell, Video, Menu, X } from "lucide-react"
+import { Link, useNavigate } from "react-router-dom";
 import Button from "../button/Button";
 import Input from "../input/Input";
-import tw from "../../utils/tailwindUtil";
 
 const Navbar = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState("");
 
     const user = useSelector((state) => state.auth.userData);
-
     const handleSearch = (e) => {
         e.preventDefault();
         console.log("Searching for:", searchQuery);
+    }
+
+    const handleLogout = async () => {
+        try {
+            await authService.logoutUser();
+            dispatch(logout());
+            navigate("/login");
+        } catch (error) {
+            console.error("Navbar :: handleLogout :: error", error);
+        }
     }
 
     return (
@@ -27,11 +39,11 @@ const Navbar = () => {
                 >
                     <Menu size={24} />
                 </button>
-                <div className="flex items-center gap-2 cursor-pointer group">
+                <Link to="/" className="flex items-center gap-2 cursor-pointer group">
                     <span className="text-xl font-bold text-text-main hidden sm:block">
                         <span className="text-primary">Stream</span>ify
                     </span>
-                </div>
+                </Link>
             </div>
 
             {/* Center: Search Bar */}
@@ -61,7 +73,7 @@ const Navbar = () => {
 
             {/* Right: Actions */}
             {user && (
-                <div className="flex items-center gap-1 sm:gap-3">
+                <div className="flex items-center lg:gap-5">
                     <button className="p-2 hover:bg-surface-hover rounded-full text-text-secondary hover:text-text-main transition-all duration-200 relative">
                         <Video size={22} />
                     </button>
@@ -69,7 +81,7 @@ const Navbar = () => {
                         <Bell size={22} />
                         <div className="absolute top-2 right-2 w-1.5 h-1.5 bg-primary rounded-full" />
                     </button>
-                    <div className="ml-2 pl-2 border-l border-border flex items-center gap-3 cursor-pointer group">
+                    <Link to={`/c/${user.username}`} className="ml-2 pl-2 border-l border-border flex items-center gap-3 cursor-pointer group">
                         <div className="text-right hidden lg:block">
                             <p className="text-sm font-semibold text-text-main leading-none mb-1">{user.fullName || "User"}</p>
                             <p className="text-xs text-text-muted">@{user.username || "user"}</p>
@@ -77,19 +89,29 @@ const Navbar = () => {
                         <div className="w-10 h-10 rounded-full border-2 border-border group-hover:border-primary transition-all duration-300 overflow-hidden shadow-lg shadow-primary/5">
                             <img src={user.avatar} alt={user.fullName} className="w-full h-full object-cover" />
                         </div>
-                    </div>
+                    </Link>
+                    <Button
+                        onClick={handleLogout}
+                        variant="danger"
+                        size="md"
+                        className="rounded-full px-6 font-semibold"
+                    >
+                        Sign Out
+                    </Button>
                 </div>
             )}
             {!user && (
                 <div className="flex items-center">
                     <div className="mr-2">
-                        <Button
-                            variant="primary"
-                            size="sm"
-                            className="px-6 py-2 rounded-full font-bold shadow-lg shadow-primary/20 hover:shadow-primary/30 active:scale-95 transition-all duration-200 cursor-pointer mr-6"
-                        >
-                            <span className="text-sm">Sign In</span>
-                        </Button>
+                        <Link to="/login">
+                            <Button
+                                variant="primary"
+                                size="sm"
+                                className="px-6 py-2 rounded-full font-bold shadow-lg shadow-primary/20 hover:shadow-primary/30 active:scale-95 transition-all duration-200 cursor-pointer mr-6"
+                            >
+                                <span className="text-sm">Sign In</span>
+                            </Button>
+                        </Link>
                     </div>
                 </div>
             )}
