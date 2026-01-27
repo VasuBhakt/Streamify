@@ -9,7 +9,6 @@ export default function AuthLayout({
 
     const navigate = useNavigate();
     const authStatus = useSelector((state) => state.auth.status);
-    const userData = useSelector((state) => state.auth.userData);
     const [loader, setLoader] = useState(true);
 
     useEffect(() => {
