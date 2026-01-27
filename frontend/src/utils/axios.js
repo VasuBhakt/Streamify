@@ -10,15 +10,17 @@ axiosInstance.interceptors.response.use(
     (response) => response,
     async (error) => {
         const originalRequest = error.config;
+        const skipUrls = ['/login', '/register', '/refresh-token'];
+        const shouldSkip = skipUrls.some(url => originalRequest.url.includes(url));
         //If error is 401 and not processed yet
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        if (error.response?.status === 401 && !shouldSkip && !originalRequest._retry) {
             originalRequest._retry = true;
             try {
                 // sends httpOnly refresh token cookie
                 await axiosInstance.post('/users/refresh-token');
                 return axiosInstance(originalRequest);
             } catch (error) {
-                window.location.href = '/login';
+                // DON'T reload! Just reject. The component UI will handle the logout state.
                 return Promise.reject(error);
             }
         }

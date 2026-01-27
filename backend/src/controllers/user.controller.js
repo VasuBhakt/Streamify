@@ -30,7 +30,7 @@ const generateAccessAndRefreshToken = async (userId) => {
 const refreshAccessToken = asyncHandler(async (req, res) => {
     try {
         // get refresh token from cookies
-        const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
+        const incomingRefreshToken = req.cookies?.refreshToken || req.body?.refreshToken;
 
         // if no refresh token throw error
         if (!incomingRefreshToken) {

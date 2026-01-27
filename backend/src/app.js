@@ -44,4 +44,16 @@ app.use("/comments", commentRouter)
 app.use("/dashboard", dashboardRouter)
 app.use("/healthcheck", healthCheckRouter)
 
+// Global Error Handler
+app.use((err, req, res, next) => {
+    const statusCode = err.statusCode || 500;
+    const message = err.message || "Internal Server Error";
+
+    return res.status(statusCode).json({
+        success: false,
+        message: message,
+        errors: err.errors || [],
+    });
+});
+
 export { app }

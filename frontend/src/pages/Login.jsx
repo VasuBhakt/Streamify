@@ -20,12 +20,12 @@ function Login() {
         setIsLoading(true);
         try {
             const response = await authService.loginUser(data);
-            if (response.data) {
-                dispatch(authLogin(response.data.loggedInUser));
+            if (response?.data) {
+                dispatch(authLogin(response?.data?.loggedInUser));
                 navigate("/");
             }
         } catch (error) {
-            setError(error.response?.data?.message || error.message || "Invalid credentials");
+            setError(error.response?.data?.message || "Invalid credentials");
         } finally {
             setIsLoading(false);
         }

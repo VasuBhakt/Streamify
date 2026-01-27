@@ -18,6 +18,7 @@ function App() {
     const dispatch = useDispatch();
 
     useEffect(() => {
+        if (isAuthPage) return;
         authService.getCurrentUser()
             .then((response) => {
                 if (response?.data) {
@@ -34,7 +35,6 @@ function App() {
     return (
         <div className="flex flex-col bg-background-page min-h-screen text-text-main font-sans overflow-x-hidden">
             <Navbar />
-
             <div className="flex flex-1 pt-16">
                 {!isAuthPage && <Sidebar />}
 

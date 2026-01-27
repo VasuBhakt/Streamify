@@ -4,14 +4,17 @@ import { logout } from "../../features/authSlice";
 import authService from "../../services/auth";
 import { toggleSidebar } from "../../features/uiSlice";
 import { Search, Bell, Video, Menu, X } from "lucide-react"
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Button from "../button/Button";
 import Input from "../input/Input";
+import tw from "../../utils/tailwindUtil";
 
 const Navbar = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState("");
+    const location = useLocation();
+    const isAuthPage = location.pathname === "/login" || location.pathname === "/register";
 
     const user = useSelector((state) => state.auth.userData);
     const handleSearch = (e) => {
@@ -33,13 +36,13 @@ const Navbar = () => {
         <nav className="fixed top-0 left-0 right-0 h-16 bg-background/80 backdrop-blur-md z-50 px-4 flex items-center justify-between">
             {/* Left: Logo & Menu */}
             <div className="flex items-center gap-4">
-                <button
+                {!isAuthPage && <button
                     onClick={() => dispatch(toggleSidebar())}
-                    className="p-2 hover:bg-surface-hover rounded-full text-text-secondary hover:text-text-main transition-all duration-200 active:scale-95"
+                    className="p-2 hover:bg-surface-hover rounded-full text-text-secondary hover:text-text-main transition-all duration-200 active:scale-95 cursor-pointer"
                 >
                     <Menu size={24} />
-                </button>
-                <Link to="/" className="flex items-center gap-2 cursor-pointer group">
+                </button>}
+                <Link to="/" className={tw("flex items-center gap-2 cursor-pointer group", isAuthPage && "m-4")}>
                     <span className="text-xl font-bold text-text-main hidden sm:block">
                         <span className="text-primary">Stream</span>ify
                     </span>
@@ -47,7 +50,7 @@ const Navbar = () => {
             </div>
 
             {/* Center: Search Bar */}
-            <div className="flex-1 max-w-2xl mx-8 hidden md:block">
+            {!isAuthPage && <div className="flex-1 max-w-2xl mx-8 hidden md:block">
                 <form onSubmit={handleSearch} className="w-full">
                     <Input
                         icon={Search}
@@ -69,10 +72,10 @@ const Navbar = () => {
                         }
                     />
                 </form>
-            </div>
+            </div>}
 
             {/* Right: Actions */}
-            {user && (
+            {user && !isAuthPage && (
                 <div className="flex items-center lg:gap-5">
                     <button className="p-2 hover:bg-surface-hover rounded-full text-text-secondary hover:text-text-main transition-all duration-200 relative">
                         <Video size={22} />
@@ -100,7 +103,7 @@ const Navbar = () => {
                     </Button>
                 </div>
             )}
-            {!user && (
+            {!user && !isAuthPage && (
                 <div className="flex items-center">
                     <div className="mr-2">
                         <Link to="/login">
