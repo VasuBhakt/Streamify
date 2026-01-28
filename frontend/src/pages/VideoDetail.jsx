@@ -125,6 +125,37 @@ const VideoDetail = () => {
     const cancelComment = () => {
         commentObserver.current.value = "";
     }
+
+    const updateComment = async (commentId, content) => {
+        try {
+            const response = await commentService.updateComment({
+                videoId,
+                commentId,
+                content
+            });
+            if (response?.data) {
+                setComments((prev) =>
+                    prev.map((c) => c._id === commentId ? { ...c, ...response.data, owner: c.owner } : c)
+                );
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error("Error editing comment:", error);
+            return false;
+        }
+    }
+
+    const deleteComment = async (commentId) => {
+        if (!window.confirm("Are you sure you want to delete this comment?")) return;
+        try {
+            await commentService.deleteComment({ videoId, commentId });
+            setComments((prev) => prev.filter((c) => c._id !== commentId));
+            setTotalComments((prev) => prev - 1);
+        } catch (error) {
+            console.error("Error deleting comment:", error);
+        }
+    }
     // Initial load for video and related videos
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -213,14 +244,23 @@ const VideoDetail = () => {
 
                             <div className="space-y-8">
                                 {comments.map((comment, index) => {
+                                    const isOwner = user?._id === comment.owner?._id;
+                                    const commentProps = {
+                                        comment,
+                                        onUpdate: updateComment,
+                                        onDelete: deleteComment,
+                                        isEditable: isOwner,
+                                        isDeletable: isOwner
+                                    };
+
                                     if (comments.length === index + 1) {
                                         return (
                                             <div ref={lastCommentElementRef} key={comment._id}>
-                                                <CommentCard comment={comment} />
+                                                <CommentCard {...commentProps} />
                                             </div>
                                         );
                                     }
-                                    return <CommentCard key={comment._id} comment={comment} />;
+                                    return <CommentCard key={comment._id} {...commentProps} />;
                                 })}
 
                                 {commentsLoading && (
