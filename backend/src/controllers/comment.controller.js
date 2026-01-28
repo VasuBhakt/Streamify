@@ -16,7 +16,25 @@ const getVideoComments = asyncHandler(async (req, res) => {
             $match: {
                 video: new mongoose.Types.ObjectId(videoId)
             }
-        }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "owner",
+                pipeline: [
+                    {
+                        $project: {
+                            username: 1,
+                            fullName: 1,
+                            avatar: 1
+                        }
+                    }
+                ]
+            }
+        },
+        { $unwind: "$owner" }
     ]
     const commentsAggregate = Comment.aggregate(pipelines);
     const options = {
@@ -52,10 +70,11 @@ const addComment = asyncHandler(async (req, res) => {
         owner: req.user._id,
         content: content
     })
+    const populatedComment = await Comment.findById(comment._id).populate("owner", "fullName username avatar");
     return res
         .status(201)
         .json(
-            new APIResponse(201, comment, "Comment added successfully")
+            new APIResponse(201, populatedComment, "Comment added successfully")
         )
 })
 

@@ -11,6 +11,7 @@ import Input from "../components/input/Input";
 import Button from "../components/button/Button";
 import { Loader2, AlertCircle } from "lucide-react";
 import { useSelector } from "react-redux";
+import tw from "../utils/tailwindUtil";
 
 const VideoDetail = () => {
     const { videoId } = useParams();
@@ -27,6 +28,7 @@ const VideoDetail = () => {
     const [totalComments, setTotalComments] = useState(0);
 
     const user = useSelector((state) => state.auth.userData);
+    const status = useSelector((state) => state.auth.status);
 
     // Observer for infinite scroll on comments
     const observer = useRef();
@@ -70,18 +72,27 @@ const VideoDetail = () => {
         }
     };
 
-    const fetchComments = async () => {
+    const fetchComments = async (pageToFetch = commentsPage) => {
         if (!videoId) return;
         try {
             setCommentsLoading(true);
             const response = await commentService.getVideoComments({
                 videoId,
-                page: commentsPage,
+                page: pageToFetch,
                 limit: 10
             });
 
             if (response?.data?.docs) {
-                setComments((prev) => [...prev, ...response.data.docs]);
+                setComments((prev) => {
+                    const newDocs = response.data.docs;
+                    if (pageToFetch === 1) return newDocs;
+
+                    // Filter out already existing comments to prevent duplicates (Strict Mode safe)
+                    const filteredNewDocs = newDocs.filter(
+                        (newDoc) => !prev.some((oldDoc) => oldDoc._id === newDoc._id)
+                    );
+                    return [...prev, ...filteredNewDocs];
+                });
                 setHasMoreComments(response.data.hasNextPage);
                 setTotalComments(response.data.totalDocs || 0);
             }
@@ -92,6 +103,28 @@ const VideoDetail = () => {
         }
     };
 
+    const commentObserver = useRef();
+    const addComment = async () => {
+        try {
+            const content = commentObserver.current.value.trim();
+            if (!content) return;
+            const response = await commentService.addComment({
+                videoId,
+                content
+            });
+            if (response?.data) {
+                setComments((prev) => [response.data, ...prev]);
+                setTotalComments((prev) => prev + 1);
+                commentObserver.current.value = "";
+            }
+        } catch (error) {
+            console.error("Error adding comment:", error);
+        }
+    }
+
+    const cancelComment = () => {
+        commentObserver.current.value = "";
+    }
     // Initial load for video and related videos
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -100,14 +133,14 @@ const VideoDetail = () => {
             // Reset comments when video changes
             setComments([]);
             setCommentsPage(1);
-            fetchComments();
+            fetchComments(1);
         }
     }, [videoId]);
 
     // Fetch comments whenever commentsPage changes
     useEffect(() => {
         if (commentsPage > 1) {
-            fetchComments();
+            fetchComments(commentsPage);
         }
     }, [commentsPage]);
 
@@ -159,20 +192,21 @@ const VideoDetail = () => {
                             </h3>
 
                             {/* Comment Input */}
-                            <div className="flex gap-4 mb-10">
+                            <div className="flex gap-4 mb-5">
                                 <div className="w-10 h-10 rounded-full bg-surface-hover flex items-center justify-center shrink-0 border border-border">
                                     <span className="text-text-secondary font-bold">{user?.fullName ? user.fullName.charAt(0).toUpperCase() : user?.username ? user.username.charAt(0).toUpperCase() : "U"}</span>
                                 </div>
                                 <div className="flex-1 group">
                                     <Input
+                                        ref={commentObserver}
                                         type="text"
-                                        readOnly
-                                        placeholder="Add a public comment (Sign in required)..."
-                                        className="w-full bg-transparent border-b border-border py-2 outline-none cursor-not-allowed text-text-muted"
+                                        readOnly={!status}
+                                        placeholder={status ? "Add a comment" : "Add a public comment (Sign in required)..."}
+                                        className={tw("w-full bg-transparent border-b border-border py-2 outline-none text-text-muted", !status && "cursor-not-allowed")}
                                     />
-                                    {user && (<div className="flex justify-end gap-3 mt-3 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300">
-                                        <Button variant="ghost" className="px-4 py-1.5 text-sm font-semibold text-text-secondary hover:text-text-main transition-colors">Cancel</Button>
-                                        <Button varaint="ghost" className="px-4 py-1.5 text-sm font-semibold bg-primary text-white rounded-full hover:bg-secondary-hover transition-all">Comment</Button>
+                                    {status && (<div className="flex justify-end gap-3 mt-3 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300">
+                                        <Button variant="ghost" className="px-4 py-1.5 text-sm font-semibold text-text-secondary hover:text-text-main transition-colors" onClick={cancelComment}>Cancel</Button>
+                                        <Button variant="ghost" className="px-4 py-1.5 text-sm font-semibold bg-primary text-white rounded-full hover:bg-secondary-hover transition-all" onClick={addComment}>Comment</Button>
                                     </div>)}
                                 </div>
                             </div>
