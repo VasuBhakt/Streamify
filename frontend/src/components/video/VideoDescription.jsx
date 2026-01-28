@@ -5,7 +5,7 @@ import { Bell, Heart, Share2, MoreHorizontal } from "lucide-react";
 import tw from "../../utils/tailwindUtil";
 
 
-const VideoDescription = ({ video }) => {
+const VideoDescription = ({ video, isSubscribed = false, isLiked = false, onLike, onSubscribe }) => {
     const [isExpanded, setIsExpanded] = useState(false);
 
     if (!video) return null;
@@ -16,8 +16,6 @@ const VideoDescription = ({ video }) => {
         views,
         createdAt,
         owner,
-        likesCount = 0,
-        isSubscribed = false
     } = video;
 
     return (
@@ -54,14 +52,18 @@ const VideoDescription = ({ video }) => {
                             className="ml-4 rounded-full px-6 cursor-pointer font-semibold"
                             label={isSubscribed ? "Subscribed" : "Subscribe"}
                             icon={isSubscribed ? Bell : null}
+                            onClick={onSubscribe}
                         />
                     </div>
                     {/*Action Buttons*/}
                     <div className="flex items-center gap-2">
                         <div className="flex items-center bg-surface-hover rounded-full overflow-hidden border border-border">
-                            <button className="flex items-center gap-2 px-4 py-2 hover:bg-surface transition-all border-r border-border cursor-pointer group/like text-text-main">
-                                <Heart className="w-5 h-5 transition-transform group-hover/like:scale-110" />
-                                <span className="text-sm font-bold tracking-tight">{likesCount}</span>
+                            <button
+                                onClick={onLike}
+                                className="flex items-center gap-2 px-4 py-2 hover:bg-surface transition-all border-r border-border cursor-pointer group/like text-text-main"
+                            >
+                                <Heart className={tw("w-5 h-5 transition-transform group-hover/like:scale-110", isLiked ? "text-primary fill-primary" : "text-text-main")} />
+                                <span className="text-sm font-bold tracking-tight">{video.likesCount || 0}</span>
                             </button>
                             <button className="px-4 py-2 hover:bg-surface transition-colors cursor-pointer group/share">
                                 <Share2 className="w-5 h-5 group-hover/share:text-primary transition-colors" />

@@ -146,58 +146,66 @@ const publishVideo = asyncHandler(async (req, res) => {
 })
 
 const getVideoById = asyncHandler(async (req, res) => {
-    // get videoId from params
     const { videoId } = req.params;
 
     if (!mongoose.isValidObjectId(videoId)) {
         throw new APIError(400, "Invalid video ID");
     }
 
-    // fetch from db and increment views
-    const video = await Video.findByIdAndUpdate(
-        videoId,
+    const video = await Video.aggregate([
         {
-            $inc: { views: 1 }
+            $match: {
+                _id: new mongoose.Types.ObjectId(videoId)
+            }
         },
-        { new: true }
-    );
+        {
+            $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "owner",
+                pipeline: [
+                    {
+                        $project: {
+                            _id: 1,
+                            fullName: 1,
+                            username: 1,
+                            avatar: 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $addFields: {
+                owner: {
+                    $first: "$owner"
+                }
+            }
+        }
+    ]);
 
-    // if video is not there, throw error
-    if (!video) {
+    if (!video?.length) {
         throw new APIError(404, "Video not found");
     }
 
-    // Add to watch history if user is logged in
+    // Increment views
+    await Video.findByIdAndUpdate(videoId, {
+        $inc: { views: 1 }
+    });
+
+    // Add to watch history
     if (req.user) {
-        await User.findByIdAndUpdate(
-            req.user._id,
-            {
-                $pull: { watchHistory: videoId } // pull the video id from watch history if watched previously
-            }
-        );
-        await User.findByIdAndUpdate(
-            req.user._id,
-            {
-                $push: {
-                    watchHistory: {
-                        $each: [videoId],  //pushed into watch history
-                        $position: 0
-                    }
-                }
-            }
-        );
+        await User.findByIdAndUpdate(req.user._id, {
+            $addToSet: { watchHistory: videoId }
+        });
     }
 
-    // return video
     return res
         .status(200)
         .json(
-            new APIResponse(
-                200,
-                video,
-                "Video fetched successfully"
-            )
-        )
+            new APIResponse(200, video[0], "Video fetched successfully")
+        );
 })
 
 const updateVideo = asyncHandler(async (req, res) => {

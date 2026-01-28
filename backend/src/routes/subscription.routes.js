@@ -1,11 +1,12 @@
 import { Router } from "express";
-import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { getSubscribers, getSubscriptions, toggleSubscription } from "../controllers/subscription.controller.js";
+import { verifyJWT, getOptionalUser } from "../middlewares/auth.middleware.js";
+import { getSubscribers, getSubscriptions, toggleSubscription, getSubscriptionStatus } from "../controllers/subscription.controller.js";
 
 const router = Router();
 
-router.route("/subscribe").post(verifyJWT, toggleSubscription);
-router.route("/subscribers").get(verifyJWT, getSubscribers);
-router.route("/subscribed").get(verifyJWT, getSubscriptions);
+router.route("/c/:channelId").post(verifyJWT, toggleSubscription);
+router.route("/c/:channelId").get(getSubscribers);
+router.route("/status/c/:channelId").get(getOptionalUser, getSubscriptionStatus);
+router.route("/user").get(verifyJWT, getSubscriptions);
 
 export default router;

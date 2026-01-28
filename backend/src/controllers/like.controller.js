@@ -4,6 +4,7 @@ import APIError from "../utils/ApiError.js";
 import APIResponse from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
+
 const toggleLikeVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params;
     if (!videoId) {
@@ -128,4 +129,29 @@ const userLikedVideos = asyncHandler(async (req, res) => {
         )
 })
 
-export { toggleLikeVideo, toggleLikeComment, userLikedVideos }
+const getVideoLikeStatus = asyncHandler(async (req, res) => {
+    const { videoId } = req.params;
+
+    if (!mongoose.isValidObjectId(videoId)) {
+        throw new APIError(400, "Invalid video ID");
+    }
+
+    const likesCount = await Like.countDocuments({ video: videoId });
+
+    let isLiked = false;
+    if (req.user) {
+        const like = await Like.findOne({
+            video: videoId,
+            likedBy: req.user._id
+        });
+        isLiked = !!like;
+    }
+
+    return res
+        .status(200)
+        .json(
+            new APIResponse(200, { likesCount, isLiked }, "Like status fetched successfully")
+        );
+})
+
+export { toggleLikeVideo, toggleLikeComment, userLikedVideos, getVideoLikeStatus }

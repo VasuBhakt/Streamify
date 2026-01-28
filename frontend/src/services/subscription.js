@@ -1,35 +1,46 @@
+import axios from "../utils/axios";
+
 export class SubscriptionService {
-
-    async toggleSubscription({ channelId }) {
+    async toggleSubscription(channelId) {
         try {
-            const response = await axios.post(`/subscriptions/subscribe/${channelId}`)
-            return response.data
+            const response = await axios.post(`/subscriptions/c/${channelId}`);
+            return response.data;
         } catch (error) {
-            console.log("SubscriptionService :: toggleSubscription :: error", error)
-            throw error
+            console.error("SubscriptionService :: toggleSubscription :: error", error);
+            throw error;
         }
     }
 
-    async getSubscriptions() {
+    async getSubscriptionStatus(channelId) {
         try {
-            const response = await axios.get(`/subscriptions/subscribed`)
-            return response.data
+            const response = await axios.get(`/subscriptions/status/c/${channelId}`);
+            return response.data;
         } catch (error) {
-            console.log("SubscriptionService :: getSubscriptions :: error", error)
-            throw error
+            console.error("SubscriptionService :: getSubscriptionStatus :: error", error);
+            throw error;
         }
     }
 
-    async getSubscribers() {
+    async getSubscribedChannels() {
         try {
-            const response = await axios.get(`/subscriptions/subscribers`)
-            return response.data
+            const response = await axios.get(`/subscriptions/user`);
+            return response.data;
         } catch (error) {
-            console.log("SubscriptionService :: getSubscribers :: error", error)
-            throw error
+            console.error("SubscriptionService :: getSubscribedChannels :: error", error);
+            throw error;
+        }
+    }
+
+    async getUserChannelSubscribers(channelId) {
+        try {
+            const response = await axios.get(`/subscriptions/c/${channelId}`);
+            return response.data;
+        } catch (error) {
+            console.error("SubscriptionService :: getUserChannelSubscribers :: error", error);
+            throw error;
         }
     }
 }
 
-const subscriptionService = new SubscriptionService()
-export default subscriptionService
+const subscriptionService = new SubscriptionService();
+export default subscriptionService;

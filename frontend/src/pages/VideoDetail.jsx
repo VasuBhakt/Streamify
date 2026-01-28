@@ -2,6 +2,8 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import videoService from "../services/video";
 import commentService from "../services/comment";
+import likeService from "../services/like";
+import subscriptionService from "../services/subscription";
 import Container from "../components/container/Container";
 import VideoCard from "../components/video/VideoCard";
 import VideoPlayer from "../components/video/VideoPlayer";
@@ -26,6 +28,12 @@ const VideoDetail = () => {
     const [hasMoreComments, setHasMoreComments] = useState(false);
     const [commentsLoading, setCommentsLoading] = useState(false);
     const [totalComments, setTotalComments] = useState(0);
+
+    // Social Stats (Separated Concerns)
+    const [likesCount, setLikesCount] = useState(0);
+    const [isLiked, setIsLiked] = useState(false);
+    const [subscribersCount, setSubscribersCount] = useState(0);
+    const [isSubscribed, setIsSubscribed] = useState(false);
 
     const user = useSelector((state) => state.auth.userData);
     const status = useSelector((state) => state.auth.status);
@@ -53,9 +61,14 @@ const VideoDetail = () => {
             const response = await videoService.getVideoById({ videoId });
             if (response?.data) {
                 setVideo(response.data);
+                // After getting video, we can fetch subscription status for the owner
+                fetchSubscriptionStatus(response.data.owner._id);
             } else {
                 setError("Video not found");
             }
+
+            // Parallel fetch for other data
+            fetchLikeStatus();
 
             // Fetch related videos
             const relatedResponse = await videoService.getAllVideos({ limit: 12 });
@@ -69,6 +82,30 @@ const VideoDetail = () => {
             setError("Failed to load video details.");
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchLikeStatus = async () => {
+        try {
+            const response = await likeService.getVideoLikeStatus(videoId);
+            if (response?.data) {
+                setLikesCount(response.data.likesCount);
+                setIsLiked(response.data.isLiked);
+            }
+        } catch (error) {
+            console.error("Error fetching like status:", error);
+        }
+    };
+
+    const fetchSubscriptionStatus = async (channelId) => {
+        try {
+            const response = await subscriptionService.getSubscriptionStatus(channelId);
+            if (response?.data) {
+                setIsSubscribed(response.data.isSubscribed);
+                setSubscribersCount(response.data.subscribersCount);
+            }
+        } catch (error) {
+            console.error("Error fetching subscription status:", error);
         }
     };
 
@@ -156,6 +193,50 @@ const VideoDetail = () => {
             console.error("Error deleting comment:", error);
         }
     }
+
+    const handleToggleLike = async () => {
+        if (!status) return;
+
+        // Optimistic update
+        const prevLiked = isLiked;
+        const prevCount = likesCount;
+
+        setIsLiked(!prevLiked);
+        setLikesCount(prevLiked ? prevCount - 1 : prevCount + 1);
+
+        try {
+            await likeService.toggleLikeVideo({ videoId });
+        } catch (error) {
+            console.error("Error liking video:", error);
+            setIsLiked(prevLiked);
+            setLikesCount(prevCount);
+        }
+    }
+
+    const handleToggleSubscribe = async () => {
+        if (!status) {
+            window.alert("Please sign in to subscribe to channels");
+            return;
+        }
+        if (!video?.owner?._id) return;
+
+        const ownerId = video.owner._id.toString();
+
+        // Optimistic update
+        const prevSubscribed = isSubscribed;
+        const prevCount = subscribersCount;
+
+        setIsSubscribed(!prevSubscribed);
+        setSubscribersCount(prevSubscribed ? (prevCount > 0 ? prevCount - 1 : 0) : prevCount + 1);
+
+        try {
+            await subscriptionService.toggleSubscription(ownerId);
+        } catch (error) {
+            console.error("Error toggling subscription:", error);
+            setIsSubscribed(prevSubscribed);
+            setSubscribersCount(prevCount);
+        }
+    }
     // Initial load for video and related videos
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -214,7 +295,21 @@ const VideoDetail = () => {
                         </div>
 
                         {/* Description Section */}
-                        <VideoDescription video={video} />
+                        <VideoDescription
+                            video={{
+                                ...video,
+                                likesCount,
+                                isLiked,
+                                owner: {
+                                    ...video.owner,
+                                    subscribersCount,
+                                }
+                            }}
+                            isLiked={isLiked}
+                            isSubscribed={isSubscribed}
+                            onLike={handleToggleLike}
+                            onSubscribe={handleToggleSubscribe}
+                        />
 
                         {/* Comments Section */}
                         <div className="bg-surface/10 rounded-2xl p-6 border border-border/40">

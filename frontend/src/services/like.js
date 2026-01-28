@@ -4,7 +4,7 @@ export class LikeService {
 
     async toggleLikeVideo({ videoId }) {
         try {
-            const response = await axios.post(`/likes/${videoId}`);
+            const response = await axios.post(`/likes/toggle/v/${videoId}`);
             return response.data;
         } catch (error) {
             console.log("LikeService :: toggleLikeVideo :: error", error);
@@ -14,10 +14,20 @@ export class LikeService {
 
     async toggleLikeComment({ commentId }) {
         try {
-            const response = await axios.post(`/likes/${commentId}`);
+            const response = await axios.post(`/likes/toggle/c/${commentId}`);
             return response.data;
         } catch (error) {
             console.log("LikeService :: toggleLikeComment :: error", error);
+            throw error;
+        }
+    }
+
+    async getVideoLikeStatus(videoId) {
+        try {
+            const response = await axios.get(`/likes/status/v/${videoId}`);
+            return response.data;
+        } catch (error) {
+            console.log("LikeService :: getVideoLikeStatus :: error", error);
             throw error;
         }
     }
