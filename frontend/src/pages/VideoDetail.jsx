@@ -299,6 +299,7 @@ const VideoDetail = () => {
                             isSubscribed={isSubscribed}
                             onLike={handleToggleLike}
                             onSubscribe={handleToggleSubscribe}
+                            ownVideo={channel?._id === user._id}
                         />
 
                         {/* Comments Section */}

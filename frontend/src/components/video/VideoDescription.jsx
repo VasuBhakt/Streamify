@@ -5,7 +5,7 @@ import { Bell, Heart, Share2, MoreHorizontal } from "lucide-react";
 import tw from "../../utils/tailwindUtil";
 
 
-const VideoDescription = ({ video, isSubscribed = false, isLiked = false, onLike, onSubscribe }) => {
+const VideoDescription = ({ video, isSubscribed = false, isLiked = false, onLike, onSubscribe, ownVideo }) => {
     const [isExpanded, setIsExpanded] = useState(false);
 
     if (!video) return null;
@@ -51,6 +51,7 @@ const VideoDescription = ({ video, isSubscribed = false, isLiked = false, onLike
                             size="md"
                             className="ml-4 rounded-full px-6 cursor-pointer font-semibold"
                             label={isSubscribed ? "Subscribed" : "Subscribe"}
+                            disabled={ownVideo}
                             icon={isSubscribed ? Bell : null}
                             onClick={onSubscribe}
                         />

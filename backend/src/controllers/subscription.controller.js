@@ -9,6 +9,9 @@ const toggleSubscription = asyncHandler(async (req, res) => {
     if (!channelId) {
         throw new APIError(400, "Channel ID is required")
     }
+    if (channelId === req.user._id) {
+        throw new APIError(400, "You cannot subscribe to yourself")
+    }
     const pipelines = [];
     pipelines.push({
         $match: {
