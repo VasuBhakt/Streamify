@@ -3,7 +3,7 @@ import { formatViews, timeAgo } from "../../utils/format";
 import Button from "../button/Button";
 import { Bell, Heart, Share2 } from "lucide-react";
 import tw from "../../utils/tailwindUtil";
-import ShareModal from "./ShareModal";
+import ShareModal from "../modals/ShareModal";
 
 
 const VideoDescription = ({ video, isSubscribed = false, isLiked = false, onLike, onSubscribe, ownVideo }) => {
