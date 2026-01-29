@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { timeAgo } from '../../utils/format'
+import { timeAgo, formatViews } from '../../utils/format'
 import { ThumbsUp, Trash, Reply, Pencil, X, Check } from 'lucide-react'
 import tw from "../../utils/tailwindUtil";
 import Button from '../button/Button';
@@ -101,7 +101,7 @@ const CommentCard = ({ comment, onUpdate, onDelete, onLike, isEditable, isDeleta
                                 className={tw("p-1.5 -ml-1.5 hover:bg-surface-hover rounded-full transition-all duration-200 cursor-pointer flex items-center gap-2", isLiked ? "text-primary" : "hover:text-text-main")}
                             >
                                 <ThumbsUp className={tw("w-4 h-4", isLiked ? "fill-primary" : "")} />
-                                <span className="text-xs font-bold leading-none">{likesCount}</span>
+                                <span className="text-xs font-bold leading-none">{formatViews(likesCount).replace(" views", "")}</span>
                             </button>
                         </div>
 
