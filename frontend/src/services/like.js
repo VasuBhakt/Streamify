@@ -22,16 +22,6 @@ export class LikeService {
         }
     }
 
-    async getVideoLikeStatus(videoId) {
-        try {
-            const response = await axios.get(`/likes/status/v/${videoId}`);
-            return response.data;
-        } catch (error) {
-            console.log("LikeService :: getVideoLikeStatus :: error", error);
-            throw error;
-        }
-    }
-
     async userLikedVideos({ page = 1, limit = 10 }) {
         try {
             const response = await axios.get(`/likes/liked-videos`, { params: { page: page || 1, limit: limit || 10 } });

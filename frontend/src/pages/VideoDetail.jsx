@@ -4,6 +4,7 @@ import videoService from "../services/video";
 import commentService from "../services/comment";
 import likeService from "../services/like";
 import subscriptionService from "../services/subscription";
+import userService from "../services/user";
 import Container from "../components/container/Container";
 import VideoCard from "../components/video/VideoCard";
 import VideoPlayer from "../components/video/VideoPlayer";
@@ -18,6 +19,7 @@ import tw from "../utils/tailwindUtil";
 const VideoDetail = () => {
     const { videoId } = useParams();
     const [video, setVideo] = useState(null);
+    const [channel, setChannel] = useState(null);
     const [relatedVideos, setRelatedVideos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -61,19 +63,31 @@ const VideoDetail = () => {
             const response = await videoService.getVideoById({ videoId });
             if (response?.data) {
                 setVideo(response.data);
-                // After getting video, we can fetch subscription status for the owner
-                fetchSubscriptionStatus(response.data.owner._id);
+                setLikesCount(response.data.likesCount);
+                setIsLiked(response.data.isLiked);
+                setTotalComments(response.data.commentsCount);
+
+                // Fetch channel data after video is loaded
+                if (response.data.owner?.username) {
+                    try {
+                        const channelResponse = await userService.getUserChannelProfile(response.data.owner.username);
+                        if (channelResponse?.data) {
+                            setChannel(channelResponse.data);
+                            setIsSubscribed(channelResponse.data.isSubscribed);
+                            setSubscribersCount(channelResponse.data.subscribersCount);
+                        }
+                    } catch (channelErr) {
+                        console.error("Error fetching channel detail:", channelErr);
+                        // We don't set the main error here so the video can still be watched
+                    }
+                }
             } else {
                 setError("Video not found");
             }
 
-            // Parallel fetch for other data
-            fetchLikeStatus();
-
             // Fetch related videos
             const relatedResponse = await videoService.getAllVideos({ limit: 12 });
             if (relatedResponse?.data?.docs) {
-                // Filter out current video
                 setRelatedVideos(relatedResponse.data.docs.filter(v => v._id !== videoId));
             }
 
@@ -82,30 +96,6 @@ const VideoDetail = () => {
             setError("Failed to load video details.");
         } finally {
             setLoading(false);
-        }
-    };
-
-    const fetchLikeStatus = async () => {
-        try {
-            const response = await likeService.getVideoLikeStatus(videoId);
-            if (response?.data) {
-                setLikesCount(response.data.likesCount);
-                setIsLiked(response.data.isLiked);
-            }
-        } catch (error) {
-            console.error("Error fetching like status:", error);
-        }
-    };
-
-    const fetchSubscriptionStatus = async (channelId) => {
-        try {
-            const response = await subscriptionService.getSubscriptionStatus(channelId);
-            if (response?.data) {
-                setIsSubscribed(response.data.isSubscribed);
-                setSubscribersCount(response.data.subscribersCount);
-            }
-        } catch (error) {
-            console.error("Error fetching subscription status:", error);
         }
     };
 
@@ -131,7 +121,6 @@ const VideoDetail = () => {
                     return [...prev, ...filteredNewDocs];
                 });
                 setHasMoreComments(response.data.hasNextPage);
-                setTotalComments(response.data.totalDocs || 0);
             }
         } catch (err) {
             console.error("Error fetching comments:", err);
@@ -218,9 +207,9 @@ const VideoDetail = () => {
             window.alert("Please sign in to subscribe to channels");
             return;
         }
-        if (!video?.owner?._id) return;
+        if (!channel?._id) return;
 
-        const ownerId = video.owner._id.toString();
+        const ownerId = channel._id.toString();
 
         // Optimistic update
         const prevSubscribed = isSubscribed;
@@ -237,14 +226,15 @@ const VideoDetail = () => {
             setSubscribersCount(prevCount);
         }
     }
-    // Initial load for video and related videos
+    // Initial load for video, channel and comments
     useEffect(() => {
-        window.scrollTo(0, 0);
         if (videoId) {
-            fetchVideoData();
-            // Reset comments when video changes
+            window.scrollTo(0, 0);
+            setVideo(null);
+            setChannel(null);
             setComments([]);
             setCommentsPage(1);
+            fetchVideoData();
             fetchComments(1);
         }
     }, [videoId]);

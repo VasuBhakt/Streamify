@@ -11,16 +11,6 @@ export class SubscriptionService {
         }
     }
 
-    async getSubscriptionStatus(channelId) {
-        try {
-            const response = await axios.get(`/subscriptions/status/c/${channelId}`);
-            return response.data;
-        } catch (error) {
-            console.error("SubscriptionService :: getSubscriptionStatus :: error", error);
-            throw error;
-        }
-    }
-
     async getSubscribedChannels() {
         try {
             const response = await axios.get(`/subscriptions/user`);

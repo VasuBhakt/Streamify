@@ -182,7 +182,45 @@ const getVideoById = asyncHandler(async (req, res) => {
                     $first: "$owner"
                 }
             }
+        },
+        {
+            $lookup: {
+                from: "likes",
+                localField: "_id",
+                foreignField: "video",
+                as: "likes"
+            }
+        },
+        {
+            $addFields: {
+                likesCount: {
+                    $size: "$likes"
+                },
+                isLiked: {
+                    $cond: {
+                        if: req.user?._id ? { $in: [new mongoose.Types.ObjectId(req.user._id), "$likes.likedBy"] } : false,
+                        then: true,
+                        else: false
+                    }
+                }
+            }
+        },
+        {
+            $lookup: {
+                from: "comments",
+                localField: "_id",
+                foreignField: "video",
+                as: "comments"
+            }
+        },
+        {
+            $addFields: {
+                commentsCount: {
+                    $size: "$comments"
+                }
+            }
         }
+
     ]);
 
     if (!video?.length) {
