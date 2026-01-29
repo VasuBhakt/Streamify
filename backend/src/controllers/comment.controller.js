@@ -34,7 +34,27 @@ const getVideoComments = asyncHandler(async (req, res) => {
                 ]
             }
         },
-        { $unwind: "$owner" }
+        { $unwind: "$owner" },
+        {
+            $lookup: {
+                from: "likes",
+                localField: "_id",
+                foreignField: "comment",
+                as: "likes"
+            }
+        },
+        {
+            $addFields: {
+                likesCount: { $size: "$likes" },
+                isLiked: {
+                    $cond: {
+                        if: req.user?._id ? { $in: [new mongoose.Types.ObjectId(req.user._id), "$likes.likedBy"] } : false,
+                        then: true,
+                        else: false
+                    }
+                }
+            }
+        }
     ]
     const commentsAggregate = Comment.aggregate(pipelines);
     const options = {

@@ -226,6 +226,44 @@ const VideoDetail = () => {
             setSubscribersCount(prevCount);
         }
     }
+    const handleToggleCommentLike = async (commentId) => {
+        if (!status) return;
+
+        setComments((prev) =>
+            prev.map((c) => {
+                if (c._id === commentId) {
+                    const isLiked = c.isLiked;
+                    return {
+                        ...c,
+                        isLiked: !isLiked,
+                        likesCount: isLiked ? c.likesCount - 1 : c.likesCount + 1
+                    };
+                }
+                return c;
+            })
+        );
+
+        try {
+            await likeService.toggleLikeComment({ commentId });
+        } catch (error) {
+            console.error("Error toggling comment like:", error);
+            // Revert on error
+            setComments((prev) =>
+                prev.map((c) => {
+                    if (c._id === commentId) {
+                        const isLiked = c.isLiked;
+                        return {
+                            ...c,
+                            isLiked: !isLiked,
+                            likesCount: isLiked ? c.likesCount - 1 : c.likesCount + 1
+                        };
+                    }
+                    return c;
+                })
+            );
+        }
+    };
+
     // Initial load for video, channel and comments
     useEffect(() => {
         if (videoId) {
@@ -335,6 +373,7 @@ const VideoDetail = () => {
                                         comment,
                                         onUpdate: updateComment,
                                         onDelete: deleteComment,
+                                        onLike: handleToggleCommentLike,
                                         isEditable: isOwner,
                                         isDeletable: isOwner
                                     };

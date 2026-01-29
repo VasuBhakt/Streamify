@@ -1,10 +1,10 @@
 import { Router } from "express";
 import { addComment, deleteComment, getVideoComments, updateComment } from "../controllers/comment.controller.js";
-import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { verifyJWT, getOptionalUser } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.route("/:videoId").get(getVideoComments);
+router.route("/:videoId").get(getOptionalUser, getVideoComments);
 
 // secure
 router.route("/:videoId").post(verifyJWT, addComment);

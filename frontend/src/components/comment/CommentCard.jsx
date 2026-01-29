@@ -5,7 +5,7 @@ import tw from "../../utils/tailwindUtil";
 import Button from '../button/Button';
 import { Link } from 'react-router-dom';
 
-const CommentCard = ({ comment, onUpdate, onDelete, isEditable, isDeletable }) => {
+const CommentCard = ({ comment, onUpdate, onDelete, onLike, isEditable, isDeletable }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedContent, setEditedContent] = useState(comment?.content || "");
 
@@ -16,6 +16,7 @@ const CommentCard = ({ comment, onUpdate, onDelete, isEditable, isDeletable }) =
         createdAt,
         owner,
         isLiked = false,
+        likesCount = 0,
     } = comment;
 
     const handleUpdate = async () => {
@@ -95,8 +96,12 @@ const CommentCard = ({ comment, onUpdate, onDelete, isEditable, isDeletable }) =
                 {!isEditing && (
                     <div className='flex items-center gap-4 text-text-secondary'>
                         <div className='flex items-center gap-1.5'>
-                            <button className={tw("p-1.5 -ml-1.5 hover:bg-surface-hover rounded-full transition-all duration-200 cursor-pointer", isLiked ? "text-primary" : "hover:text-text-main")}>
+                            <button
+                                onClick={() => onLike(comment._id)}
+                                className={tw("p-1.5 -ml-1.5 hover:bg-surface-hover rounded-full transition-all duration-200 cursor-pointer flex items-center gap-2", isLiked ? "text-primary" : "hover:text-text-main")}
+                            >
                                 <ThumbsUp className={tw("w-4 h-4", isLiked ? "fill-primary" : "")} />
+                                <span className="text-xs font-bold leading-none">{likesCount}</span>
                             </button>
                         </div>
 
