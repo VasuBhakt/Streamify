@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { formatViews, timeAgo } from "../../utils/format";
 import Button from "../button/Button";
-import { Bell, Heart, Share2, MoreHorizontal } from "lucide-react";
+import { Bell, Heart, Share2 } from "lucide-react";
 import tw from "../../utils/tailwindUtil";
+import ShareModal from "./ShareModal";
 
 
 const VideoDescription = ({ video, isSubscribed = false, isLiked = false, onLike, onSubscribe, ownVideo }) => {
     const [isExpanded, setIsExpanded] = useState(false);
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
     if (!video) return null;
 
@@ -17,6 +19,8 @@ const VideoDescription = ({ video, isSubscribed = false, isLiked = false, onLike
         createdAt,
         owner,
     } = video;
+
+    const videoUrl = window.location.href;
 
     return (
         <div className="flex flex-col gap-4 w-full">
@@ -64,18 +68,28 @@ const VideoDescription = ({ video, isSubscribed = false, isLiked = false, onLike
                                 className="flex items-center gap-2 px-4 py-2 hover:bg-surface transition-all border-r border-border cursor-pointer group/like text-text-main"
                             >
                                 <Heart className={tw("w-5 h-5 transition-transform group-hover/like:scale-110", isLiked ? "text-primary fill-primary" : "text-text-main")} />
-                                <span className="text-sm font-bold tracking-tight">{video.likesCount || 0}</span>
+                                <span className="text-sm font-bold tracking-tight">{formatViews(video.likesCount || 0).replace(" views", "")}</span>
                             </button>
-                            <button className="px-4 py-2 hover:bg-surface transition-colors cursor-pointer group/share">
-                                <Share2 className="w-5 h-5 group-hover/share:text-primary transition-colors" />
+                            <button
+                                onClick={() => setIsShareModalOpen(true)}
+                                className="flex items-center gap-2 px-4 py-2 hover:bg-surface transition-colors cursor-pointer group/share text-text-main"
+                            >
+                                <Share2 className="w-5 h-5 group-hover/share:text-primary transition-all group-hover/share:rotate-6" />
+                                <span className="text-sm font-bold tracking-tight">Share</span>
                             </button>
                         </div>
-                        <button className="p-2 bg-surface-hover hover:bg-surface border border-border rounded-full transition-colors cursor-pointer">
-                            <MoreHorizontal className="w-5 h-5" />
-                        </button>
                     </div>
                 </div>
             </div>
+
+            {/* Share Modal */}
+            <ShareModal
+                isOpen={isShareModalOpen}
+                onClose={() => setIsShareModalOpen(false)}
+                videoTitle={title}
+                videoUrl={videoUrl}
+            />
+
             {/*Description Box*/}
             <div className={tw(
                 "p-4 bg-surface-hover rounded-2xl border border-border transition-all duration-300",

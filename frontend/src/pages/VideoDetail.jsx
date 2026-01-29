@@ -139,7 +139,13 @@ const VideoDetail = () => {
                 content
             });
             if (response?.data) {
-                setComments((prev) => [response.data, ...prev]);
+                // Initialize likes data for the new comment
+                const newComment = {
+                    ...response.data,
+                    isLiked: false,
+                    likesCount: 0
+                };
+                setComments((prev) => [newComment, ...prev]);
                 setTotalComments((prev) => prev + 1);
                 commentObserver.current.value = "";
             }
@@ -232,11 +238,12 @@ const VideoDetail = () => {
         setComments((prev) =>
             prev.map((c) => {
                 if (c._id === commentId) {
-                    const isLiked = c.isLiked;
+                    const isLiked = c.isLiked || false;
+                    const likesCount = c.likesCount || 0;
                     return {
                         ...c,
                         isLiked: !isLiked,
-                        likesCount: isLiked ? c.likesCount - 1 : c.likesCount + 1
+                        likesCount: isLiked ? likesCount - 1 : likesCount + 1
                     };
                 }
                 return c;
@@ -251,11 +258,12 @@ const VideoDetail = () => {
             setComments((prev) =>
                 prev.map((c) => {
                     if (c._id === commentId) {
-                        const isLiked = c.isLiked;
+                        const isLiked = c.isLiked || false;
+                        const likesCount = c.likesCount || 0;
                         return {
                             ...c,
                             isLiked: !isLiked,
-                            likesCount: isLiked ? c.likesCount - 1 : c.likesCount + 1
+                            likesCount: isLiked ? likesCount - 1 : likesCount + 1
                         };
                     }
                     return c;
@@ -337,7 +345,7 @@ const VideoDetail = () => {
                             isSubscribed={isSubscribed}
                             onLike={handleToggleLike}
                             onSubscribe={handleToggleSubscribe}
-                            ownVideo={channel?._id === user._id}
+                            ownVideo={channel?._id === user?._id}
                         />
 
                         {/* Comments Section */}
