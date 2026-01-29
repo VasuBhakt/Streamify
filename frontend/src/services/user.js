@@ -54,9 +54,9 @@ export class UserService {
         }
     }
 
-    async getUserChannelProfile(username) {
+    async getUserChannelProfile(userId) {
         try {
-            const response = await axios.get(`/users/c/${username}`);
+            const response = await axios.get(`/users/c/${userId}`);
             return response.data;
         } catch (error) {
             console.log("UserService :: getUserChannelProfile :: error", error);
@@ -84,9 +84,9 @@ export class UserService {
         }
     }
 
-    async getUserAllVideos({ page = 1, limit = 10 }) {
+    async getUserAllVideos({ userId, page = 1, limit = 10 }) {
         try {
-            const response = await axios.get(`/dashboard/videos`, { params: { page: page || 1, limit: limit || 10 } });
+            const response = await axios.get(`/dashboard/v/${userId}`, { params: { page: page || 1, limit: limit || 10 } });
             return response.data;
         } catch (error) {
             console.log("UserService :: getUserAllVideos :: error", error);

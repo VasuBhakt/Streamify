@@ -63,14 +63,23 @@ const VideoDetail = () => {
             const response = await videoService.getVideoById({ videoId });
             if (response?.data) {
                 setVideo(response.data);
-                setLikesCount(response.data.likesCount);
-                setIsLiked(response.data.isLiked);
-                setTotalComments(response.data.commentsCount);
+                setLikesCount(response.data.likesCount || 0);
+                setIsLiked(response.data.isLiked || false);
+                setTotalComments(response.data.commentsCount || 0);
 
-                // Fetch channel data after video is loaded
-                if (response.data.owner?.username) {
+                // 1. Initialize logic immediately from video owner data (which now includes sub stats)
+                // This prevents the "not working" feel while waiting for the second call.
+                if (response.data.owner) {
+                    setChannel(response.data.owner);
+                    setIsSubscribed(response.data.owner.isSubscribed || false);
+                    setSubscribersCount(response.data.owner.subscribersCount || 0);
+                }
+
+                // 2. Restore the original separate API call pattern as explicitly requested.
+                // Updated to use owner._id (userId) instead of username.
+                if (response.data.owner?._id) {
                     try {
-                        const channelResponse = await userService.getUserChannelProfile(response.data.owner.username);
+                        const channelResponse = await userService.getUserChannelProfile(response.data.owner._id);
                         if (channelResponse?.data) {
                             setChannel(channelResponse.data);
                             setIsSubscribed(channelResponse.data.isSubscribed);
@@ -345,7 +354,7 @@ const VideoDetail = () => {
                             isSubscribed={isSubscribed}
                             onLike={handleToggleLike}
                             onSubscribe={handleToggleSubscribe}
-                            ownVideo={channel?._id === user?._id}
+                            ownVideo={user && (channel?._id === user?._id || video?.owner?._id === user?._id)}
                         />
 
                         {/* Comments Section */}

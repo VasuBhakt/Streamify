@@ -34,12 +34,13 @@ const SidebarItem = ({ icon: Icon, label, to, isExpanded }) => {
 const Sidebar = () => {
     const dispatch = useDispatch()
     const { isExpanded } = useSelector((state) => state.ui)
+    const { userData: user } = useSelector((state) => state.auth)
 
     const mainNavItems = [
         { icon: Home, label: 'Home', to: '/' },
         { icon: ThumbsUp, label: 'Liked Videos', to: '/liked-videos' },
         { icon: History, label: 'History', to: '/history' },
-        { icon: Video, label: 'My Content', to: `/c` },
+        { icon: Video, label: 'My Content', to: user ? `/c/${user._id}` : '/login' },
         { icon: Users, label: 'Dashboard', to: '/dashboard' }
     ]
 

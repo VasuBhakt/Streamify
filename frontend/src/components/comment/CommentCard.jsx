@@ -45,7 +45,7 @@ const CommentCard = ({ comment, onUpdate, onDelete, onLike, isEditable, isDeleta
             {/*Content Section*/}
             <div className="flex flex-col flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                    <Link to={`/profile/${owner._id}`}>
+                    <Link to={`/c/${owner?._id}`}>
                         <span className='text-text-main text-sm font-bold leading-none hover:text-primary-hover cursor-pointer transition-color'>
                             @{owner?.username || "user"}
                         </span>

@@ -49,7 +49,7 @@ const getChannelStats = asyncHandler(async (req, res) => {
 
 const getAllVideosOfChannel = asyncHandler(async (req, res) => {
     const { page = 1, limit = 10 } = req.query;
-    const userId = req.user._id;
+    const { userId } = req.params;
     const pipelines = [
         {
             $match: {

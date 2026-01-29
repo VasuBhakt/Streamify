@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import VideoDetail from "./pages/VideoDetail";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Channel from "./pages/Channel";
 import tw from "./utils/tailwindUtil";
 import { useDispatch } from "react-redux";
 import { login, logout } from "./features/authSlice";
@@ -44,6 +45,7 @@ function App() {
                         <Route path="/video/:videoId" element={<VideoDetail />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
+                        <Route path="/c/:userId" element={<Channel />} />
                         {/* More routes can be added here */}
                     </Routes>
                 </main>
