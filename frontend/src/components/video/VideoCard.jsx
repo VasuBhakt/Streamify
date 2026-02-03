@@ -28,7 +28,7 @@ function VideoCard({ video, className }) {
             {/*Info Section*/}
             <div className="flex gap-3 items-start px-0.5">
                 {/*Avatar*/}
-                <Link to={`/c/${ownerDetails?._id}`} className="shrink-0" onClick={(e) => e.stopPropagation()}>
+                <Link to={`/c/${ownerDetails?.username}`} className="shrink-0" onClick={(e) => e.stopPropagation()}>
                     <div className="h-9 w-9 rounded-full overflow-hidden bg-surface-hover border border-border group-hover:border-primary/50 transition-colors duration-300">
                         {ownerDetails?.avatar ? (
                             <img src={ownerDetails?.avatar} alt={ownerDetails?.fullName || "User"} className="h-full w-full object-cover" />
@@ -46,7 +46,7 @@ function VideoCard({ video, className }) {
                     </h3>
                     <div className='text-text-secondary text-xs flex flex-col gap-0.5'>
                         <Link
-                            to={`/c/${ownerDetails?._id}`}
+                            to={`/c/${ownerDetails?.username}`}
                             className='hover:text-text-main transition-colors duration-200 truncate font-medium'
                             onClick={(e) => e.stopPropagation()}
                         >

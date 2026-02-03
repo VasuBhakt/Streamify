@@ -376,14 +376,14 @@ const updateCoverImage = asyncHandler(async (req, res) => {
 })
 
 const getUserChannelProfile = asyncHandler(async (req, res) => {
-    const { userId } = req.params;
+    const { username } = req.params;
 
     // aggregation pipelines for subscriber count
     const channel = await User.aggregate([
         // match the user
         {
             $match: {
-                _id: new mongoose.Types.ObjectId(userId)
+                username: username
             }
         },
         // lookup the subscriptions to user's channel

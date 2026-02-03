@@ -33,7 +33,7 @@ const VideoDescription = ({ video, isSubscribed = false, isLiked = false, onLike
                 <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
                     {/*Owner info*/}
                     <div className="flex items-center gap-3">
-                        <Link to={`/c/${owner?._id}`} className="shrink-0">
+                        <Link to={`/c/${owner?.username}`} className="shrink-0">
                             <div className="h-10 w-10 md:h-12 md:w-12 rounded-full overflow-hidden bg-surface-hover border border-border">
                                 {owner?.avatar ? (
                                     <img src={owner.avatar} alt={owner.fullName} className="h-full w-full object-cover" />
@@ -45,7 +45,7 @@ const VideoDescription = ({ video, isSubscribed = false, isLiked = false, onLike
                             </div>
                         </Link>
                         <div className="flex flex-col">
-                            <Link to={`/c/${owner?._id}`}>
+                            <Link to={`/c/${owner?.username}`}>
                                 <span className="text-text-main font-bold text-base leading-none hover:text-primary cursor-pointer transition-colors">
                                     {owner?.fullName || "Unknown Channel"}
                                 </span>

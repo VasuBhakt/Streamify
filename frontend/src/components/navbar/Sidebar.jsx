@@ -40,7 +40,7 @@ const Sidebar = () => {
         { icon: Home, label: 'Home', to: '/' },
         { icon: ThumbsUp, label: 'Liked Videos', to: '/liked-videos' },
         { icon: History, label: 'History', to: '/history' },
-        { icon: Video, label: 'My Content', to: user ? `/c/${user._id}` : '/login' },
+        { icon: Video, label: 'My Content', to: user ? `/c/${user.username}` : '/login' },
         { icon: Users, label: 'Dashboard', to: '/dashboard' }
     ]
 

@@ -45,7 +45,7 @@ function App() {
                         <Route path="/video/:videoId" element={<VideoDetail />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
-                        <Route path="/c/:userId" element={<Channel />} />
+                        <Route path="/c/:username" element={<Channel />} />
                         {/* More routes can be added here */}
                     </Routes>
                 </main>

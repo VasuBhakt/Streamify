@@ -12,7 +12,7 @@ import tw from "../utils/tailwindUtil";
 import { formatViews } from "../utils/format";
 
 const Channel = () => {
-    const { userId } = useParams();
+    const { username } = useParams();
     const { status, userData } = useSelector((state) => state.auth);
 
     const [channel, setChannel] = useState(null);
@@ -26,26 +26,26 @@ const Channel = () => {
     const fetchChannelProfile = useCallback(async () => {
         try {
             setLoading(true);
-            const response = await userService.getUserChannelProfile(userId);
+            const response = await userService.getUserChannelProfile(username);
             if (response?.data) {
                 setChannel(response.data);
                 setIsSubscribed(response.data.isSubscribed);
                 setSubscribersCount(response.data.subscribersCount);
 
                 // Fetch videos after channel info is loaded
-                fetchChannelVideos(response.data._id);
+                fetchChannelVideos(response.data.username);
             }
         } catch (error) {
             console.error("Error fetching channel profile:", error);
         } finally {
             setLoading(false);
         }
-    }, [userId]);
+    }, [username]);
 
-    const fetchChannelVideos = async (userId) => {
+    const fetchChannelVideos = async (username) => {
         try {
             setVideosLoading(true);
-            const response = await userService.getUserAllVideos({ userId, limit: 100 });
+            const response = await userService.getUserAllVideos({ username, limit: 100 });
             if (response?.data?.docs) {
                 setVideos(response.data.docs);
             }
@@ -57,10 +57,10 @@ const Channel = () => {
     };
 
     useEffect(() => {
-        if (userId) {
+        if (username) {
             fetchChannelProfile();
         }
-    }, [userId, fetchChannelProfile]);
+    }, [username, fetchChannelProfile]);
 
     const handleToggleSubscription = async () => {
         if (!status) {
