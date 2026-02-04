@@ -283,7 +283,10 @@ const updateVideo = asyncHandler(async (req, res) => {
     // update details
     video.title = title || video.title;
     video.description = description || video.description;
-    video.isPublished = isPublished || video.isPublished;
+
+    if (isPublished !== undefined) {
+        video.isPublished = isPublished;
+    }
 
     // get local paths for video and thumbnail
     const newVideoLocalPath = req.files?.video?.[0]?.path;

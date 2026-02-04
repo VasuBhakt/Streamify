@@ -48,8 +48,8 @@ export class VideoService {
             formData.append("title", title)
             formData.append("description", description)
             formData.append("isPublished", isPublished)
-            formData.append("video", video)
-            formData.append("thumbnail", thumbnail)
+            if (video) formData.append("video", video)
+            if (thumbnail) formData.append("thumbnail", thumbnail)
             const response = await axios.patch(`/videos/update/${videoId}`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data"

@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import userService from "../services/user";
 import videoService from "../services/video";
 import Container from "../components/container/Container";
 import Button from "../components/button/Button";
-import UploadVideoModal from "../components/modals/UploadVideoModal";
 import {
     Loader2,
     Plus,
@@ -36,10 +36,10 @@ const StatCard = ({ icon: Icon, label, value, color }) => (
 
 const Dashboard = () => {
     const user = useSelector((state) => state.auth.userData);
+    const navigate = useNavigate();
     const [stats, setStats] = useState(null);
     const [videos, setVideos] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [isUploadOpen, setIsUploadOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState(null);
 
     const fetchData = useCallback(async () => {
@@ -104,7 +104,7 @@ const Dashboard = () => {
                         <Button
                             variant="primary"
                             className="rounded-2xl px-8 font-black py-4 shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
-                            onClick={() => setIsUploadOpen(true)}
+                            onClick={() => navigate("/studio")}
                             icon={Plus}
                         >
                             Upload Video
@@ -187,7 +187,10 @@ const Dashboard = () => {
                                             </td>
                                             <td className="px-8 py-5">
                                                 <div className="flex items-center justify-end gap-2">
-                                                    <button className="p-2.5 bg-surface text-text-secondary hover:text-primary hover:bg-primary/10 rounded-xl border border-border transition-all cursor-pointer">
+                                                    <button
+                                                        onClick={() => navigate(`/studio/${video._id}`)}
+                                                        className="p-2.5 bg-surface text-text-secondary hover:text-primary hover:bg-primary/10 rounded-xl border border-border transition-all cursor-pointer"
+                                                    >
                                                         <Pencil size={18} />
                                                     </button>
                                                     <button
@@ -207,12 +210,6 @@ const Dashboard = () => {
                     </div>
                 </div>
             </Container>
-
-            <UploadVideoModal
-                isOpen={isUploadOpen}
-                onClose={() => setIsUploadOpen(false)}
-                onSuccess={fetchData}
-            />
         </div>
     );
 };

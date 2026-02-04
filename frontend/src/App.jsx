@@ -6,6 +6,12 @@ import VideoDetail from "./pages/VideoDetail";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Channel from "./pages/Channel";
+import LikedVideos from "./pages/LikedVideos";
+import WatchHistory from "./pages/WatchHistory";
+import SearchResults from "./pages/SearchResults";
+import Settings from "./pages/Settings";
+import Dashboard from "./pages/Dashboard";
+import Studio from "./pages/Studio";
 import tw from "./utils/tailwindUtil";
 import { useDispatch } from "react-redux";
 import { login, logout } from "./features/authSlice";
@@ -46,6 +52,13 @@ function App() {
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
                         <Route path="/c/:username" element={<Channel />} />
+                        <Route path="/liked-videos" element={<LikedVideos />} />
+                        <Route path="/history" element={<WatchHistory />} />
+                        <Route path="/search" element={<SearchResults />} />
+                        <Route path="/settings" element={<Settings />} />
+                        <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/studio" element={<Studio />} />
+                        <Route path="/studio/:videoId" element={<Studio />} />
                         {/* More routes can be added here */}
                     </Routes>
                 </main>
