@@ -2,6 +2,7 @@ import mongoose, { Schema, model } from "mongoose";
 import validator from "validator";
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
+import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const userSchema = new Schema({
     username: {
@@ -53,6 +54,8 @@ const userSchema = new Schema({
         type: String,
     }
 }, { timestamps: true })
+
+userSchema.plugin(mongooseAggregatePaginate)
 
 userSchema.pre("save", async function () {
     if (!this.isModified("password")) return; // doesn't need next to be called

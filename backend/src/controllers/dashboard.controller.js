@@ -3,6 +3,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.model.js";
 import { Video } from "../models/video.model.js";
 import APIResponse from "../utils/ApiResponse.js";
+import APIError from "../utils/ApiError.js";
 
 const getChannelStats = asyncHandler(async (req, res) => {
     const userId = req.user._id;
@@ -17,7 +18,22 @@ const getChannelStats = asyncHandler(async (req, res) => {
                 from: "videos",
                 localField: "_id",
                 foreignField: "owner",
-                as: "videos"
+                as: "videos",
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: "likes",
+                            localField: "_id",
+                            foreignField: "video",
+                            as: "likes"
+                        }
+                    },
+                    {
+                        $addFields: {
+                            likesCount: { $size: "$likes" }
+                        }
+                    }
+                ]
             }
         },
         {
@@ -33,6 +49,7 @@ const getChannelStats = asyncHandler(async (req, res) => {
                 totalVideos: { $size: "$videos" },
                 totalSubscribers: { $size: "$subscribers" },
                 totalViews: { $sum: "$videos.views" },
+                totalLikes: { $sum: "$videos.likesCount" },
                 username: 1,
                 fullName: 1,
                 avatar: 1
@@ -54,10 +71,31 @@ const getAllVideosOfChannel = asyncHandler(async (req, res) => {
     if (!user) {
         throw new APIError(404, "User not found");
     }
+    const isOwner = req?.user?._id?.equals(user._id);
+
     const pipelines = [
         {
             $match: {
-                owner: new mongoose.Types.ObjectId(user._id)
+                owner: new mongoose.Types.ObjectId(user._id),
+                ...(isOwner ? {} : { isPublished: true })
+            },
+        },
+        {
+            $lookup: {
+                from: "likes",
+                localField: "_id",
+                foreignField: "video",
+                as: "likes"
+            }
+        },
+        {
+            $addFields: {
+                likesCount: { $size: "$likes" }
+            }
+        },
+        {
+            $project: {
+                likes: 0
             }
         }
     ]

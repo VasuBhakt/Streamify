@@ -465,12 +465,10 @@ const getWatchHistory = asyncHandler(async (req, res) => {
             }
         },
         {
-            $project: {
-                watchHistory: 1
+            $unwind: {
+                path: "$watchHistory",
+                includeArrayIndex: "watchIndex"
             }
-        },
-        {
-            $unwind: "$watchHistory"
         },
         {
             $lookup: {
@@ -480,35 +478,25 @@ const getWatchHistory = asyncHandler(async (req, res) => {
                 as: "video",
                 pipeline: [
                     {
-                        $project: {
-                            _id: 1,
-                            title: 1,
-                            thumbnail: 1,
-                            owner: 1,
-                            views: 1
-                        }
-                    },
-                    {
                         $lookup: {
                             from: "users",
                             localField: "owner",
                             foreignField: "_id",
-                            as: "owner",
+                            as: "ownerDetails",
                             pipeline: [
                                 {
                                     $project: {
                                         username: 1,
+                                        fullName: 1,
                                         avatar: 1,
                                     }
                                 }
                             ]
-                        },
+                        }
                     },
                     {
                         $addFields: {
-                            owner: {
-                                $first: "$owner"
-                            }
+                            ownerDetails: { $first: "$ownerDetails" }
                         }
                     }
                 ]
@@ -518,8 +506,15 @@ const getWatchHistory = asyncHandler(async (req, res) => {
             $unwind: "$video"
         },
         {
-            $replaceRoot: { newRoot: "$video" }
+            $sort: {
+                watchIndex: -1
+            }
         },
+        {
+            $replaceRoot: {
+                newRoot: "$video"
+            }
+        }
     ]);
 
     const options = {

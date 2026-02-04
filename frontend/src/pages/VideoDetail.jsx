@@ -76,10 +76,10 @@ const VideoDetail = () => {
                 }
 
                 // 2. Restore the original separate API call pattern as explicitly requested.
-                // Updated to use owner._id (userId) instead of username.
-                if (response.data.owner?._id) {
+                // Updated to use owner.username instead of _id for SEO.
+                if (response.data.owner?.username) {
                     try {
-                        const channelResponse = await userService.getUserChannelProfile(response.data.owner._id);
+                        const channelResponse = await userService.getUserChannelProfile(response.data.owner.username);
                         if (channelResponse?.data) {
                             setChannel(channelResponse.data);
                             setIsSubscribed(channelResponse.data.isSubscribed);
