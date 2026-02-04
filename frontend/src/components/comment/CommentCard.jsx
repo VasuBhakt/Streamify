@@ -14,7 +14,7 @@ const CommentCard = ({ comment, onUpdate, onDelete, onLike, isEditable, isDeleta
     const {
         content,
         createdAt,
-        owner,
+        ownerDetails,
         isLiked = false,
         likesCount = 0,
     } = comment;
@@ -33,11 +33,11 @@ const CommentCard = ({ comment, onUpdate, onDelete, onLike, isEditable, isDeleta
             {/*Avatar*/}
             <div className='shrink-0 mt-1'>
                 <div className="h-10 w-10 rounded-full overflow-hidden bg-surface-hover border border-border">
-                    {owner?.avatar ? (
-                        <img src={owner.avatar} alt={owner.fullName} className="h-full w-full object-cover" />
+                    {ownerDetails?.avatar ? (
+                        <img src={ownerDetails.avatar} alt={ownerDetails.fullName} className="h-full w-full object-cover" />
                     ) : (
                         <div className="h-full w-full flex items-center justify-center text-sm font-bold bg-linear-to-br from-surface to-surface-hover">
-                            {owner?.fullName?.[0]?.toUpperCase() || "?"}
+                            {ownerDetails?.fullName?.[0]?.toUpperCase() || "?"}
                         </div>
                     )}
                 </div>
@@ -45,9 +45,9 @@ const CommentCard = ({ comment, onUpdate, onDelete, onLike, isEditable, isDeleta
             {/*Content Section*/}
             <div className="flex flex-col flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                    <Link to={`/c/${owner?.username}`}>
+                    <Link to={`/c/${ownerDetails?.username}`}>
                         <span className='text-text-main text-sm font-bold leading-none hover:text-primary-hover cursor-pointer transition-color'>
-                            @{owner?.username || "user"}
+                            @{ownerDetails?.username || "user"}
                         </span>
                     </Link>
                     <span className='text-text-secondary text-[11px] font-medium pt-0.5'>
