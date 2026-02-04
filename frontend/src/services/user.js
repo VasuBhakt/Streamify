@@ -96,7 +96,7 @@ export class UserService {
 
     async getLikedVideos({ page = 1, limit = 10 }) {
         try {
-            const response = await axios.get(`/likes/videos`, { params: { page: page || 1, limit: limit || 10 } });
+            const response = await axios.get(`/likes/liked-videos`, { params: { page: page || 1, limit: limit || 10 } });
             return response.data;
         } catch (error) {
             console.log("UserService :: getLikedVideos :: error", error);

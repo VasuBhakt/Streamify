@@ -63,15 +63,53 @@ const getPlaylistById = asyncHandler(async (req, res) => {
         throw new APIError(400, "Playlist ID is required");
     }
 
-    const playlist = await Playlist.findById(playlistId).populate("videos");
+    const playlist = await Playlist.aggregate([
+        {
+            $match: {
+                _id: new mongoose.Types.ObjectId(playlistId)
+            }
+        },
+        {
+            $lookup: {
+                from: "videos",
+                localField: "videos",
+                foreignField: "_id",
+                as: "videos",
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: "users",
+                            localField: "owner",
+                            foreignField: "_id",
+                            as: "ownerDetails",
+                            pipeline: [
+                                {
+                                    $project: {
+                                        fullName: 1,
+                                        username: 1,
+                                        avatar: 1
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        $addFields: {
+                            ownerDetails: { $first: "$ownerDetails" }
+                        }
+                    }
+                ]
+            }
+        }
+    ]);
 
-    if (!playlist) {
+    if (!playlist?.length) {
         throw new APIError(404, "Playlist not found");
     }
 
     return res
         .status(200)
-        .json(new APIResponse(200, playlist, "Playlist fetched successfully"))
+        .json(new APIResponse(200, playlist[0], "Playlist fetched successfully"))
 })
 
 const deletePlaylist = asyncHandler(async (req, res) => {

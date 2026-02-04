@@ -11,7 +11,7 @@ function VideoCard({ video, className }) {
         title,
         views = 0,
         createdAt,
-        ownerDetails,
+        ownerDetails
     } = video;
 
     return (

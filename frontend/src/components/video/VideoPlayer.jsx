@@ -13,7 +13,7 @@ function VideoPlayer({ video, className }) {
         title,
         views = 0,
         createdAt,
-        owner,
+        ownerDetails,
     } = video;
 
     const videoRef = useRef(null);

@@ -69,17 +69,17 @@ const VideoDetail = () => {
 
                 // 1. Initialize logic immediately from video owner data (which now includes sub stats)
                 // This prevents the "not working" feel while waiting for the second call.
-                if (response.data.owner) {
-                    setChannel(response.data.owner);
-                    setIsSubscribed(response.data.owner.isSubscribed || false);
-                    setSubscribersCount(response.data.owner.subscribersCount || 0);
+                if (response.data.ownerDetails) {
+                    setChannel(response.data.ownerDetails);
+                    setIsSubscribed(response.data.ownerDetails.isSubscribed || false);
+                    setSubscribersCount(response.data.ownerDetails.subscribersCount || 0);
                 }
 
                 // 2. Restore the original separate API call pattern as explicitly requested.
-                // Updated to use owner.username instead of _id for SEO.
-                if (response.data.owner?.username) {
+                // Updated to use ownerDetails.username instead of _id for SEO.
+                if (response.data.ownerDetails?.username) {
                     try {
-                        const channelResponse = await userService.getUserChannelProfile(response.data.owner.username);
+                        const channelResponse = await userService.getUserChannelProfile(response.data.ownerDetails.username);
                         if (channelResponse?.data) {
                             setChannel(channelResponse.data);
                             setIsSubscribed(channelResponse.data.isSubscribed);
@@ -176,7 +176,7 @@ const VideoDetail = () => {
             });
             if (response?.data) {
                 setComments((prev) =>
-                    prev.map((c) => c._id === commentId ? { ...c, ...response.data, owner: c.owner } : c)
+                    prev.map((c) => c._id === commentId ? { ...c, ...response.data, ownerDetails: c.ownerDetails } : c)
                 );
                 return true;
             }
@@ -345,8 +345,8 @@ const VideoDetail = () => {
                                 ...video,
                                 likesCount,
                                 isLiked,
-                                owner: {
-                                    ...video.owner,
+                                ownerDetails: {
+                                    ...video.ownerDetails,
                                     subscribersCount,
                                 }
                             }}
@@ -354,7 +354,7 @@ const VideoDetail = () => {
                             isSubscribed={isSubscribed}
                             onLike={handleToggleLike}
                             onSubscribe={handleToggleSubscribe}
-                            ownVideo={user && (channel?._id === user?._id || video?.owner?._id === user?._id)}
+                            ownVideo={user && (channel?._id === user?._id || video?.ownerDetails?._id === user?._id)}
                         />
 
                         {/* Comments Section */}
@@ -385,7 +385,7 @@ const VideoDetail = () => {
 
                             <div className="space-y-8">
                                 {comments.map((comment, index) => {
-                                    const isOwner = user?._id === comment.owner?._id;
+                                    const isOwner = user?._id === comment.ownerDetails?._id;
                                     const commentProps = {
                                         comment,
                                         onUpdate: updateComment,

@@ -94,6 +94,28 @@ const getAllVideosOfChannel = asyncHandler(async (req, res) => {
             }
         },
         {
+            $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "ownerDetails",
+                pipeline: [
+                    {
+                        $project: {
+                            username: 1,
+                            fullName: 1,
+                            avatar: 1,
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $addFields: {
+                ownerDetails: { $first: "$ownerDetails" }
+            }
+        },
+        {
             $project: {
                 likes: 0
             }

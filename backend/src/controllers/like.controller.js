@@ -86,14 +86,14 @@ const userLikedVideos = asyncHandler(async (req, res) => {
                             from: "users",
                             localField: "owner",
                             foreignField: "_id",
-                            as: "owner",
+                            as: "ownerDetails",
                             pipeline: [
                                 {
                                     $project: {
                                         fullName: 1,
                                         username: 1,
                                         avatar: 1,
-                                        _id: 0
+                                        _id: 1
                                     }
                                 }
                             ]
@@ -101,8 +101,8 @@ const userLikedVideos = asyncHandler(async (req, res) => {
                     },
                     {
                         $addFields: {
-                            owner: {
-                                $first: "$owner"
+                            ownerDetails: {
+                                $first: "$ownerDetails"
                             }
                         }
                     }

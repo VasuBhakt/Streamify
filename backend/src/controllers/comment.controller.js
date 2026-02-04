@@ -22,7 +22,7 @@ const getVideoComments = asyncHandler(async (req, res) => {
                 from: "users",
                 localField: "owner",
                 foreignField: "_id",
-                as: "owner",
+                as: "ownerDetails",
                 pipeline: [
                     {
                         $project: {
@@ -34,7 +34,7 @@ const getVideoComments = asyncHandler(async (req, res) => {
                 ]
             }
         },
-        { $unwind: "$owner" },
+        { $unwind: "$ownerDetails" },
         {
             $lookup: {
                 from: "likes",
@@ -91,10 +91,13 @@ const addComment = asyncHandler(async (req, res) => {
         content: content
     })
     const populatedComment = await Comment.findById(comment._id).populate("owner", "fullName username avatar");
+    const result = populatedComment.toObject();
+    result.ownerDetails = result.owner;
+    delete result.owner;
     return res
         .status(201)
         .json(
-            new APIResponse(201, populatedComment, "Comment added successfully")
+            new APIResponse(201, result, "Comment added successfully")
         )
 })
 
@@ -121,10 +124,14 @@ const updateComment = asyncHandler(async (req, res) => {
     }, {
         new: true
     })
+    const updatedComment = await Comment.findById(comment._id).populate("owner", "fullName username avatar");
+    const result = updatedComment.toObject();
+    result.ownerDetails = result.owner;
+    delete result.owner;
     return res
         .status(200)
         .json(
-            new APIResponse(200, comment, "Comment updated successfully")
+            new APIResponse(200, result, "Comment updated successfully")
         )
 })
 

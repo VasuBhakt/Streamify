@@ -18,7 +18,7 @@ const VideoDescription = ({ video, isSubscribed = false, isLiked = false, onLike
         description,
         views,
         createdAt,
-        owner,
+        ownerDetails,
     } = video;
 
     const videoUrl = window.location.href;
@@ -33,25 +33,25 @@ const VideoDescription = ({ video, isSubscribed = false, isLiked = false, onLike
                 <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
                     {/*Owner info*/}
                     <div className="flex items-center gap-3">
-                        <Link to={`/c/${owner?.username}`} className="shrink-0">
+                        <Link to={`/c/${ownerDetails?.username}`} className="shrink-0">
                             <div className="h-10 w-10 md:h-12 md:w-12 rounded-full overflow-hidden bg-surface-hover border border-border">
-                                {owner?.avatar ? (
-                                    <img src={owner.avatar} alt={owner.fullName} className="h-full w-full object-cover" />
+                                {ownerDetails?.avatar ? (
+                                    <img src={ownerDetails.avatar} alt={ownerDetails.fullName} className="h-full w-full object-cover" />
                                 ) : (
                                     <div className="h-full w-full flex items-center justify-center text-sm font-bold bg-linear-to-br from-surface to-surface-hover">
-                                        {owner?.fullName?.[0]?.toUpperCase() || "?"}
+                                        {ownerDetails?.fullName?.[0]?.toUpperCase() || "?"}
                                     </div>
                                 )}
                             </div>
                         </Link>
                         <div className="flex flex-col">
-                            <Link to={`/c/${owner?.username}`}>
+                            <Link to={`/c/${ownerDetails?.username}`}>
                                 <span className="text-text-main font-bold text-base leading-none hover:text-primary cursor-pointer transition-colors">
-                                    {owner?.fullName || "Unknown Channel"}
+                                    {ownerDetails?.fullName || "Unknown Channel"}
                                 </span>
                             </Link>
                             <span className="text-text-secondary text-xs mt-1">
-                                {formatViews(owner?.subscribersCount || 0).replace(' views', '')} subscribers
+                                {formatViews(ownerDetails?.subscribersCount || 0).replace(' views', '')} subscribers
                             </span>
                         </div>
                         {/*Subscribe button*/}
