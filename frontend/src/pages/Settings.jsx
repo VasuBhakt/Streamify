@@ -97,7 +97,7 @@ const Settings = () => {
         <div className="flex-1 pb-20 bg-background-page">
             <div className="bg-surface/30 border-b border-border py-12 mb-10">
                 <Container>
-                    <h1 className="text-4xl font-black text-text-main px-4 tracking-tight">Settings</h1>
+                    <h1 className="text-4xl font-black text-text-main px-4 tracking-tight">Settings <span className="text-primary">@{user?.username}</span></h1>
                     <p className="text-text-secondary px-4 mt-2 font-medium">Manage your account and channel identity</p>
                 </Container>
             </div>
@@ -173,7 +173,7 @@ const Settings = () => {
                         {/* Account Details */}
                         <section className="bg-surface/10 rounded-3xl p-8 border border-border/40">
                             <h2 className="text-xl font-bold text-text-main mb-8 flex items-center gap-2">
-                                <span className="w-1.5 h-6 bg-secondary rounded-full" />
+                                <span className="w-1.5 h-6 bg-green-500 rounded-full" />
                                 Personal Info
                             </h2>
                             <form onSubmit={handleUpdateDetails} className="space-y-6">

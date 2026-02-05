@@ -1,16 +1,16 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import userService from "../services/user";
 import videoService from "../services/video";
 import Container from "../components/container/Container";
 import Button from "../components/button/Button";
+import StatCard from "../components/container/StatCard";
 import {
     Loader2,
     Plus,
     LayoutDashboard,
     Video,
-    BarChart3,
     Users,
     Heart,
     Pencil,
@@ -21,18 +21,6 @@ import {
 } from "lucide-react";
 import tw from "../utils/tailwindUtil";
 import { formatDuration, formatViews, timeAgo } from "../utils/format";
-
-const StatCard = ({ icon: Icon, label, value, color }) => (
-    <div className="bg-surface/10 rounded-3xl p-6 border border-border/40 flex items-center gap-6 group hover:translate-y-[-4px] transition-all duration-300">
-        <div className={tw("w-14 h-14 rounded-2xl flex items-center justify-center transition-colors shadow-lg", color)}>
-            <Icon size={24} className="text-white" />
-        </div>
-        <div>
-            <p className="text-sm font-bold text-text-secondary uppercase tracking-widest">{label}</p>
-            <h3 className="text-2xl font-black text-text-main mt-1 tracking-tight">{value}</h3>
-        </div>
-    </div>
-);
 
 const Dashboard = () => {
     const user = useSelector((state) => state.auth.userData);
@@ -118,7 +106,13 @@ const Dashboard = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
                     <StatCard icon={Video} label="Total Videos" value={stats?.totalVideos || 0} color="bg-blue-500 shadow-blue-500/20" />
                     <StatCard icon={Eye} label="Cumulative Views" value={formatViews(stats?.totalViews || 0).replace(' views', '')} color="bg-emerald-500 shadow-emerald-500/20" />
-                    <StatCard icon={Users} label="Subscribers" value={stats?.totalSubscribers || 0} color="bg-purple-500 shadow-purple-500/20" />
+                    <StatCard
+                        icon={Users}
+                        label="Subscribers"
+                        value={stats?.totalSubscribers || 0}
+                        color="bg-purple-500 shadow-purple-500/20"
+                        onClick={() => navigate("/subscribers")}
+                    />
                     <StatCard icon={Heart} label="Channel Likes" value={formatViews(stats?.totalLikes || 0).replace(' views', '')} color="bg-rose-500 shadow-rose-500/20" />
                 </div>
 
@@ -155,16 +149,18 @@ const Dashboard = () => {
                                     videos.map((video) => (
                                         <tr key={video._id} className="hover:bg-surface/20 transition-colors group">
                                             <td className="px-8 py-5">
-                                                <div className="flex items-center gap-4 min-w-[300px]">
-                                                    <div className="w-24 h-14 rounded-xl overflow-hidden bg-surface-hover shrink-0 relative group/thumb">
-                                                        <img src={video.thumbnail} className="w-full h-full object-cover group-hover/thumb:scale-110 transition-transform duration-500" />
-                                                        <div className="absolute bottom-1 right-1 bg-black/80 text-[10px] text-white px-1 rounded font-bold">{formatDuration(video.duration)}</div>
+                                                <Link to={`/video/${video._id}`}>
+                                                    <div className="flex items-center gap-4 min-w-[300px] cursor-pointer">
+                                                        <div className="w-24 h-14 rounded-xl overflow-hidden bg-surface-hover shrink-0 relative group/thumb">
+                                                            <img src={video.thumbnail} className="w-full h-full object-cover group-hover/thumb:scale-110 transition-transform duration-500" />
+                                                            <div className="absolute bottom-1 right-1 bg-black/80 text-[10px] text-white px-1 rounded font-bold">{formatDuration(video.duration)}</div>
+                                                        </div>
+                                                        <div className="flex flex-col min-w-0">
+                                                            <span className="text-sm font-bold text-text-main truncate group-hover:text-primary transition-colors">{video.title}</span>
+                                                            <span className="text-[10px] text-text-muted uppercase tracking-tighter mt-0.5">ID: {video._id.slice(-8)}</span>
+                                                        </div>
                                                     </div>
-                                                    <div className="flex flex-col min-w-0">
-                                                        <span className="text-sm font-bold text-text-main truncate group-hover:text-primary transition-colors">{video.title}</span>
-                                                        <span className="text-[10px] text-text-muted uppercase tracking-tighter mt-0.5">ID: {video._id.slice(-8)}</span>
-                                                    </div>
-                                                </div>
+                                                </Link>
                                             </td>
                                             <td className="px-8 py-5">
                                                 <div className={tw(

@@ -12,6 +12,7 @@ import SearchResults from "./pages/SearchResults";
 import Settings from "./pages/Settings";
 import Dashboard from "./pages/Dashboard";
 import Studio from "./pages/Studio";
+import Subscribers from "./pages/Subscribers";
 import tw from "./utils/tailwindUtil";
 import { useDispatch } from "react-redux";
 import { login, logout } from "./features/authSlice";
@@ -59,6 +60,7 @@ function App() {
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/studio" element={<Studio />} />
                         <Route path="/studio/:videoId" element={<Studio />} />
+                        <Route path="/subscribers" element={<Subscribers />} />
                         {/* More routes can be added here */}
                     </Routes>
                 </main>
