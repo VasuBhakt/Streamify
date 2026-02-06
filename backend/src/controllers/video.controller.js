@@ -19,20 +19,6 @@ const getAllVideos = asyncHandler(async (req, res) => {
         }
     })
 
-    // Search logic
-    if (query) {
-        pipelines.push({
-            $match: {
-                $or: [
-                    { title: { $regex: query, $options: "i" } },
-                    { description: { $regex: query, $options: "i" } },
-                    { "ownerDetails.username": { $regex: query, $options: "i" } },
-                    { "ownerDetails.fullName": { $regex: query, $options: "i" } }
-                ]
-            }
-        });
-    }
-
     // joining for search by username or full name
     pipelines.push({
         $lookup: {
@@ -59,6 +45,40 @@ const getAllVideos = asyncHandler(async (req, res) => {
         }
     })
 
+    // Search logic (Moved after lookup to allow searching by owner details)
+    if (query) {
+        // Intelligent multi-keyword search
+        const keywords = query.trim().split(/\s+/).map(k => ({
+            $or: [
+                { title: { $regex: k, $options: "i" } },
+                { description: { $regex: k, $options: "i" } },
+                { "ownerDetails.username": { $regex: k, $options: "i" } },
+                { "ownerDetails.fullName": { $regex: k, $options: "i" } }
+            ]
+        }));
+
+        pipelines.push({
+            $match: {
+                $and: keywords
+            }
+        });
+    }
+
+
+    pipelines.push({
+        $lookup: {
+            from: "likes",
+            localField: "_id",
+            foreignField: "video",
+            as: "likes"
+        }
+    });
+
+    pipelines.push({
+        $addFields: {
+            likesCount: { $size: "$likes" }
+        }
+    });
 
     const videoAggregate = Video.aggregate(pipelines);
 
@@ -214,6 +234,7 @@ const getVideoById = asyncHandler(async (req, res) => {
                             fullName: 1,
                             username: 1,
                             avatar: 1,
+                            description: 1,
                             subscribersCount: 1,
                             isSubscribed: 1
                         }

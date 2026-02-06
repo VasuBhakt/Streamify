@@ -145,6 +145,7 @@ const registerUser = asyncHandler(async (req, res) => {
         avatar: avatar.secure_url,
         coverImage: (coverImage) ? coverImage.secure_url : "", // if ccoverImage is not provided then return empty string
         password: password,
+        description: ""
     })
 
     // remove password and refresh token from response object and check if user has been created, one extra db call
@@ -280,7 +281,7 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 
 const updateAccountDetails = asyncHandler(async (req, res) => {
     // get user details from frontend
-    const { fullName, email } = req.body;
+    const { fullName, email, description } = req.body;
 
     if (!fullName && !email) {
         throw new APIError(400, "All fields are required");
@@ -288,7 +289,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 
     const ifEmailExists = await User.findOne({ email: email });
 
-    if (ifEmailExists) {
+    if (ifEmailExists && email !== req.user.email) {
         throw new APIError(400, "Email already exists. Please use a different email");
     }
 
@@ -296,7 +297,8 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
         {
             $set: {
                 fullName: fullName,
-                email: email
+                email: email,
+                description: description
             }
         },
         {
@@ -431,11 +433,13 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
             $project: {
                 fullName: 1,
                 username: 1,
+                description: 1,
                 subscribersCount: 1,
                 channelsSubscribedToCount: 1,
                 isSubscribed: 1,
                 avatar: 1,
-                coverImage: 1
+                coverImage: 1,
+                createdAt: 1
             }
         }
     ])

@@ -45,3 +45,15 @@ export function formatViews(views) {
     }
     return num + ' views';
 }
+
+export function formatDate(dateString) {
+    const date = new Date(dateString);
+    const formattedDate = new Intl.DateTimeFormat('en-GB', {
+        day: '2-digit',
+        month: 'short', // Use 'long' for the full name
+        year: 'numeric',
+    })
+        .format(date)
+
+    return formattedDate;
+}

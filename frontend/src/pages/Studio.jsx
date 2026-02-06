@@ -164,7 +164,7 @@ const Studio = () => {
                     <div className="flex flex-col md:flex-row items-center justify-between gap-6 px-4">
                         <div className="flex items-center gap-6">
                             <button
-                                onClick={() => navigate(-1)}
+                                onClick={() => navigate("/dashboard")}
                                 className="p-3 bg-surface border border-border rounded-2xl text-text-secondary hover:text-primary transition-all group active:scale-90 cursor-pointer"
                             >
                                 <ChevronLeft className="group-hover:-translate-x-1 transition-transform" />

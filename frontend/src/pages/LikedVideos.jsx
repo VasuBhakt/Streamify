@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import userService from "../services/user";
 import Container from "../components/container/Container";
-import { Loader2, ThumbsUp, ArrowLeft, ExternalLink, Calendar, PlayCircle, Eye, Clock } from "lucide-react";
+import { Loader2, ThumbsUp, ArrowLeft, ExternalLink, Calendar, PlayCircle, Eye } from "lucide-react";
 import { timeAgo, formatDuration } from "../utils/format";
 
 const LikedVideos = () => {
@@ -163,7 +163,7 @@ const LikedVideos = () => {
                                                         </div>
                                                     </div>
                                                     <div className="flex flex-col min-w-0">
-                                                        <Link to={`/watch/${video._id}`} className="text-sm font-bold text-text-main truncate hover:text-pink-500 transition-colors">
+                                                        <Link to={`/video/${video._id}`} className="text-sm font-bold text-text-main truncate hover:text-pink-500 transition-colors">
                                                             {video.title}
                                                         </Link>
                                                         <Link to={`/c/${video.owner?.username}`} className="text-xs text-text-muted hover:text-text-secondary">
@@ -206,4 +206,3 @@ const LikedVideos = () => {
 };
 
 export default LikedVideos;
-

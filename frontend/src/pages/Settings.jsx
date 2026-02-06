@@ -5,7 +5,7 @@ import { login } from "../features/authSlice";
 import Container from "../components/container/Container";
 import Input from "../components/input/Input";
 import Button from "../components/button/Button";
-import { Loader2, Camera, Lock, User, Mail, Image as ImageIcon } from "lucide-react";
+import { Loader2, Camera, Lock, User, Mail, Image as ImageIcon, Info } from "lucide-react";
 import tw from "../utils/tailwindUtil";
 
 const Settings = () => {
@@ -14,6 +14,7 @@ const Settings = () => {
 
     const [fullName, setFullName] = useState(user?.fullName || "");
     const [email, setEmail] = useState(user?.email || "");
+    const [description, setDescription] = useState(user?.description || "");
     const [loading, setLoading] = useState(false);
     const [avatarLoading, setAvatarLoading] = useState(false);
     const [coverLoading, setCoverLoading] = useState(false);
@@ -29,9 +30,9 @@ const Settings = () => {
         e.preventDefault();
         try {
             setLoading(true);
-            const response = await userService.updateUserAccountDetails({ fullName, email });
+            const response = await userService.updateUserAccountDetails({ fullName, email, description });
             if (response?.data) {
-                dispatch(login({ ...user, fullName, email }));
+                dispatch(login({ ...user, fullName, email, description }));
                 alert("Profile updated successfully!");
             }
         } catch (error) {
@@ -177,8 +178,20 @@ const Settings = () => {
                                 Personal Info
                             </h2>
                             <form onSubmit={handleUpdateDetails} className="space-y-6">
-                                <Input label="Full Name" icon={User} value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Your display name" />
+                                <Input label="Full Name (Channel)" icon={User} value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Your display name" />
                                 <Input label="Email Address" icon={Mail} type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email linked to this account" />
+                                <div className="space-y-2">
+                                    <label className="text-sm font-bold text-text-main flex items-center gap-2">
+                                        <Info size={18} className="text-primary" />
+                                        Channel Description
+                                    </label>
+                                    <textarea
+                                        value={description}
+                                        onChange={(e) => setDescription(e.target.value)}
+                                        placeholder="Tell your viewers what your channel is about..."
+                                        className="w-full bg-surface/5 border border-border rounded-2xl p-4 text-text-main min-h-[140px] outline-none focus:border-primary transition-all text-sm font-medium resize-none shadow-inner"
+                                    />
+                                </div>
                                 <div className="pt-4">
                                     <Button variant="primary" type="submit" className="w-full md:w-auto px-10 rounded-2xl font-bold py-3 shadow-lg shadow-primary/20" disabled={loading}>
                                         {loading ? <Loader2 size={20} className="animate-spin" /> : "Save Changes"}
@@ -197,7 +210,7 @@ const Settings = () => {
                                 <Input label="Current Password" icon={Lock} type="password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} placeholder="••••••••" />
                                 <Input label="New Password" icon={Lock} type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="••••••••" />
                                 <div className="pt-4">
-                                    <Button variant="secondary" type="submit" className="w-full md:w-auto px-10 rounded-2xl font-bold py-3" disabled={passwordLoading}>
+                                    <Button variant="danger" type="submit" className="w-full md:w-auto px-10 rounded-2xl font-bold py-3" disabled={passwordLoading}>
                                         {passwordLoading ? <Loader2 size={20} className="animate-spin" /> : "Update Password"}
                                     </Button>
                                 </div>

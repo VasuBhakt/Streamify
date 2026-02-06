@@ -30,6 +30,9 @@ const userSchema = new Schema({
         type: String,
         required: true,
     },
+    description: {
+        type: String
+    },
     avatar: {
         type: String,
         required: true,

@@ -1,7 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
-import { toggleSidebar } from "../../features/uiSlice";
 import { NavLink } from "react-router-dom";
-import { Home, ThumbsUp, History, Video, Folder, Users, Menu, Settings, HelpCircle } from "lucide-react";
+import { Home, LogIn, ThumbsUp, History, Video, Folder, Users, Menu, Settings, HelpCircle } from "lucide-react";
 import tw from "../../utils/tailwindUtil";
 
 const SidebarItem = ({ icon: Icon, label, to, isExpanded }) => {
@@ -32,12 +31,13 @@ const SidebarItem = ({ icon: Icon, label, to, isExpanded }) => {
 }
 
 const Sidebar = () => {
-    const dispatch = useDispatch()
     const { isExpanded } = useSelector((state) => state.ui)
-    const { userData: user } = useSelector((state) => state.auth)
+    const { userData: user, status } = useSelector((state) => state.auth)
+
 
     const mainNavItems = [
         { icon: Home, label: 'Home', to: '/' },
+        { icon: Folder, label: 'Subscriptions', to: '/subscriptions' },
         { icon: ThumbsUp, label: 'Liked Videos', to: '/liked-videos' },
         { icon: History, label: 'History', to: '/history' },
         { icon: Video, label: 'My Content', to: user ? `/c/${user.username}` : '/login' },
@@ -56,7 +56,7 @@ const Sidebar = () => {
                 isExpanded ? "w-64" : "w-20"
             )}>
 
-                <div className="flex-1 overflow-y-auto py-4 px-3 space-y-1 scrollbar-hide">
+                {status && (<div className="flex-1 overflow-y-auto py-4 px-3 space-y-1 scrollbar-hide">
                     {mainNavItems.map((item) => (
                         <SidebarItem
                             key={item.to}
@@ -64,7 +64,14 @@ const Sidebar = () => {
                             isExpanded={isExpanded}
                         />
                     ))}
-                </div>
+                </div>)}
+
+                {!status && (
+                    <div className="flex-1 overflow-y-auto py-4 px-3 space-y-1 scrollbar-hide">
+                        <SidebarItem icon={Home} key="/" label="Home" to="/" isExpanded={isExpanded} />
+                        <SidebarItem icon={LogIn} key="/login" label="Login" to="/login" isExpanded={isExpanded} />
+                    </div>
+                )}
 
                 <div className="p-3 border-t border-border space-y-1">
                     {bottomNavItems.map((item) => (

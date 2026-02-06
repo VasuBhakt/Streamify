@@ -19,7 +19,9 @@ const Navbar = () => {
     const user = useSelector((state) => state.auth.userData);
     const handleSearch = (e) => {
         e.preventDefault();
-        console.log("Searching for:", searchQuery);
+        if (searchQuery.trim()) {
+            navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+        }
     }
 
     const handleLogout = async () => {

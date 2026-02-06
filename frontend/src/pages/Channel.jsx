@@ -2,14 +2,13 @@ import { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import userService from "../services/user";
-import videoService from "../services/video";
 import subscriptionService from "../services/subscription";
 import Container from "../components/container/Container";
 import VideoCard from "../components/video/VideoCard";
 import Button from "../components/button/Button";
-import { Loader2, Bell, Video, PlaySquare, User, Info } from "lucide-react";
+import { Loader2, Bell, Video, PlaySquare, User, Info, Play, Clock } from "lucide-react";
 import tw from "../utils/tailwindUtil";
-import { formatViews } from "../utils/format";
+import { formatViews, formatDate } from "../utils/format";
 
 const Channel = () => {
     const { username } = useParams();
@@ -247,23 +246,35 @@ const Channel = () => {
                                     {channel.description || "No description provided for this channel."}
                                 </p>
                             </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8 border-t border-border/50">
+                            <div className="w-full grid grid-cols-1 gap-8 pt-8 border-t border-border/50">
                                 <div>
                                     <h4 className="text-sm font-bold text-text-muted uppercase tracking-widest mb-2">Stats</h4>
-                                    <div className="space-y-4">
+                                    <div className="flex flex-wrap gap-x-10 gap-y-6">
                                         <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-xl bg-surface-hover flex items-center justify-center border border-border/50">
+                                                <Play className="w-5 h-5 text-primary" />
+                                            </div>
                                             <div className="flex flex-col">
-                                                <span className="text-text-main font-bold">{videos.length} videos</span>
-                                                <span className="text-text-secondary text-[11px]">Total uploaded</span>
+                                                <span className="text-text-main font-semibold">{videos.length} videos</span>
+                                                <span className="text-text-secondary text-[11px] uppercase tracking-wider font-bold">Total Content</span>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-xl bg-surface-hover flex items-center justify-center">
+                                            <div className="w-10 h-10 rounded-xl bg-surface-hover flex items-center justify-center border border-border/50">
                                                 <User className="w-5 h-5 text-primary" />
                                             </div>
                                             <div className="flex flex-col">
-                                                <span className="text-text-main font-bold">{formatViews(subscribersCount).replace(" views", "")} subscribers</span>
-                                                <span className="text-text-secondary text-[11px]">Global reach</span>
+                                                <span className="text-text-main font-semibold">{formatViews(subscribersCount).replace(" views", "")} subscribers</span>
+                                                <span className="text-text-secondary text-[11px] uppercase tracking-wider font-bold">Community</span>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-xl bg-surface-hover flex items-center justify-center border border-border/50">
+                                                <Clock className="w-5 h-5 text-primary" />
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="text-text-main font-semibold">Joined {formatDate(channel.createdAt)}</span>
+                                                <span className="text-text-secondary text-[11px] uppercase tracking-wider font-bold">Tenure</span>
                                             </div>
                                         </div>
                                     </div>

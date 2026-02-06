@@ -13,6 +13,7 @@ import Settings from "./pages/Settings";
 import Dashboard from "./pages/Dashboard";
 import Studio from "./pages/Studio";
 import Subscribers from "./pages/Subscribers";
+import Subscriptions from "./pages/Subscriptions";
 import tw from "./utils/tailwindUtil";
 import { useDispatch } from "react-redux";
 import { login, logout } from "./features/authSlice";
@@ -61,6 +62,7 @@ function App() {
                         <Route path="/studio" element={<Studio />} />
                         <Route path="/studio/:videoId" element={<Studio />} />
                         <Route path="/subscribers" element={<Subscribers />} />
+                        <Route path="/subscriptions" element={<Subscriptions />} />
                         {/* More routes can be added here */}
                     </Routes>
                 </main>

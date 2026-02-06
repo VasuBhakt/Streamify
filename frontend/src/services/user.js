@@ -12,9 +12,9 @@ export class UserService {
         }
     }
 
-    async updateUserAccountDetails({ fullName, email }) {
+    async updateUserAccountDetails({ fullName, email, description }) {
         try {
-            const response = await axios.patch("/users/update-details", { fullName, email });
+            const response = await axios.patch("/users/update-details", { fullName, email, description });
             return response.data;
         } catch (error) {
             console.log("UserService :: updateUserAccountDetails :: error", error);
