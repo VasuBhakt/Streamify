@@ -151,30 +151,25 @@ const getVideoById = asyncHandler(async (req, res) => {
         });
 
         // Add to watch history only when viewing
-        // Move to front + unique in ONE database call
+        // Move to front + unique using sequential database calls for maximum reliability
         if (req.user) {
             try {
-                await User.findByIdAndUpdate(req.user._id, [
-                    {
-                        $set: {
-                            watchHistory: {
-                                $concatArrays: [
-                                    [new mongoose.Types.ObjectId(videoId)],
-                                    {
-                                        $filter: {
-                                            input: { $ifNull: ["$watchHistory", []] },
-                                            as: "item",
-                                            cond: { $ne: ["$$item", new mongoose.Types.ObjectId(videoId)] }
-                                        }
-                                    }
-                                ]
-                            }
+                // Remove the video from history if it exists (Atomic Pull)
+                await User.findByIdAndUpdate(req.user._id, {
+                    $pull: { watchHistory: new mongoose.Types.ObjectId(videoId) }
+                });
+
+                // Add it to the front (Atomic Push at position 0)
+                await User.findByIdAndUpdate(req.user._id, {
+                    $push: {
+                        watchHistory: {
+                            $each: [new mongoose.Types.ObjectId(videoId)],
+                            $position: 0
                         }
                     }
-                ]);
+                });
             } catch (err) {
                 console.error("Watch history update failed:", err);
-                // Don't throw error here, so the user can still watch the video
             }
         }
     }

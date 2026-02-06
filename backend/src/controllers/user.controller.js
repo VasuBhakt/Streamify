@@ -507,7 +507,7 @@ const getWatchHistory = asyncHandler(async (req, res) => {
         },
         {
             $sort: {
-                watchIndex: -1
+                watchIndex: 1
             }
         },
         {
