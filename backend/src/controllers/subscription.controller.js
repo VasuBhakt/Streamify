@@ -86,12 +86,13 @@ const getSubscriptions = asyncHandler(async (req, res) => {
 
 const getSubscribers = asyncHandler(async (req, res) => {
     const { channelId } = req.params;
+    const { page = 1, limit = 10 } = req.query;
 
     if (!mongoose.isValidObjectId(channelId)) {
         throw new APIError(400, "Invalid channel ID");
     }
 
-    const subscribers = await Subscription.aggregate([
+    const subscribersAggregate = Subscription.aggregate([
         {
             $match: {
                 channel: new mongoose.Types.ObjectId(channelId)
@@ -118,6 +119,25 @@ const getSubscribers = asyncHandler(async (req, res) => {
             $unwind: "$subscriber"
         }
     ]);
+
+    // Check if pagination is requested (query params exist)
+    if (req.query.page || req.query.limit) {
+        const options = {
+            page: parseInt(page),
+            limit: parseInt(limit),
+        };
+
+        const result = await Subscription.aggregatePaginate(subscribersAggregate, options);
+
+        return res
+            .status(200)
+            .json(
+                new APIResponse(200, result, "Subscribers fetched successfully with pagination!")
+            );
+    }
+
+    // Default: return all subscribers (maintaining backward compatibility)
+    const subscribers = await subscribersAggregate;
 
     return res
         .status(200)

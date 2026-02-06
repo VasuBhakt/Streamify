@@ -32,9 +32,9 @@ export class VideoService {
         }
     }
 
-    async getVideoById({ videoId }) {
+    async getVideoById({ videoId, params = {} }) {
         try {
-            const response = await axios.get(`/videos/${videoId}`)
+            const response = await axios.get(`/videos/${videoId}`, { params })
             return response.data
         } catch (error) {
             console.log("VideoService :: getVideoById :: error", error)

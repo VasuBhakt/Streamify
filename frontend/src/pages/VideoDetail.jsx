@@ -60,7 +60,10 @@ const VideoDetail = () => {
             setLoading(true);
             setError(null);
 
-            const response = await videoService.getVideoById({ videoId });
+            const response = await videoService.getVideoById({
+                videoId,
+                params: { incrementView: true }
+            });
             if (response?.data) {
                 setVideo(response.data);
                 setLikesCount(response.data.likesCount || 0);

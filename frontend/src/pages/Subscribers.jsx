@@ -5,20 +5,35 @@ import subscriptionService from "../services/subscription";
 import Container from "../components/container/Container";
 import { Loader2, Users, ArrowLeft, ExternalLink, Calendar } from "lucide-react";
 import { timeAgo } from "../utils/format";
-import tw from "../utils/tailwindUtil";
 
 const Subscribers = () => {
     const user = useSelector((state) => state.auth.userData);
     const [subscribers, setSubscribers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(1);
+    const [paginationData, setPaginationData] = useState(null);
 
-    const fetchSubscribers = useCallback(async () => {
+    const fetchSubscribers = useCallback(async (pageNumber = 1) => {
         if (!user?._id) return;
         try {
             setLoading(true);
-            const response = await subscriptionService.getUserChannelSubscribers(user._id);
+            const response = await subscriptionService.getUserChannelSubscribers(user._id, {
+                page: pageNumber,
+                limit: 10
+            });
+
             if (response?.data) {
-                setSubscribers(response.data);
+                if (response.data.docs) {
+                    setSubscribers(response.data.docs);
+                    setPaginationData({
+                        totalDocs: response.data.totalDocs,
+                        hasNextPage: response.data.hasNextPage,
+                        hasPrevPage: response.data.hasPrevPage,
+                        totalPages: response.data.totalPages,
+                    });
+                } else {
+                    setSubscribers(response.data);
+                }
             }
         } catch (error) {
             console.error("Subscribers :: fetchSubscribers :: error", error);
@@ -28,10 +43,18 @@ const Subscribers = () => {
     }, [user?._id]);
 
     useEffect(() => {
-        fetchSubscribers();
-    }, [fetchSubscribers]);
+        fetchSubscribers(page);
+    }, [fetchSubscribers, page]);
 
-    if (loading) {
+    const handleNextPage = () => {
+        if (paginationData?.hasNextPage) setPage(prev => prev + 1);
+    };
+
+    const handlePrevPage = () => {
+        if (paginationData?.hasPrevPage) setPage(prev => prev - 1);
+    };
+
+    if (loading && subscribers.length === 0) {
         return (
             <div className="flex-1 flex items-center justify-center min-h-[60vh]">
                 <Loader2 size={40} className="text-primary animate-spin" />
@@ -68,15 +91,45 @@ const Subscribers = () => {
 
             <Container className="px-4">
                 <div className="bg-surface/10 rounded-4xl border border-border/40 overflow-hidden">
-                    <div className="p-8 border-b border-border flex items-center justify-between">
+                    <div className="p-8 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <h2 className="text-xl font-bold text-text-main flex items-center gap-2">
                             <span className="w-1.5 h-6 bg-purple-500 rounded-full" />
                             Subscriber List
                         </h2>
-                        <span className="text-xs font-bold text-text-muted italic">Total {subscribers.length} subscribers</span>
+                        <div className="flex items-center gap-4">
+                            <span className="text-xs font-bold text-text-muted italic">
+                                Total {paginationData?.totalDocs || subscribers.length} subscribers
+                            </span>
+                            {paginationData && paginationData.totalPages > 1 && (
+                                <div className="flex items-center gap-2 bg-surface/50 p-1 rounded-xl border border-border">
+                                    <button
+                                        onClick={handlePrevPage}
+                                        disabled={!paginationData.hasPrevPage || loading}
+                                        className="p-1.5 hover:bg-surface rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                    >
+                                        <ArrowLeft size={16} />
+                                    </button>
+                                    <span className="text-xs font-black px-2">
+                                        {page} / {paginationData.totalPages}
+                                    </span>
+                                    <button
+                                        onClick={handleNextPage}
+                                        disabled={!paginationData.hasNextPage || loading}
+                                        className="p-1.5 hover:bg-surface rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-colors rotate-180"
+                                    >
+                                        <ArrowLeft size={16} />
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
-                    <div className="overflow-x-auto">
+                    <div className="overflow-x-auto relative">
+                        {loading && subscribers.length > 0 && (
+                            <div className="absolute inset-0 bg-background-page/40 backdrop-blur-[1px] flex items-center justify-center z-10 transition-all">
+                                <Loader2 size={24} className="text-primary animate-spin" />
+                            </div>
+                        )}
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-surface/30 border-b border-border">

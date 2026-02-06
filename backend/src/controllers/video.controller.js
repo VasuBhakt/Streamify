@@ -19,20 +19,21 @@ const getAllVideos = asyncHandler(async (req, res) => {
         }
     })
 
-    // Search by query
+    // Search logic
     if (query) {
         pipelines.push({
             $match: {
                 $or: [
-                    // regex for expression matching on title, description of video, i for case insensitive
                     { title: { $regex: query, $options: "i" } },
                     { description: { $regex: query, $options: "i" } },
+                    { "ownerDetails.username": { $regex: query, $options: "i" } },
+                    { "ownerDetails.fullName": { $regex: query, $options: "i" } }
                 ]
             }
         });
     }
 
-    // user joining for search by username or full name
+    // joining for search by username or full name
     pipelines.push({
         $lookup: {
             from: "users",
@@ -53,21 +54,10 @@ const getAllVideos = asyncHandler(async (req, res) => {
     });
 
     pipelines.push({
-        $unwind: "$ownerDetails"
+        $unwind: {
+            path: "$ownerDetails",
+        }
     })
-
-    // Search by query
-    if (query) {
-        pipelines.push({
-            $match: {
-                $or: [
-                    // regex for expression matching on username (channel) of video or Channel full name, i for case insensitive
-                    { "ownerDetails.username": { $regex: query, $options: "i" } },
-                    { "ownerDetails.fullName": { $regex: query, $options: "i" } }
-                ]
-            }
-        });
-    }
 
 
     const videoAggregate = Video.aggregate(pipelines);
@@ -153,10 +143,47 @@ const getVideoById = asyncHandler(async (req, res) => {
         throw new APIError(400, "Invalid video ID");
     }
 
+    // Increment views only if requested (specifically from VideoDetail page)
+    // We do this BEFORE the main aggregation so the response includes the updated count
+    if (req.query.incrementView === "true") {
+        await Video.findByIdAndUpdate(videoId, {
+            $inc: { views: 1 }
+        });
+
+        // Add to watch history only when viewing
+        // Move to front + unique in ONE database call
+        if (req.user) {
+            try {
+                await User.findByIdAndUpdate(req.user._id, [
+                    {
+                        $set: {
+                            watchHistory: {
+                                $concatArrays: [
+                                    [new mongoose.Types.ObjectId(videoId)],
+                                    {
+                                        $filter: {
+                                            input: { $ifNull: ["$watchHistory", []] },
+                                            as: "item",
+                                            cond: { $ne: ["$$item", new mongoose.Types.ObjectId(videoId)] }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]);
+            } catch (err) {
+                console.error("Watch history update failed:", err);
+                // Don't throw error here, so the user can still watch the video
+            }
+        }
+    }
+
     const video = await Video.aggregate([
         {
             $match: {
-                _id: new mongoose.Types.ObjectId(videoId)
+                _id: new mongoose.Types.ObjectId(videoId),
+                isPublished: true
             }
         },
         {
@@ -250,17 +277,6 @@ const getVideoById = asyncHandler(async (req, res) => {
         throw new APIError(404, "Video not found");
     }
 
-    // Increment views
-    await Video.findByIdAndUpdate(videoId, {
-        $inc: { views: 1 }
-    });
-
-    // Add to watch history
-    if (req.user) {
-        await User.findByIdAndUpdate(req.user._id, {
-            $addToSet: { watchHistory: videoId }
-        });
-    }
 
     return res
         .status(200)

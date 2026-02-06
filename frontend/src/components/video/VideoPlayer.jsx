@@ -10,10 +10,7 @@ function VideoPlayer({ video, className }) {
         videoFile,
         thumbnail,
         duration,
-        title,
-        views = 0,
-        createdAt,
-        ownerDetails,
+        title
     } = video;
 
     const videoRef = useRef(null);
@@ -116,7 +113,7 @@ function VideoPlayer({ video, className }) {
                         ref={videoRef}
                         src={videoFile}
                         poster={thumbnail}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain"
                         onTimeUpdate={handleTimeUpdate}
                         onLoadedMetadata={handleLoadedMetadata}
                         onVolumeChange={handleVolumeChange}
@@ -126,7 +123,7 @@ function VideoPlayer({ video, className }) {
                     <img
                         src={thumbnail}
                         alt={title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                        className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 ease-out"
                     />
                 )}
 

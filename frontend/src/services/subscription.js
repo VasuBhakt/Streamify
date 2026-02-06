@@ -21,9 +21,9 @@ export class SubscriptionService {
         }
     }
 
-    async getUserChannelSubscribers(channelId) {
+    async getUserChannelSubscribers(channelId, params = {}) {
         try {
-            const response = await axios.get(`/subscriptions/c/${channelId}`);
+            const response = await axios.get(`/subscriptions/c/${channelId}`, { params });
             return response.data;
         } catch (error) {
             console.error("SubscriptionService :: getUserChannelSubscribers :: error", error);

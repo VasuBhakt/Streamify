@@ -16,15 +16,14 @@ import {
     AlertCircle,
     Globe,
     Lock,
-    Play,
     ChevronLeft
 } from "lucide-react";
 import tw from "../utils/tailwindUtil";
+import VideoPlayer from "../components/video/VideoPlayer";
 
 const Studio = () => {
     const { videoId } = useParams();
     const navigate = useNavigate();
-    const user = useSelector((state) => state.auth.userData);
 
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(!!videoId);
@@ -47,31 +46,25 @@ const Studio = () => {
     const thumbnailInputRef = useRef();
 
     // Fetch existing video data if updating
-    useEffect(() => {
-        if (videoId) {
-            const fetchVideo = async () => {
-                try {
-                    setFetching(true);
-                    const response = await videoService.getVideoById({ videoId });
-                    if (response?.data) {
-                        const v = response.data;
-                        setTitle(v.title);
-                        setDescription(v.description);
-                        setIsPublished(v.isPublished);
-                        setVideoPreview(v.videoFile);
-                        setThumbnailPreview(v.thumbnail);
-                    }
-                } catch (error) {
-                    console.error("Error fetching video for edit:", error);
-                    setStatus({ type: "error", message: "Failed to load video details." });
-                } finally {
-                    setFetching(false);
-                }
-            };
-            fetchVideo();
+    const fetchVideo = async () => {
+        try {
+            setFetching(true);
+            const response = await videoService.getVideoById({ videoId });
+            if (response?.data) {
+                const v = response.data;
+                setTitle(v.title);
+                setDescription(v.description);
+                setIsPublished(v.isPublished);
+                setVideoPreview(v.videoFile);
+                setThumbnailPreview(v.thumbnail);
+            }
+        } catch (error) {
+            console.error("Error fetching video for edit:", error);
+            setStatus({ type: "error", message: "Failed to load video details." });
+        } finally {
+            setFetching(false);
         }
-    }, [videoId]);
-
+    };
     // Handle File Selections
     const handleVideoSelect = (e) => {
         const file = e.target.files[0];
@@ -147,6 +140,13 @@ const Studio = () => {
         }
     };
 
+    useEffect(() => {
+        if (videoId) {
+            fetchVideo();
+        }
+    }, [videoId]);
+
+
     if (fetching) {
         return (
             <div className="flex-1 flex flex-col items-center justify-center min-h-[70vh]">
@@ -159,13 +159,13 @@ const Studio = () => {
     return (
         <div className="flex-1 bg-background-page pb-20 overflow-x-hidden">
             {/* Header */}
-            <div className="bg-surface/30 border-b border-border py-10 sticky top-16 z-40 backdrop-blur-xl">
+            <div className="bg-surface/30 border-b border-border py-10 sticky top-16 z-40 backdrop-blur-xl my-15">
                 <Container>
                     <div className="flex flex-col md:flex-row items-center justify-between gap-6 px-4">
                         <div className="flex items-center gap-6">
                             <button
                                 onClick={() => navigate(-1)}
-                                className="p-3 bg-surface border border-border rounded-2xl text-text-secondary hover:text-primary transition-all group active:scale-90"
+                                className="p-3 bg-surface border border-border rounded-2xl text-text-secondary hover:text-primary transition-all group active:scale-90 cursor-pointer"
                             >
                                 <ChevronLeft className="group-hover:-translate-x-1 transition-transform" />
                             </button>
@@ -196,21 +196,25 @@ const Studio = () => {
                             </Button>
                         </div>
                     </div>
+
+                    {status.message && (
+                        <div className={tw(
+                            "mt-8 mx-4 p-4 rounded-2xl border flex items-center gap-4 animate-in slide-in-from-top-2 duration-500 shadow-sm",
+                            status.type === "success" ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500" :
+                                status.type === "error" ? "bg-rose-500/10 border-rose-500/20 text-rose-500" :
+                                    "bg-primary/10 border-primary/20 text-primary"
+                        )}>
+                            {status.type === "success" ? <CheckCircle2 size={18} /> : status.type === "error" ? <AlertCircle size={18} /> : <Loader2 size={18} className="animate-spin" />}
+                            <p className="font-bold text-xs uppercase tracking-wider">{status.message}</p>
+                            <button onClick={() => setStatus({ type: null, message: "" })} className="ml-auto p-1 hover:bg-surface rounded-lg transition-colors">
+                                <X size={14} />
+                            </button>
+                        </div>
+                    )}
                 </Container>
             </div>
 
-            <Container className="mt-10 px-4">
-                {status.message && (
-                    <div className={tw(
-                        "mb-10 p-5 rounded-3xl border flex items-center gap-4 animate-in slide-in-from-top-4 duration-500",
-                        status.type === "success" ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500" :
-                            status.type === "error" ? "bg-rose-500/10 border-rose-500/20 text-rose-500" :
-                                "bg-primary/10 border-primary/20 text-primary"
-                    )}>
-                        {status.type === "success" ? <CheckCircle2 /> : status.type === "error" ? <AlertCircle /> : <Loader2 className="animate-spin" />}
-                        <p className="font-bold text-sm uppercase tracking-wider">{status.message}</p>
-                    </div>
-                )}
+            <Container className="px-4">
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                     {/* Left: Previews */}
@@ -224,27 +228,28 @@ const Studio = () => {
                                 </h3>
                                 <button
                                     onClick={() => videoInputRef.current.click()}
-                                    className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-secondary-hover transition-colors"
+                                    className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-secondary-hover transition-colors cursor-pointer"
                                 >
                                     {videoPreview ? "Replace File" : "Select Source"}
                                 </button>
                             </div>
 
-                            <div
-                                className={tw(
-                                    "aspect-video rounded-4xl overflow-hidden border-2 bg-black relative group/player",
-                                    videoPreview ? "border-border shadow-2xl" : "border-dashed border-border/50 hover:border-primary/50 transition-all cursor-pointer"
-                                )}
-                                onClick={() => !videoPreview && videoInputRef.current.click()}
-                            >
-                                {videoPreview ? (
-                                    <video
-                                        src={videoPreview}
-                                        controls
-                                        className="w-full h-full object-contain"
-                                        poster={thumbnailPreview}
+                            {videoPreview ? (
+                                <div className="rounded-4xl overflow-hidden border-2 border-border shadow-2xl bg-black">
+                                    <VideoPlayer
+                                        video={{
+                                            videoFile: videoPreview,
+                                            thumbnail: thumbnailPreview,
+                                            title: title || "Preview",
+                                            duration: 0
+                                        }}
                                     />
-                                ) : (
+                                </div>
+                            ) : (
+                                <div
+                                    className="aspect-video rounded-4xl overflow-hidden border-2 border-dashed border-border/50 bg-black relative group/player hover:border-primary/50 transition-all cursor-pointer"
+                                    onClick={() => videoInputRef.current.click()}
+                                >
                                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
                                         <div className="w-16 h-16 bg-surface-hover rounded-full flex items-center justify-center text-text-muted group-hover/player:scale-110 group-hover/player:bg-primary/10 group-hover/player:text-primary transition-all duration-500">
                                             <Upload size={32} />
@@ -254,9 +259,9 @@ const Studio = () => {
                                             <p className="text-xs text-text-secondary mt-1">MP4, WebM or OGG files</p>
                                         </div>
                                     </div>
-                                )}
-                                <input type="file" ref={videoInputRef} accept="video/*" className="hidden" onChange={handleVideoSelect} />
-                            </div>
+                                </div>
+                            )}
+                            <input type="file" ref={videoInputRef} accept="video/*" className="hidden" onChange={handleVideoSelect} />
                         </div>
 
                         {/* Thumbnail Preview */}
@@ -268,7 +273,7 @@ const Studio = () => {
                                 </h3>
                                 <button
                                     onClick={() => thumbnailInputRef.current.click()}
-                                    className="text-[10px] font-black uppercase tracking-widest text-secondary hover:text-secondary-hover transition-colors"
+                                    className="text-[10px] font-black uppercase tracking-widest text-secondary text-primary hover:text-secondary-hover transition-colors cursor-pointer"
                                 >
                                     {thumbnailPreview ? "Change Visual" : "Select Visual"}
                                 </button>
@@ -282,7 +287,7 @@ const Studio = () => {
                                 onClick={() => thumbnailInputRef.current.click()}
                             >
                                 {thumbnailPreview ? (
-                                    <img src={thumbnailPreview} className="w-full h-full object-cover group-hover/thumb:scale-105 transition-transform duration-700" alt="Thumbnail Preview" />
+                                    <img src={thumbnailPreview} className="w-full h-full object-contain group-hover/thumb:scale-105 transition-transform duration-700" alt="Thumbnail Preview" />
                                 ) : (
                                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
                                         <div className="w-12 h-12 bg-surface-hover rounded-2xl flex items-center justify-center text-text-muted group-hover/thumb:bg-secondary/10 group-hover/thumb:text-secondary transition-all">
