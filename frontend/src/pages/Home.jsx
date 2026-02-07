@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import videoService from "../services/video";
 import VideoCard from "../components/video/VideoCard";
 import Container from "../components/container/Container";
+import Loading from "../components/Loading";
 import { Loader2, AlertCircle } from "lucide-react";
 
 const Home = () => {
@@ -60,9 +61,8 @@ const Home = () => {
 
     if (loading && videos.length === 0) {
         return (
-            <div className="flex-1 flex flex-col items-center justify-center min-h-[60vh]">
-                <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
-                <p className="text-text-secondary animate-pulse font-medium tracking-wide">Gathering premium content...</p>
+            <div className="flex-1 flex items-center justify-center min-h-[60vh]">
+                <Loading fullScreen={false} />
             </div>
         );
     }

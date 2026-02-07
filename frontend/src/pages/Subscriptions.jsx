@@ -5,6 +5,7 @@ import subscriptionService from "../services/subscription";
 import Container from "../components/container/Container";
 import { Loader2, FolderHeart, ArrowLeft, ExternalLink, Calendar } from "lucide-react";
 import { timeAgo } from "../utils/format";
+import Loading from "../components/Loading";
 
 const Subscriptions = () => {
     const user = useSelector((state) => state.auth.userData);
@@ -33,7 +34,7 @@ const Subscriptions = () => {
     if (loading && channels.length === 0) {
         return (
             <div className="flex-1 flex items-center justify-center min-h-[60vh]">
-                <Loader2 size={40} className="text-primary animate-spin" />
+                <Loading fullScreen={false} />
             </div>
         );
     }
@@ -59,7 +60,7 @@ const Subscriptions = () => {
                         </div>
                         <h1 className="text-4xl font-black text-text-main tracking-tight">Following</h1>
                         <p className="text-text-secondary mt-2 font-medium">
-                            Premium channels you've chosen to follow
+                            Channels you've chosen to follow
                         </p>
                     </div>
                 </Container>

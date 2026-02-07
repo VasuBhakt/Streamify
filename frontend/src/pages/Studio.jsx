@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import tw from "../utils/tailwindUtil";
 import VideoPlayer from "../components/video/VideoPlayer";
+import Loading from "../components/Loading";
 
 const Studio = () => {
     const { videoId } = useParams();
@@ -149,9 +150,8 @@ const Studio = () => {
 
     if (fetching) {
         return (
-            <div className="flex-1 flex flex-col items-center justify-center min-h-[70vh]">
-                <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
-                <p className="text-text-secondary font-medium animate-pulse uppercase tracking-widest text-xs">Accessing Studio Archives...</p>
+            <div className="flex-1 flex items-center justify-center min-h-[60vh]">
+                <Loading fullScreen={false} />
             </div>
         );
     }
@@ -159,7 +159,7 @@ const Studio = () => {
     return (
         <div className="flex-1 bg-background-page pb-20 overflow-x-hidden">
             {/* Header */}
-            <div className="bg-surface/30 border-b border-border py-10 sticky top-16 z-40 backdrop-blur-xl my-15">
+            <div className="bg-surface/30 border-b border-border py-10 sticky top-16 z-40 my-15">
                 <Container>
                     <div className="flex flex-col md:flex-row items-center justify-between gap-6 px-4">
                         <div className="flex items-center gap-6">
@@ -171,7 +171,7 @@ const Studio = () => {
                             </button>
                             <div>
                                 <div className="flex items-center gap-2 mb-1">
-                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary bg-primary/10 px-2 py-0.5 rounded">Creative Studio</span>
+                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary bg-primary/10 px-2 py-0.5 rounded">Creator Studio</span>
                                 </div>
                                 <h1 className="text-3xl font-black text-text-main tracking-tight">
                                     {videoId ? "Edit Masterpiece" : "New Production"}
@@ -306,17 +306,17 @@ const Studio = () => {
                         <div className="bg-surface/30 p-8 rounded-4xl border border-border/50 space-y-8 h-fit lg:sticky lg:top-44">
                             <div className="space-y-6">
                                 <Input
-                                    label="Creative Title"
+                                    label="Title"
                                     value={title}
                                     onChange={(e) => setTitle(e.target.value)}
-                                    placeholder="The title of your next big hit..."
+                                    placeholder="The title of your next masterpiece..."
                                     className="text-lg font-bold"
                                 />
 
                                 <div className="flex flex-col gap-3">
                                     <label className="text-xs font-black text-text-muted uppercase tracking-[0.2em] flex items-center gap-2">
                                         <Info size={14} />
-                                        Narrative (Description)
+                                        Description
                                     </label>
                                     <textarea
                                         value={description}

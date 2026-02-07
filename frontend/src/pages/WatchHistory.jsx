@@ -4,6 +4,7 @@ import userService from "../services/user";
 import Container from "../components/container/Container";
 import { Loader2, History, ArrowLeft, ExternalLink, PlayCircle, Eye, Clock } from "lucide-react";
 import { timeAgo, formatDuration } from "../utils/format";
+import Loading from "../components/Loading";
 
 const WatchHistory = () => {
     const [videos, setVideos] = useState([]);
@@ -50,7 +51,7 @@ const WatchHistory = () => {
     if (loading && videos.length === 0) {
         return (
             <div className="flex-1 flex items-center justify-center min-h-[60vh]">
-                <Loader2 size={40} className="text-primary animate-spin" />
+                <Loading fullScreen={false} />
             </div>
         );
     }
@@ -61,11 +62,11 @@ const WatchHistory = () => {
                 <Container>
                     <div className="px-4">
                         <Link
-                            to="/dashboard"
+                            to="/home"
                             className="inline-flex items-center gap-2 text-text-muted hover:text-primary transition-colors mb-6 group"
                         >
                             <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-                            <span className="text-sm font-bold">Back to Dashboard</span>
+                            <span className="text-sm font-bold">Back to Feed</span>
                         </Link>
 
                         <div className="flex items-center gap-3 mb-4">

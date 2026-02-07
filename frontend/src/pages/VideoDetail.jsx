@@ -15,6 +15,7 @@ import Button from "../components/button/Button";
 import { Loader2, AlertCircle } from "lucide-react";
 import { useSelector } from "react-redux";
 import tw from "../utils/tailwindUtil";
+import Loading from "../components/Loading";
 
 const VideoDetail = () => {
     const { videoId } = useParams();
@@ -306,11 +307,8 @@ const VideoDetail = () => {
 
     if (loading) {
         return (
-            <div className="flex-1 flex items-center justify-center min-h-[70vh]">
-                <div className="flex flex-col items-center gap-4">
-                    <Loader2 className="w-12 h-12 text-primary animate-spin" />
-                    <p className="text-text-secondary font-medium tracking-wide">Initializing theater mode...</p>
-                </div>
+            <div className="flex-1 flex items-center justify-center min-h-[60vh]">
+                <Loading fullScreen={false} />
             </div>
         );
     }

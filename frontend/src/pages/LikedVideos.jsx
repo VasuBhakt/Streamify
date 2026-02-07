@@ -4,6 +4,7 @@ import userService from "../services/user";
 import Container from "../components/container/Container";
 import { Loader2, ThumbsUp, ArrowLeft, ExternalLink, Calendar, PlayCircle, Eye } from "lucide-react";
 import { timeAgo, formatDuration } from "../utils/format";
+import Loading from "../components/Loading";
 
 const LikedVideos = () => {
     const [videos, setVideos] = useState([]);
@@ -56,7 +57,7 @@ const LikedVideos = () => {
     if (loading && videos.length === 0) {
         return (
             <div className="flex-1 flex items-center justify-center min-h-[60vh]">
-                <Loader2 size={40} className="text-primary animate-spin" />
+                <Loading fullScreen={false} />
             </div>
         );
     }
@@ -67,11 +68,11 @@ const LikedVideos = () => {
                 <Container>
                     <div className="px-4">
                         <Link
-                            to="/dashboard"
+                            to="/home"
                             className="inline-flex items-center gap-2 text-text-muted hover:text-primary transition-colors mb-6 group"
                         >
                             <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-                            <span className="text-sm font-bold">Back to Dashboard</span>
+                            <span className="text-sm font-bold">Back to Feed</span>
                         </Link>
 
                         <div className="flex items-center gap-3 mb-4">
@@ -82,7 +83,7 @@ const LikedVideos = () => {
                         </div>
                         <h1 className="text-4xl font-black text-text-main tracking-tight">Liked Videos</h1>
                         <p className="text-text-secondary mt-2 font-medium">
-                            A curated list of content that resonated with you
+                            List of content that resonated with you
                         </p>
                     </div>
                 </Container>

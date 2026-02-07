@@ -9,6 +9,7 @@ import Button from "../components/button/Button";
 import { Loader2, Bell, Video, PlaySquare, User, Info, Play, Clock } from "lucide-react";
 import tw from "../utils/tailwindUtil";
 import { formatViews, formatDate } from "../utils/format";
+import Loading from "../components/Loading";
 
 const Channel = () => {
     const { username } = useParams();
@@ -86,7 +87,7 @@ const Channel = () => {
     if (loading) {
         return (
             <div className="flex-1 flex items-center justify-center min-h-[60vh]">
-                <Loader2 className="w-10 h-10 text-primary animate-spin" />
+                <Loading fullScreen={false} />
             </div>
         );
     }

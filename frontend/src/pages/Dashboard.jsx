@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import tw from "../utils/tailwindUtil";
 import { formatDuration, formatViews, timeAgo } from "../utils/format";
+import Loading from "../components/Loading";
 
 const Dashboard = () => {
     const user = useSelector((state) => state.auth.userData);
@@ -69,7 +70,7 @@ const Dashboard = () => {
     if (loading && !stats) {
         return (
             <div className="flex-1 flex items-center justify-center min-h-[60vh]">
-                <Loader2 size={40} className="text-primary animate-spin" />
+                <Loading fullScreen={false} />
             </div>
         );
     }

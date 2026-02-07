@@ -4,6 +4,7 @@ import videoService from "../services/video";
 import Container from "../components/container/Container";
 import { Loader2, Search, AlertCircle, Heart, Eye } from "lucide-react";
 import { formatViews, timeAgo, formatDuration } from "../utils/format";
+import Loading from "../components/Loading";
 
 const SearchResults = () => {
     const [searchParams] = useSearchParams();
@@ -72,9 +73,8 @@ const SearchResults = () => {
 
     if (loading && videos.length === 0) {
         return (
-            <div className="flex-1 flex flex-col items-center justify-center min-h-[60vh]">
-                <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
-                <p className="text-text-secondary font-medium">Scanning the multiverse for "{query}"...</p>
+            <div className="flex-1 flex items-center justify-center min-h-[60vh]">
+                <Loading fullScreen={false} />
             </div>
         );
     }
