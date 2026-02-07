@@ -3,6 +3,7 @@
 <p align="center">
     <img src="frontend/public/streamify_logo.png" height="240px"><br>
 </p>
+
 **Streamify** is a full-stack video streaming platform built with modern web technologies, offering a comprehensive suite of features for video content creation, management, and consumption. This proprietary application provides a YouTube-like experience with advanced user authentication, video management, social interactions, and analytics capabilities.
 
 > **Note:** This project is **not open source** and is proprietary software. All rights reserved.
