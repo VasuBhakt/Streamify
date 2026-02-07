@@ -130,7 +130,7 @@ function Register() {
                             />
 
                             <Input
-                                label="Username"
+                                label="Username (Careful, you cannot change it later!)"
                                 placeholder="johndoe123"
                                 icon={User}
                                 {...register("username", {
