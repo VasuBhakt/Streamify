@@ -8,9 +8,11 @@ import {
     updateCoverImage,
     changeCurrentUserPassword,
     getCurrentUser,
-    updateAccountDetails,
     getUserChannelProfile,
-    getWatchHistory
+    getWatchHistory,
+    forgotPassword,
+    resetPassword,
+    updateAccountDetails
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT, getOptionalUser } from "../middlewares/auth.middleware.js";
@@ -26,6 +28,8 @@ router.route("/register").post(
 );
 
 router.route("/login").post(loginUser);
+router.route("/forgot-password").post(forgotPassword);
+router.route("/reset-password/:token").post(resetPassword);
 
 // secured routes
 router.route("/logout").post(verifyJWT, logoutUser);

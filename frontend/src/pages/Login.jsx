@@ -84,6 +84,15 @@ function Login() {
                             })}
                             error={errors.password?.message}
                         />
+
+                        <div className="flex justify-end px-1">
+                            <Link
+                                to="/forgot-password"
+                                className="text-sm font-semibold text-primary hover:text-primary-hover transition-colors"
+                            >
+                                Forgot password?
+                            </Link>
+                        </div>
                     </div>
 
                     <div className="pt-2">

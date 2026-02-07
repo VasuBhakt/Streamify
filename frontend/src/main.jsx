@@ -20,6 +20,8 @@ import Register from './pages/Register.jsx'
 import Channel from './pages/Channel.jsx'
 import Landing from './pages/Landing.jsx'
 import Support from './pages/Support.jsx'
+import ForgotPassword from './pages/ForgotPassword.jsx'
+import ResetPassword from './pages/ResetPassword.jsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
 const router = createBrowserRouter([
@@ -37,11 +39,30 @@ const router = createBrowserRouter([
       },
       {
         path: "login",
-        element: <Login />
+        element:
+          <AuthLayout auth={false}>
+            <Login />
+          </AuthLayout>
       },
       {
         path: "register",
-        element: <Register />
+        element:
+          <AuthLayout auth={false}>
+            <Register />
+          </AuthLayout>
+      },
+      {
+        path: "forgot-password",
+        element:
+          <AuthLayout auth={false}>
+            <ForgotPassword />
+          </AuthLayout>
+      },
+      {
+        path: "reset-password/:token",
+        element: <AuthLayout auth={false}>
+          <ResetPassword />
+        </AuthLayout>
       },
       {
         path: "/c/:username",

@@ -67,6 +67,26 @@ export class AuthService {
             throw error;
         }
     }
+
+    async forgotPassword(email) {
+        try {
+            const response = await axios.post("/users/forgot-password", { email });
+            return response.data;
+        } catch (error) {
+            console.error("AuthService :: forgotPassword :: error", error);
+            throw error;
+        }
+    }
+
+    async resetPassword(token, password) {
+        try {
+            const response = await axios.post(`/users/reset-password/${token}`, { password });
+            return response.data;
+        } catch (error) {
+            console.error("AuthService :: resetPassword :: error", error);
+            throw error;
+        }
+    }
 }
 
 const authService = new AuthService();

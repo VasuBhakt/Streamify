@@ -3,6 +3,7 @@ import validator from "validator";
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
+import crypto from "crypto";
 
 const userSchema = new Schema({
     username: {
@@ -55,6 +56,12 @@ const userSchema = new Schema({
     },
     refreshToken: {
         type: String,
+    },
+    forgotPasswordToken: {
+        type: String,
+    },
+    forgotPasswordTokenExpiry: {
+        type: Date,
     }
 }, { timestamps: true })
 
@@ -86,6 +93,22 @@ userSchema.methods.generateRefreshToken = async function () {
     }, process.env.REFRESH_TOKEN_SECRET, {
         expiresIn: process.env.REFRESH_TOKEN_EXPIRY
     })
+}
+
+userSchema.methods.generateForgotPasswordToken = function () {
+    // 1. generate random token
+    const resetToken = crypto.randomBytes(20).toString('hex');
+
+    // 2. hash token and set to db field
+    this.forgotPasswordToken = crypto
+        .createHash('sha256')
+        .update(resetToken)
+        .digest('hex');
+
+    // 3. set expire
+    this.forgotPasswordTokenExpiry = Date.now() + 30 * 60 * 1000; // 10 minutes
+
+    return resetToken;
 }
 
 export const User = model("User", userSchema)

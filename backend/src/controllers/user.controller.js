@@ -6,6 +6,8 @@ import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/Cloudinary.js";
 import jwt from "jsonwebtoken"
 import mongoose from "mongoose";
+import crypto from "crypto";
+import { sendEmail } from "../utils/mail.js";
 
 const generateAccessAndRefreshToken = async (userId) => {
     try {
@@ -552,5 +554,104 @@ const getWatchHistory = asyncHandler(async (req, res) => {
         )
 })
 
+const forgotPassword = asyncHandler(async (req, res) => {
+    // 1. Get email
+    const { email } = req.body;
+    if (!email) {
+        throw new APIError(400, "Email is required");
+    }
 
-export { registerUser, loginUser, logoutUser, refreshAccessToken, changeCurrentUserPassword, getCurrentUser, updateAccountDetails, updateAvatar, updateCoverImage, getUserChannelProfile, getWatchHistory };
+    // 2. Find user
+    const user = await User.findOne({ email });
+    if (!user) {
+        throw new APIError(404, "User not found");
+    }
+
+    // 3. Generate token
+    const resetToken = user.generateForgotPasswordToken();
+    await user.save({ validateBeforeSave: false });
+
+    // 4. Send email
+    // We send the *unhashed* token to the user
+    // The link should point to the frontend page
+    const resetUrl = `${process.env.CORS_ORIGIN}/reset-password/${resetToken}`;
+
+    const message = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+            <h2 style="color: #4F46E5;">Reset your password</h2>
+            <p>You have requested to reset your password. Click the button below to proceed:</p>
+            <a href="${resetUrl}" style="display: inline-block; background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; margin: 16px 0;">Reset Password</a>
+            <p style="font-size: 0.9em; color: #666;">This link is valid for 30 minutes. If you did not request this, please ignore this email.</p>
+        </div>
+    `;
+
+    try {
+        await sendEmail({
+            email: user.email,
+            subject: "Streamify Password Reset",
+            message: message
+        });
+
+        res.status(200).json(new APIResponse(200, {}, "Email sent successfully"));
+
+    } catch (error) {
+        user.forgotPasswordToken = undefined;
+        user.forgotPasswordTokenExpiry = undefined;
+        await user.save({ validateBeforeSave: false });
+
+        throw new APIError(500, "Email could not be sent. Please try again later.");
+    }
+});
+
+const resetPassword = asyncHandler(async (req, res) => {
+    // 1. Get token from params and new password from body
+    const { token } = req.params;
+    const { password } = req.body;
+
+    if (!password) {
+        throw new APIError(400, "Password is required");
+    }
+
+    // 2. Hash the token from the URL to compare with DB
+    const hashedToken = crypto
+        .createHash('sha256')
+        .update(token)
+        .digest('hex');
+
+    // 3. Find user with valid token and expiry
+    const user = await User.findOne({
+        forgotPasswordToken: hashedToken,
+        forgotPasswordTokenExpiry: { $gt: Date.now() }
+    });
+
+    if (!user) {
+        throw new APIError(400, "Token is invalid or has expired");
+    }
+
+    // 4. Set new password and clear token
+    user.password = password;
+    user.forgotPasswordToken = undefined;
+    user.forgotPasswordTokenExpiry = undefined;
+    await user.save(); // validation happens here (password hashing)
+
+    // 5. Response
+    res.status(200).json(new APIResponse(200, {}, "Password reset successfully"));
+
+});
+
+
+export {
+    registerUser,
+    loginUser,
+    logoutUser,
+    refreshAccessToken,
+    changeCurrentUserPassword,
+    getCurrentUser,
+    updateAccountDetails,
+    updateAvatar,
+    updateCoverImage,
+    getUserChannelProfile,
+    getWatchHistory,
+    forgotPassword,
+    resetPassword
+};
