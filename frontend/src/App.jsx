@@ -1,19 +1,6 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { useLocation, Outlet } from "react-router-dom";
 import Navbar from "./components/navbar/Navbar";
 import Sidebar from "./components/navbar/Sidebar";
-import Home from "./pages/Home";
-import VideoDetail from "./pages/VideoDetail";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Channel from "./pages/Channel";
-import LikedVideos from "./pages/LikedVideos";
-import WatchHistory from "./pages/WatchHistory";
-import SearchResults from "./pages/SearchResults";
-import Settings from "./pages/Settings";
-import Dashboard from "./pages/Dashboard";
-import Studio from "./pages/Studio";
-import Subscribers from "./pages/Subscribers";
-import Subscriptions from "./pages/Subscriptions";
 import tw from "./utils/tailwindUtil";
 import { useDispatch } from "react-redux";
 import { login, logout } from "./features/authSlice";
@@ -41,31 +28,18 @@ function App() {
                 dispatch(logout());
             })
     }, [])
-    return (
-        <div className="flex flex-col bg-background-page min-h-screen text-text-main font-sans overflow-x-hidden">
-            <Navbar />
-            <div className="flex flex-1 pt-16">
-                {!isAuthPage && <Sidebar />}
 
-                <main className={tw("flex-1 w-full overflow-x-hidden", isAuthPage && "flex items-center justify-center pt-0")}>
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/video/:videoId" element={<VideoDetail />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<Register />} />
-                        <Route path="/c/:username" element={<Channel />} />
-                        <Route path="/liked-videos" element={<LikedVideos />} />
-                        <Route path="/history" element={<WatchHistory />} />
-                        <Route path="/search" element={<SearchResults />} />
-                        <Route path="/settings" element={<Settings />} />
-                        <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/studio" element={<Studio />} />
-                        <Route path="/studio/:videoId" element={<Studio />} />
-                        <Route path="/subscribers" element={<Subscribers />} />
-                        <Route path="/subscriptions" element={<Subscriptions />} />
-                        {/* More routes can be added here */}
-                    </Routes>
-                </main>
+    return (
+        <div className="flex flex-col min-h-screen text-text-main font-sans overflow-x-hidden relative bg-background">
+            <div className="relative z-10 flex flex-col min-h-screen">
+                <Navbar />
+                <div className="flex flex-1 pt-16">
+                    {!isAuthPage && <Sidebar />}
+
+                    <main className={tw("flex-1 w-full overflow-x-hidden", isAuthPage && "flex items-center justify-center pt-0")}>
+                        <Outlet />
+                    </main>
+                </div>
             </div>
         </div>
     );

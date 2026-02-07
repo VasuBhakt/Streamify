@@ -75,10 +75,10 @@ const LikedVideos = () => {
                         </Link>
 
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2 bg-pink-500/10 text-pink-500 rounded-xl">
+                            <div className="p-2 bg-primary/10 text-primary rounded-xl">
                                 <ThumbsUp size={20} />
                             </div>
-                            <span className="text-xs font-black uppercase tracking-widest text-pink-500">Your Collection</span>
+                            <span className="text-xs font-black uppercase tracking-widest text-primary">Your Collection</span>
                         </div>
                         <h1 className="text-4xl font-black text-text-main tracking-tight">Liked Videos</h1>
                         <p className="text-text-secondary mt-2 font-medium">
@@ -92,7 +92,7 @@ const LikedVideos = () => {
                 <div className="bg-surface/10 rounded-4xl border border-border/40 overflow-hidden">
                     <div className="p-8 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <h2 className="text-xl font-bold text-text-main flex items-center gap-2">
-                            <span className="w-1.5 h-6 bg-pink-500 rounded-full" />
+                            <span className="w-1.5 h-6 bg-primary rounded-full" />
                             Favorites
                         </h2>
                         <div className="flex items-center gap-4">
@@ -149,7 +149,7 @@ const LikedVideos = () => {
                                         <tr key={video._id} className="hover:bg-surface/20 transition-colors group">
                                             <td className="px-8 py-5 min-w-[300px]">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="relative w-32 aspect-video rounded-xl overflow-hidden bg-surface-hover shrink-0 border border-border group-hover:border-pink-500 transition-colors">
+                                                    <div className="relative w-32 aspect-video rounded-xl overflow-hidden bg-surface-hover shrink-0 border border-border group-hover:border-primary transition-colors">
                                                         <img
                                                             src={video.thumbnail}
                                                             alt={video.title}
@@ -163,7 +163,7 @@ const LikedVideos = () => {
                                                         </div>
                                                     </div>
                                                     <div className="flex flex-col min-w-0">
-                                                        <Link to={`/video/${video._id}`} className="text-sm font-bold text-text-main truncate hover:text-pink-500 transition-colors">
+                                                        <Link to={`/video/${video._id}`} className="text-sm font-bold text-text-main truncate hover:text-primary transition-colors">
                                                             {video.title}
                                                         </Link>
                                                         <Link to={`/c/${video.owner?.username}`} className="text-xs text-text-muted hover:text-text-secondary">
@@ -187,7 +187,7 @@ const LikedVideos = () => {
                                             <td className="px-8 py-5 text-right">
                                                 <Link
                                                     to={`/video/${video._id}`}
-                                                    className="inline-flex items-center gap-2 p-2.5 bg-surface text-text-secondary hover:text-pink-500 hover:bg-pink-500/10 rounded-xl border border-border transition-all cursor-pointer group/link"
+                                                    className="inline-flex items-center gap-2 p-2.5 bg-surface text-text-secondary hover:text-primary hover:bg-primary/10 rounded-xl border border-border transition-all cursor-pointer group/link"
                                                 >
                                                     <span className="text-xs font-bold hidden sm:inline">Watch Now</span>
                                                     <ExternalLink size={16} />

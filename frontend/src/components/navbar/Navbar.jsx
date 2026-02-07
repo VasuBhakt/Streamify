@@ -79,13 +79,6 @@ const Navbar = () => {
             {/* Right: Actions */}
             {user && !isAuthPage && (
                 <div className="flex items-center lg:gap-5">
-                    <button className="p-2 hover:bg-surface-hover rounded-full text-text-secondary hover:text-text-main transition-all duration-200 relative">
-                        <Video size={22} />
-                    </button>
-                    <button className="p-2 hover:bg-surface-hover rounded-full text-text-secondary hover:text-text-main transition-all duration-200 relative">
-                        <Bell size={22} />
-                        <div className="absolute top-2 right-2 w-1.5 h-1.5 bg-primary rounded-full" />
-                    </button>
                     <Link to={`/c/${user.username}`} className="ml-2 pl-2 border-l border-border flex items-center gap-3 cursor-pointer group">
                         <div className="text-right hidden lg:block">
                             <p className="text-sm font-semibold text-text-main leading-none mb-1">{user.fullName || "User"}</p>

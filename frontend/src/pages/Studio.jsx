@@ -200,8 +200,8 @@ const Studio = () => {
                     {status.message && (
                         <div className={tw(
                             "mt-8 mx-4 p-4 rounded-2xl border flex items-center gap-4 animate-in slide-in-from-top-2 duration-500 shadow-sm",
-                            status.type === "success" ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500" :
-                                status.type === "error" ? "bg-rose-500/10 border-rose-500/20 text-rose-500" :
+                            status.type === "success" ? "bg-success/10 border-success/20 text-success" :
+                                status.type === "error" ? "bg-error/10 border-error/20 text-error" :
                                     "bg-primary/10 border-primary/20 text-primary"
                         )}>
                             {status.type === "success" ? <CheckCircle2 size={18} /> : status.type === "error" ? <AlertCircle size={18} /> : <Loader2 size={18} className="animate-spin" />}
@@ -332,7 +332,7 @@ const Studio = () => {
                                     <div className="flex items-center gap-3">
                                         <div className={tw(
                                             "w-10 h-10 rounded-xl flex items-center justify-center transition-colors",
-                                            isPublished ? "bg-emerald-500/10 text-emerald-500" : "bg-amber-500/10 text-amber-500"
+                                            isPublished ? "bg-success/10 text-success" : "bg-warning/10 text-warning"
                                         )}>
                                             {isPublished ? <Globe size={20} /> : <Lock size={20} />}
                                         </div>
@@ -345,13 +345,13 @@ const Studio = () => {
                                         type="button"
                                         onClick={() => setIsPublished(!isPublished)}
                                         className={tw(
-                                            "w-12 h-6 rounded-full relative transition-all duration-300 cursor-pointer",
+                                            "w-12 h-6 rounded-full relative transition-colors duration-300 ease-in-out cursor-pointer",
                                             isPublished ? "bg-primary" : "bg-text-muted/30"
                                         )}
                                     >
                                         <div className={tw(
-                                            "absolute top-1 w-4 h-4 bg-white rounded-full transition-all shadow-md",
-                                            isPublished ? "right-1" : "left-1"
+                                            "absolute top-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 ease-in-out shadow-md",
+                                            isPublished ? "translate-x-7" : "translate-x-1"
                                         )} />
                                     </button>
                                 </div>

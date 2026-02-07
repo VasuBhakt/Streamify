@@ -76,10 +76,10 @@ const Subscribers = () => {
                         </Link>
 
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2 bg-purple-500/10 text-purple-500 rounded-xl">
+                            <div className="p-2 bg-primary/10 text-primary rounded-xl">
                                 <Users size={20} />
                             </div>
-                            <span className="text-xs font-black uppercase tracking-widest text-purple-500">Channel Audience</span>
+                            <span className="text-xs font-black uppercase tracking-widest text-primary">Channel Audience</span>
                         </div>
                         <h1 className="text-4xl font-black text-text-main tracking-tight">Your Subscribers</h1>
                         <p className="text-text-secondary mt-2 font-medium">
@@ -93,7 +93,7 @@ const Subscribers = () => {
                 <div className="bg-surface/10 rounded-4xl border border-border/40 overflow-hidden">
                     <div className="p-8 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <h2 className="text-xl font-bold text-text-main flex items-center gap-2">
-                            <span className="w-1.5 h-6 bg-purple-500 rounded-full" />
+                            <span className="w-1.5 h-6 bg-primary rounded-full" />
                             Subscriber List
                         </h2>
                         <div className="flex items-center gap-4">
@@ -150,7 +150,7 @@ const Subscribers = () => {
                                         <tr key={item._id} className="hover:bg-surface/20 transition-colors group">
                                             <td className="px-8 py-5">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="w-12 h-12 rounded-full overflow-hidden bg-surface-hover shrink-0 border-2 border-border group-hover:border-purple-500 transition-colors">
+                                                    <div className="w-12 h-12 rounded-full overflow-hidden bg-surface-hover shrink-0 border-2 border-border group-hover:border-primary transition-colors">
                                                         <img
                                                             src={item.subscriber.avatar}
                                                             alt={item.subscriber.fullName}
@@ -175,7 +175,7 @@ const Subscribers = () => {
                                             <td className="px-8 py-5 text-right">
                                                 <Link
                                                     to={`/c/${item.subscriber.username}`}
-                                                    className="inline-flex items-center gap-2 p-2.5 bg-surface text-text-secondary hover:text-purple-500 hover:bg-purple-500/10 rounded-xl border border-border transition-all cursor-pointer group/link"
+                                                    className="inline-flex items-center gap-2 p-2.5 bg-surface text-text-secondary hover:text-primary hover:bg-primary/10 rounded-xl border border-border transition-all cursor-pointer group/link"
                                                 >
                                                     <span className="text-xs font-bold hidden sm:inline">View Channel</span>
                                                     <ExternalLink size={16} />

@@ -104,16 +104,16 @@ const Dashboard = () => {
             <Container className="px-4">
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                    <StatCard icon={Video} label="Total Videos" value={stats?.totalVideos || 0} color="bg-blue-500 shadow-blue-500/20" />
-                    <StatCard icon={Eye} label="Cumulative Views" value={formatViews(stats?.totalViews || 0).replace(' views', '')} color="bg-emerald-500 shadow-emerald-500/20" />
+                    <StatCard icon={Video} label="Total Videos" value={stats?.totalVideos || 0} color="bg-primary shadow-primary/20" />
+                    <StatCard icon={Eye} label="Cumulative Views" value={formatViews(stats?.totalViews || 0).replace(' views', '')} color="bg-success shadow-success/20" />
                     <StatCard
                         icon={Users}
                         label="Subscribers"
                         value={stats?.totalSubscribers || 0}
-                        color="bg-purple-500 shadow-purple-500/20"
+                        color="bg-warning shadow-primary/20"
                         onClick={() => navigate("/subscribers")}
                     />
-                    <StatCard icon={Heart} label="Channel Likes" value={formatViews(stats?.totalLikes || 0).replace(' views', '')} color="bg-rose-500 shadow-rose-500/20" />
+                    <StatCard icon={Heart} label="Channel Likes" value={formatViews(stats?.totalLikes || 0).replace(' views', '')} color="bg-error shadow-error/20" />
                 </div>
 
                 {/* Video Table */}
@@ -166,8 +166,8 @@ const Dashboard = () => {
                                                 <div className={tw(
                                                     "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border",
                                                     video.isPublished
-                                                        ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
-                                                        : "bg-amber-500/10 text-amber-500 border-amber-500/20"
+                                                        ? "bg-success/10 text-success border-success/20"
+                                                        : "bg-warning/10 text-warning border-warning/20"
                                                 )}>
                                                     {video.isPublished ? <Globe size={10} /> : <Lock size={10} />}
                                                     {video.isPublished ? "Public" : "Private"}

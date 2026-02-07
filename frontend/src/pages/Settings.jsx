@@ -174,7 +174,7 @@ const Settings = () => {
                         {/* Account Details */}
                         <section className="bg-surface/10 rounded-3xl p-8 border border-border/40">
                             <h2 className="text-xl font-bold text-text-main mb-8 flex items-center gap-2">
-                                <span className="w-1.5 h-6 bg-green-500 rounded-full" />
+                                <span className="w-1.5 h-6 bg-success rounded-full" />
                                 Personal Info
                             </h2>
                             <form onSubmit={handleUpdateDetails} className="space-y-6">

@@ -184,7 +184,7 @@ const SearchResults = () => {
                                                     </span>
                                                 </div>
                                                 <div className="flex items-center gap-2 px-3 py-1.5 bg-surface/50 border border-border/60 rounded-xl">
-                                                    <Eye size={14} className="text-emerald-500" />
+                                                    <Eye size={14} className="text-success" />
                                                     <span className="text-xs font-black text-text-main">
                                                         {formatViews(video.views).replace(' views', '')}
                                                     </span>
