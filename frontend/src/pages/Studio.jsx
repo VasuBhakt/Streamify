@@ -91,6 +91,11 @@ const Studio = () => {
             return;
         }
 
+        if (!description.trim()) {
+            setStatus({ type: "error", message: "Description is required" });
+            return;
+        }
+
         if (!videoId && !videoFile) {
             setStatus({ type: "error", message: "Video file is required for new uploads" });
             return;
