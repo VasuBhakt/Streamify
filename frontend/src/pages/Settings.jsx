@@ -19,10 +19,6 @@ const Settings = () => {
     const [avatarLoading, setAvatarLoading] = useState(false);
     const [coverLoading, setCoverLoading] = useState(false);
 
-    const [oldPassword, setOldPassword] = useState("");
-    const [newPassword, setNewPassword] = useState("");
-    const [passwordLoading, setPasswordLoading] = useState(false);
-
     const avatarInputRef = useRef();
     const coverInputRef = useRef();
 
@@ -76,21 +72,6 @@ const Settings = () => {
             alert("Cover image upload failed.");
         } finally {
             setCoverLoading(false);
-        }
-    };
-
-    const handleChangePassword = async (e) => {
-        e.preventDefault();
-        try {
-            setPasswordLoading(true);
-            await userService.changeUserPassword({ oldPassword, newPassword });
-            setOldPassword("");
-            setNewPassword("");
-            alert("Password changed successfully!");
-        } catch (error) {
-            alert("Password change failed. Check your old password.");
-        } finally {
-            setPasswordLoading(false);
         }
     };
 
