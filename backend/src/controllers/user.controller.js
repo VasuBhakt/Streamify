@@ -54,16 +54,22 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         }
 
         // generate new access and refresh token
-        const options = {
+        const accessTokenOption = {
             httpOnly: true,
-            secure: true
+            secure: true,
+            maxAge: 24 * 60 * 60 * 1000 // 1 day
+        }
+        const refreshTokenOption = {
+            httpOnly: true,
+            secure: true,
+            maxAge: 10 * 24 * 60 * 60 * 1000 // 10 days
         }
         const { accessToken, refreshToken: newRefreshToken } = await generateAccessAndRefreshToken(user._id);
 
         return res
             .status(200)
-            .cookie("accessToken", accessToken, options)
-            .cookie("refreshToken", newRefreshToken, options)
+            .cookie("accessToken", accessToken, accessTokenOption)
+            .cookie("refreshToken", newRefreshToken, refreshTokenOption)
             .json(
                 new APIResponse(200, {
                     accessToken,
@@ -204,14 +210,21 @@ const loginUser = asyncHandler(async (req, res) => {
     delete loggedInUser.password;
     delete loggedInUser.refreshToken;
 
-    const options = {
-        httpOnly: true, // these allow cookies to be modified only via server, not via client
+    const accessTokenOption = {
+        httpOnly: true,
         secure: true,
+        maxAge: 24 * 60 * 60 * 1000 // 1 day
+    }
+
+    const refreshTokenOption = {
+        httpOnly: true,
+        secure: true,
+        maxAge: 10 * 24 * 60 * 60 * 1000 // 10 days
     }
 
     return res.status(201)
-        .cookie("accessToken", accessToken, options)
-        .cookie("refreshToken", refreshToken, options)
+        .cookie("accessToken", accessToken, accessTokenOption)
+        .cookie("refreshToken", refreshToken, refreshTokenOption)
         .json(
             new APIResponse(201,
                 {

@@ -4,13 +4,14 @@ import { Link, useNavigate } from "react-router-dom";
 import authService from "../services/auth.js";
 import Button from "../components/button/Button";
 import Input from "../components/input/Input";
-import { User, Mail, Lock, Camera, Image as ImageIcon, X } from "lucide-react";
+import { User, Mail, Lock, Camera, Image as ImageIcon, X, Eye, EyeOff } from "lucide-react";
 
 function Register() {
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [avatarPreview, setAvatarPreview] = useState(null);
     const [coverPreview, setCoverPreview] = useState(null);
+    const [showPassword, setShowPassword] = useState(false);
 
     const navigate = useNavigate();
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
@@ -157,9 +158,18 @@ function Register() {
 
                         <Input
                             label="Password"
-                            type="password"
+                            type={showPassword ? "text" : "password"}
                             placeholder="••••••••"
                             icon={Lock}
+                            rightElement={
+                                <button
+                                    type="button"
+                                    className="w-5 h-5 cursor-pointer mr-2"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                >
+                                    {showPassword ? <Eye /> : <EyeOff />}
+                                </button>
+                            }
                             {...register("password", {
                                 required: "Password is required",
                                 minLength: { value: 6, message: "Password must be at least 6 characters" }

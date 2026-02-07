@@ -6,11 +6,12 @@ import authService from "../services/auth.js";
 import { login as authLogin } from "../features/authSlice.js";
 import Button from "../components/button/Button";
 import Input from "../components/input/Input";
-import { Lock, Mail } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 
 function Login() {
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -66,9 +67,18 @@ function Login() {
 
                         <Input
                             label="Password"
-                            type="password"
+                            type={showPassword ? "text" : "password"}
                             placeholder="Enter your password"
                             icon={Lock}
+                            rightElement={
+                                <button
+                                    type="button"
+                                    className="w-5 h-5 cursor-pointer mr-2"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                >
+                                    {showPassword ? <Eye /> : <EyeOff />}
+                                </button>
+                            }
                             {...register("password", {
                                 required: "Password is required"
                             })}

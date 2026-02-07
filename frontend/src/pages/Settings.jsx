@@ -5,7 +5,7 @@ import { login } from "../features/authSlice";
 import Container from "../components/container/Container";
 import Input from "../components/input/Input";
 import Button from "../components/button/Button";
-import { Loader2, Camera, Lock, User, Mail, Image as ImageIcon, Info } from "lucide-react";
+import { Loader2, Camera, Lock, User, Mail, Image as ImageIcon, Info, Eye, EyeOff } from "lucide-react";
 import tw from "../utils/tailwindUtil";
 
 const Settings = () => {
@@ -207,8 +207,22 @@ const Settings = () => {
                                 Security
                             </h2>
                             <form onSubmit={handleChangePassword} className="space-y-6">
-                                <Input label="Current Password" icon={Lock} type="password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} placeholder="••••••••" />
-                                <Input label="New Password" icon={Lock} type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="••••••••" />
+                                <Input
+                                    label="Current Password"
+                                    icon={Lock}
+                                    type="text"
+                                    value={oldPassword}
+                                    onChange={(e) => setOldPassword(e.target.value)}
+                                    placeholder="••••••••"
+                                />
+                                <Input
+                                    label="New Password"
+                                    icon={Lock}
+                                    type="text"
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    placeholder="••••••••"
+                                />
                                 <div className="pt-4">
                                     <Button variant="danger" type="submit" className="w-full md:w-auto px-10 rounded-2xl font-bold py-3" disabled={passwordLoading}>
                                         {passwordLoading ? <Loader2 size={20} className="animate-spin" /> : "Update Password"}
