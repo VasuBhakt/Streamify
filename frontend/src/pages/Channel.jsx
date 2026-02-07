@@ -18,7 +18,7 @@ const Channel = () => {
     const [videos, setVideos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [videosLoading, setVideosLoading] = useState(false);
-    const [activeTab, setActiveTab] = useState("videos"); // videos, playlist, about
+    const [activeTab, setActiveTab] = useState("videos"); // videos, about
     const [isSubscribed, setIsSubscribed] = useState(false);
     const [subscribersCount, setSubscribersCount] = useState(0);
 
@@ -98,7 +98,7 @@ const Channel = () => {
                     <User className="w-12 h-12 text-text-secondary" />
                 </div>
                 <h2 className="text-2xl font-bold text-text-main">Channel not found</h2>
-                <Link to="/">
+                <Link to="/home">
                     <Button variant="primary">Go Home</Button>
                 </Link>
             </div>
@@ -109,7 +109,6 @@ const Channel = () => {
 
     const tabs = [
         { id: "videos", label: "Videos", icon: Video },
-        { id: "playlist", label: "Playlists", icon: PlaySquare },
         { id: "about", label: "About", icon: Info },
     ];
 
@@ -228,13 +227,6 @@ const Channel = () => {
                                     <p className="text-text-secondary text-sm mt-1">This channel hasn't posted any content yet.</p>
                                 </div>
                             )}
-                        </div>
-                    )}
-
-                    {activeTab === "playlist" && (
-                        <div className="text-center py-20 bg-surface/5 rounded-3xl border border-dashed border-border/50">
-                            <h3 className="text-lg font-bold text-text-main">Playlists Coming Soon</h3>
-                            <p className="text-text-secondary text-sm mt-1">We are working on bringing playlists to your channel profile.</p>
                         </div>
                     )}
 

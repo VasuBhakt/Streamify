@@ -9,12 +9,14 @@ import authService from "./services/auth";
 
 function App() {
     const location = useLocation();
+    const isLandingPage = location.pathname === "/";
     const isAuthPage = location.pathname === "/login" || location.pathname === "/register";
+    const hideNavSidebar = isLandingPage || isAuthPage;
 
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (isAuthPage) return;
+        if (isAuthPage || isLandingPage) return;
         authService.getCurrentUser()
             .then((response) => {
                 if (response?.data) {
@@ -32,11 +34,11 @@ function App() {
     return (
         <div className="flex flex-col min-h-screen text-text-main font-sans overflow-x-hidden relative bg-background">
             <div className="relative z-10 flex flex-col min-h-screen">
-                <Navbar />
-                <div className="flex flex-1 pt-16">
-                    {!isAuthPage && <Sidebar />}
+                {!hideNavSidebar && <Navbar />}
+                <div className="flex flex-1 pt-0 md:pt-16">
+                    {!hideNavSidebar && <Sidebar />}
 
-                    <main className={tw("flex-1 w-full overflow-x-hidden", isAuthPage && "flex items-center justify-center pt-0")}>
+                    <main className={tw("flex-1 w-full overflow-x-hidden", hideNavSidebar && "flex items-center justify-center pt-0")}>
                         <Outlet />
                     </main>
                 </div>

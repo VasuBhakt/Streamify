@@ -36,7 +36,7 @@ const Sidebar = () => {
 
 
     const mainNavItems = [
-        { icon: Home, label: 'Home', to: '/' },
+        { icon: Home, label: 'Home', to: '/home' },
         { icon: Folder, label: 'Subscriptions', to: '/subscriptions' },
         { icon: ThumbsUp, label: 'Liked Videos', to: '/liked-videos' },
         { icon: History, label: 'History', to: '/history' },
@@ -68,7 +68,7 @@ const Sidebar = () => {
 
                 {!status && (
                     <div className="flex-1 overflow-y-auto py-4 px-3 space-y-1 scrollbar-hide">
-                        <SidebarItem icon={Home} key="/" label="Home" to="/" isExpanded={isExpanded} />
+                        <SidebarItem icon={Home} key="/home" label="Home" to="/home" isExpanded={isExpanded} />
                         <SidebarItem icon={LogIn} key="/login" label="Login" to="/login" isExpanded={isExpanded} />
                     </div>
                 )}

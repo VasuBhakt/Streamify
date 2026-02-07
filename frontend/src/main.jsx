@@ -18,6 +18,7 @@ import Subscribers from './pages/Subscribers.jsx'
 import Subscriptions from './pages/Subscriptions.jsx'
 import Register from './pages/Register.jsx'
 import Channel from './pages/Channel.jsx'
+import Landing from './pages/Landing.jsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
 const router = createBrowserRouter([
@@ -26,7 +27,11 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: "",
+        index: true,
+        element: <Landing />
+      },
+      {
+        path: "home",
         element: <Home />
       },
       {

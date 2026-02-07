@@ -28,7 +28,7 @@ const Navbar = () => {
         try {
             await authService.logoutUser();
             dispatch(logout());
-            navigate("/login");
+            navigate("/");
         } catch (error) {
             console.error("Navbar :: handleLogout :: error", error);
         }
@@ -44,7 +44,7 @@ const Navbar = () => {
                 >
                     <Menu size={24} />
                 </button>}
-                <Link to="/" className={tw("flex items-center gap-2 cursor-pointer group", isAuthPage && "m-4")}>
+                <Link to="/home" className={tw("flex items-center gap-2 cursor-pointer group", isAuthPage && "m-4")}>
                     <span className="text-xl font-bold text-text-main hidden sm:block">
                         <span className="text-primary">Stream</span>ify
                     </span>

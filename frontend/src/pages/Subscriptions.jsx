@@ -44,7 +44,7 @@ const Subscriptions = () => {
                 <Container>
                     <div className="px-4">
                         <Link
-                            to="/"
+                            to="/home"
                             className="inline-flex items-center gap-2 text-text-muted hover:text-primary transition-colors mb-6 group"
                         >
                             <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
