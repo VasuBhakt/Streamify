@@ -111,6 +111,9 @@ function Register() {
                                 Sign in instead
                             </Link>
                         </p>
+                        <p className="text-xs text-text-secondary">
+                            Careful with your username, you cannot change it later!
+                        </p>
                     </div>
 
                     {error && (
@@ -130,7 +133,7 @@ function Register() {
                             />
 
                             <Input
-                                label="Username (Careful, you cannot change it later!)"
+                                label="Username"
                                 placeholder="johndoe123"
                                 icon={User}
                                 {...register("username", {
