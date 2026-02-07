@@ -67,7 +67,7 @@ const Sidebar = () => {
                 </div>)}
 
                 {!status && (
-                    <div className="flex-1 overflow-y-auto py-4 px-3 space-y-1 scrollbar-hide">
+                    <div className="flex-1 overflow-y-auto py-4 p-3 space-y-1 scrollbar-hide">
                         <SidebarItem icon={Home} key="/home" label="Home" to="/home" isExpanded={isExpanded} />
                         <SidebarItem icon={LogIn} key="/login" label="Login" to="/login" isExpanded={isExpanded} />
                     </div>

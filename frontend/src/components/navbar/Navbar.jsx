@@ -44,11 +44,15 @@ const Navbar = () => {
                 >
                     <Menu size={24} />
                 </button>}
-                <Link to="/home" className={tw("flex items-center gap-2 cursor-pointer group", isAuthPage && "m-4")}>
-                    <span className="text-xl font-bold text-text-main hidden sm:block">
-                        <span className="text-primary">Stream</span>ify
-                    </span>
-                </Link>
+                <div className="flex flex-col">
+                    <Link to="/home" className={tw("flex items-center gap-2 cursor-pointer group", isAuthPage && "m-4")}>
+                        <span className="text-xl font-bold text-text-main hidden sm:block">
+                            <span className="text-primary">Stream</span>ify
+                        </span>
+                    </Link>
+                    <span className="text-text-muted text-xs">By Maadhava</span>
+                </div>
+
             </div>
 
             {/* Center: Search Bar */}

@@ -199,37 +199,6 @@ const Settings = () => {
                                 </div>
                             </form>
                         </section>
-
-                        {/* Security Details */}
-                        <section className="bg-surface/10 rounded-3xl p-8 border border-border/40">
-                            <h2 className="text-xl font-bold text-text-main mb-8 flex items-center gap-2">
-                                <span className="w-1.5 h-6 bg-error rounded-full" />
-                                Security
-                            </h2>
-                            <form onSubmit={handleChangePassword} className="space-y-6">
-                                <Input
-                                    label="Current Password"
-                                    icon={Lock}
-                                    type="text"
-                                    value={oldPassword}
-                                    onChange={(e) => setOldPassword(e.target.value)}
-                                    placeholder="••••••••"
-                                />
-                                <Input
-                                    label="New Password"
-                                    icon={Lock}
-                                    type="text"
-                                    value={newPassword}
-                                    onChange={(e) => setNewPassword(e.target.value)}
-                                    placeholder="••••••••"
-                                />
-                                <div className="pt-4">
-                                    <Button variant="danger" type="submit" className="w-full md:w-auto px-10 rounded-2xl font-bold py-3" disabled={passwordLoading}>
-                                        {passwordLoading ? <Loader2 size={20} className="animate-spin" /> : "Update Password"}
-                                    </Button>
-                                </div>
-                            </form>
-                        </section>
                     </div>
                 </div>
             </Container>

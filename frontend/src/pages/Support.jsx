@@ -20,6 +20,8 @@ const Support = () => {
         }
     };
 
+    const techStack = ["React", "Redux Toolkit", "Node.js", "MongoDB", "Express", "TailwindCSS", "Framer Motion", "Cloudinary", "SendGrid"]
+
     return (
         <div className="min-h-full w-full bg-background-page p-6 md:p-12 lg:p-16">
             <motion.div
@@ -105,7 +107,7 @@ const Support = () => {
                                 playback, real-time interactions, and a fully responsive "Electric Blue" design system.
                             </p>
                             <div className="flex flex-wrap gap-3">
-                                {["React", "Redux Toolkit", "Node.js", "MongoDB", "Express", "TailwindCSS", "Framer Motion"].map(tech => (
+                                {techStack.map(tech => (
                                     <span key={tech} className="px-3 py-1 bg-primary/5 text-primary border border-primary/10 rounded-full text-xs font-medium">
                                         {tech}
                                     </span>
