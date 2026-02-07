@@ -375,7 +375,7 @@ const VideoDetail = () => {
                                         type="text"
                                         readOnly={!status}
                                         placeholder={status ? "Add a comment" : "Add a public comment (Sign in required)..."}
-                                        className={tw("w-full bg-transparent border-b border-border py-2 outline-none text-text-muted", !status && "cursor-not-allowed")}
+                                        className={tw("w-full bg-transparent border-b border-border py-2 outline-none text-text-main", !status && "cursor-not-allowed")}
                                     />
                                     {status && (<div className="flex justify-end gap-3 mt-3 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300">
                                         <Button variant="ghost" className="px-4 py-1.5 text-sm font-semibold text-text-secondary hover:text-text-main transition-colors" onClick={cancelComment}>Cancel</Button>
