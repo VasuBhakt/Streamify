@@ -12,10 +12,6 @@ The Streamify frontend is a single-page application (SPA) that delivers a YouTub
 
 ---
 
-## 🏗️ Architecture
-
----
-
 ## ✨ Features
 
 ### 🎨 User Interface
@@ -23,8 +19,6 @@ The Streamify frontend is a single-page application (SPA) that delivers a YouTub
 #### Design System
 - **Electric Blue Theme**: Custom color palette with vibrant, modern aesthetics
 - **Dark Mode**: Optimized for low-light viewing
-- **Responsive Design**: Mobile-first approach with breakpoints for all devices
-- **Glassmorphism Effects**: Modern UI with frosted glass aesthetics
 - **Smooth Animations**: Framer Motion-powered transitions and micro-interactions
 - **Custom Typography**: Carefully selected font hierarchy for readability
 
