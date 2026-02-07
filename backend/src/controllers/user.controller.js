@@ -262,6 +262,9 @@ const logoutUser = asyncHandler(async (req, res) => {
     const options = {
         httpOnly: true, // these allow cookies to be modified only via server, not via client
         secure: true,
+        sameSite: "none", // this is required for cookies to work on production for logout
+        path: "/"
+
     }
     return res.status(200)
         .clearCookie("accessToken", options)
