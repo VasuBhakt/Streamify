@@ -60,9 +60,10 @@ const router = createBrowserRouter([
       },
       {
         path: "reset-password/:token",
-        element: <AuthLayout auth={false}>
-          <ResetPassword />
-        </AuthLayout>
+        element:
+          <AuthLayout auth={false}>
+            <ResetPassword />
+          </AuthLayout>
       },
       {
         path: "/c/:username",

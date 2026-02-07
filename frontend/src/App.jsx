@@ -35,7 +35,7 @@ function App() {
         <div className="flex flex-col min-h-screen text-text-main font-sans overflow-x-hidden relative bg-background">
             <div className="relative z-10 flex flex-col min-h-screen">
                 {!hideNavSidebar && <Navbar />}
-                <div className="flex flex-1 pt-0 md:pt-16">
+                <div className={tw("flex flex-1 pt-0", isLandingPage ? "pt-0" : "md:pt-16")}>
                     {!hideNavSidebar && <Sidebar />}
 
                     <main className={tw("flex-1 w-full overflow-x-hidden", hideNavSidebar && "flex items-center justify-center pt-0")}>

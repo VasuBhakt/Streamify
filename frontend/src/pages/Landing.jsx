@@ -28,7 +28,7 @@ const Landing = () => {
     return (
         <div className="relative min-h-screen w-full bg-background overflow-hidden flex flex-col items-center justify-center">
             {/* Animated Background Elements */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {/*<div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <motion.div
                     animate={{
                         scale: [1, 1.2, 1],
@@ -57,9 +57,9 @@ const Landing = () => {
                     }}
                     className="absolute -bottom-[10%] -right-[10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[150px]"
                 />
-            </div>
+            </div>*/}
 
-            <main className="relative z-10 container mx-auto px-4 text-center">
+            <main className="z-10 container mx-auto px-4 text-center justify-center">
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -70,6 +70,19 @@ const Landing = () => {
                         <Sparkles className="w-4 h-4" />
                         <span>{status ? `Welcome back, ${userData?.fullName}` : 'Experience the Future of Video'}</span>
                     </div>
+                </motion.div>
+
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 1, delay: 0.1, ease: "easeOut" }}
+                    className="mb-8 flex justify-center"
+                >
+                    <img
+                        src="/streamify_icon.svg"
+                        alt="Streamify Logo"
+                        className="w-24 h-24 md:w-32 md:h-32 drop-shadow-[0_0_25px_rgba(59,130,246,0.4)]"
+                    />
                 </motion.div>
 
                 <motion.h1
@@ -133,26 +146,6 @@ const Landing = () => {
                             </motion.button>
                         </Link>
                     )}
-                </motion.div>
-
-                {/* Features Grid */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 1, delay: 1 }}
-                    className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto"
-                >
-                    {[
-                        { icon: Zap, title: "Ultra Fast", desc: "Native performance with lightning quick load times." },
-                        { icon: Shield, title: "Secure", desc: "Enterprise grade security for your content and data." },
-                        { icon: Globe, title: "Global", desc: "Stream to anyone, anywhere in the world effortlessly." }
-                    ].map((feature, idx) => (
-                        <div key={idx} className="p-6 rounded-2xl bg-surface/50 border border-border/50 backdrop-blur-sm">
-                            <feature.icon className="w-8 h-8 text-primary mb-4 mx-auto" />
-                            <h3 className="text-lg font-bold mb-2">{feature.title}</h3>
-                            <p className="text-text-secondary text-sm">{feature.desc}</p>
-                        </div>
-                    ))}
                 </motion.div>
             </main>
 

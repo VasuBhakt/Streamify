@@ -64,7 +64,7 @@ const Loading = ({ fullScreen = true, message = "Loading Streamify..." }) => {
                 className="mt-8 flex flex-col items-center gap-2"
             >
                 <h3 className="text-xl font-bold text-text-main tracking-tight font-heading">
-                    Stream<span className="text-primary">ify</span>
+                    <span className="text-primary">Stream</span>ify
                 </h3>
                 <motion.p
                     animate={{ opacity: [0.5, 1, 0.5] }}
