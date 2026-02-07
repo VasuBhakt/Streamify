@@ -135,14 +135,21 @@ const Support = () => {
                             className="p-1 rounded-3xl bg-linear-to-r from-primary/50 to-blue-400/50"
                         >
                             <div className="bg-surface rounded-[22px] p-8">
-                                <h3 className="text-xl font-bold mb-2">Want to collaborate?</h3>
+                                <h3 className="text-xl font-bold mb-2">Want to collaborate</h3>
                                 <p className="text-text-secondary mb-6 italic">
-                                    "Code is a way to express ideas that can change the world. Let's build something amazing together."
+                                    "Code is a way to express ideas that can change the world. Let's build something amazing together. Catch me on my socials!"
                                 </p>
-                                <button className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-secondary-hover text-white rounded-xl font-semibold transition-all cursor-pointer">
-                                    Get in Touch
-                                    <ExternalLink className="w-4 h-4" />
-                                </button>
+                                <h3 className="text-xl font-bold mb-2">Want to report a problem?</h3>
+                                <div className="flex flex-wrap gap-2">
+                                    <a href="https://github.com/VasuBhakt" className="p-3 bg-background rounded-xl border border-border hover:border-primary/50 text-text-secondary hover:text-white transition-all">
+                                        <Github className="w-5 h-5" />
+                                    </a>
+                                    <p className="text-text-secondary mb-6 italic">
+                                        Add as an issue in the official GitHub repo!
+                                    </p>
+                                </div>
+
+
                             </div>
                         </motion.div>
                     </div>
