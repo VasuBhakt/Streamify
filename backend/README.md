@@ -60,7 +60,7 @@ Production-ready Express.js application handling authentication, video managemen
 | **Runtime & Framework** | ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white) ![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB) |
 | **Database** | ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white) ![Mongoose](https://img.shields.io/badge/Mongoose-880000?style=for-the-badge&logo=mongoose&logoColor=white) |
 | **Auth & Security** | ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens) ![Bcrypt](https://img.shields.io/badge/Bcrypt-37474F?style=for-the-badge) |
-| **Media & Mail** | ![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=for-the-badge&logo=Cloudinary&logoColor=white) ![SendGrid](https://img.shields.io/badge/SendGrid-00B2E3?style=for-the-badge&logo=SendGrid&logoColor=white) ![Multer](https://img.shields.io/badge/Multer-grey?style=for-the-badge) |
+| **Media & Mail** | ![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=for-the-badge&logo=Cloudinary&logoColor=white) ![Brevo](https://img.shields.io/badge/Brevo-6358DE?style=for-the-badge&logo=brevo&logoColor=white) ![Multer](https://img.shields.io/badge/Multer-grey?style=for-the-badge) |
 | **Infrastructure** | ![Render](https://img.shields.io/badge/Render-%46E3B7.svg?style=for-the-badge&logo=render&logoColor=white) ![Atlas](https://img.shields.io/badge/MongoDB_Atlas-white?style=for-the-badge&logo=mongodb&logoColor=47A248) |
 
 ---

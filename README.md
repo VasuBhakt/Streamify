@@ -15,7 +15,7 @@
 Streamify is built to handle the full lifecycle of digital video—from secure creator uploads and Cloudinary-powered processing to real-time user engagement and channel analytics.
 
 ## 🚀 Core Capabilities
-- **Secure Auth**: JWT-based authentication with Refresh Token rotation and SendGrid password recovery.
+- **Secure Auth**: JWT-based authentication with Refresh Token rotation and Brevo password recovery.
 - **Video Lifecycle**: Drag-and-drop uploads, custom thumbnails, and draft/publish workflows.
 - **Engagement Engine**: Subscription models, commenting, and like/unlike functionality.
 - **Creator Dashboard**: Real-time analytics for views, subscribers, and video-level performance.
@@ -41,7 +41,7 @@ Streamify/
 | :--- | :--- |
 | **Frontend** | ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) ![Redux](https://img.shields.io/badge/Redux-593D88?style=for-the-badge&logo=redux&logoColor=white) ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white) ![Framer](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white) |
 | **Backend** | ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white) ![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB) ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white) ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens) |
-| **Media & Services** | ![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=for-the-badge&logo=Cloudinary&logoColor=white) ![SendGrid](https://img.shields.io/badge/SendGrid-00B2E3?style=for-the-badge&logo=SendGrid&logoColor=white) ![Multer](https://img.shields.io/badge/Multer-grey?style=for-the-badge) |
+| **Media & Services** | ![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=for-the-badge&logo=Cloudinary&logoColor=white) ![Brevo](https://img.shields.io/badge/Brevo-6358DE?style=for-the-badge&logo=brevo&logoColor=white) ![Multer](https://img.shields.io/badge/Multer-grey?style=for-the-badge) |
 | **Deployment** | ![Vercel](https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white) ![Render](https://img.shields.io/badge/Render-%46E3B7.svg?style=for-the-badge&logo=render&logoColor=white) ![Atlas](https://img.shields.io/badge/MongoDB_Atlas-white?style=for-the-badge&logo=mongodb&logoColor=47A248) |
 
 ---
