@@ -139,70 +139,71 @@ function VideoPlayer({ video, className }) {
                             </div>
                         )}
                         {/*Bottom Controls Bar*/}
-                        <div className="flex flex-col gap-2 bg-linear-to-t from-background/80 to-transparent pt-4 pb-1 px-2 rounded-b-xl pointer-events-auto" onClick={(e) => e.stopPropagation()}>
-                            {/*Progress Bar*/}
-                            <div className="group/slider w-full h-1 relative flex items-center cursor-pointer">
-                                <input
-                                    type="range"
-                                    min="0"
-                                    max={videoDuration || 100}
-                                    value={currentTime}
-                                    onChange={handleUserTimeUpdate}
-                                    className="absolute w-full h-full opacity-0 cursor-pointer z-10"
-                                />
-                                <div className="w-full h-1 bg-surface-hover rounded-full overflow-hidden">
-                                    <div className="h-full bg-primary rounded-full"
-                                        style={{ width: `${currentTime / (videoDuration || 1) * 100}%` }} />
+                        {isHovering && (
+                            <div className="flex flex-col gap-2 bg-linear-to-t from-background/80 to-transparent pt-4 pb-1 px-2 rounded-b-xl pointer-events-auto" onClick={(e) => e.stopPropagation()}>
+                                {/*Progress Bar*/}
+                                <div className="group/slider w-full h-1 relative flex items-center cursor-pointer">
+                                    <input
+                                        type="range"
+                                        min="0"
+                                        max={videoDuration || 100}
+                                        value={currentTime}
+                                        onChange={handleUserTimeUpdate}
+                                        className="absolute w-full h-full opacity-0 cursor-pointer z-10"
+                                    />
+                                    <div className="w-full h-1 bg-surface-hover rounded-full overflow-hidden">
+                                        <div className="h-full bg-primary rounded-full"
+                                            style={{ width: `${currentTime / (videoDuration || 1) * 100}%` }} />
+                                    </div>
+                                    <div
+                                        className="absolute w-3 h-3 bg-text-main rounded-full opacity-0 group-hover/slider:opacity-100 transition-opacity pointer-events-none"
+                                        style={{ left: `${(currentTime / (videoDuration || 1)) * 100}%`, transform: 'translateX(-50%)' }}
+                                    />
                                 </div>
-                                <div
-                                    className="absolute w-3 h-3 bg-text-main rounded-full opacity-0 group-hover/slider:opacity-100 transition-opacity pointer-events-none"
-                                    style={{ left: `${(currentTime / (videoDuration || 1)) * 100}%`, transform: 'translateX(-50%)' }}
-                                />
-                            </div>
-                            {/*Buttons & Time */}
-                            <div className="flex items-center justify-between text-text-main mt-1">
-                                <div className="flex items-center gap-3">
-                                    <button onClick={togglePlay} className="hover:text-secondary-hover transition-colors cursor-pointer">
-                                        {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
-                                    </button>
-                                    {/*Volume Control Container*/}
-                                    <div className="flex items-center gap-3 relative z-10"
-                                        onMouseEnter={() => setIsVolumeHovered(true)}
-                                        onMouseLeave={() => setIsVolumeHovered(false)}
-                                        onClick={(e) => e.stopPropagation()}
-                                    >
-                                        <button onClick={toggleMute} className="hover:text-secondary-hover transition-colors cursor-pointer">
-                                            {isMuted || currentVolume === 0 ? <VolumeX className='w-6 h-6' /> : (currentVolume < 0.5 ? <Volume1 className='w-6 h-6' /> : <Volume2 className='w-6 h-6' />)}
+                                {/*Buttons & Time */}
+                                <div className="flex items-center justify-between text-text-main mt-1">
+                                    <div className="flex items-center gap-3">
+                                        <button onClick={togglePlay} className="hover:text-secondary-hover transition-colors cursor-pointer">
+                                            {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
                                         </button>
-                                        {/* Volume Slider Container */}
-                                        <div className={`h-6 flex items-center transition-all duration-300 ease-in-out overflow-hidden shrink-0 ${isVolumeHovered ? 'w-24 opacity-100' : 'w-0 opacity-0'}`}>
-                                            <div className="group/slider h-full w-full relative flex items-center cursor-pointer">
-                                                <input
-                                                    type="range"
-                                                    min="0"
-                                                    max="1"
-                                                    step="0.05"
-                                                    value={isMuted ? 0 : currentVolume}
-                                                    onChange={handleUserVolumeChange}
-                                                    className="absolute w-full h-full opacity-0 cursor-pointer z-10"
-                                                />
-                                                <div className="w-full h-1 bg-surface-hover rounded-full overflow-hidden">
-                                                    <div className="h-full bg-primary rounded-full transition-all duration-100"
-                                                        style={{ width: `${(isMuted ? 0 : currentVolume) * 100}%` }} />
+                                        {/*Volume Control Container*/}
+                                        <div className="flex items-center gap-3 relative z-10"
+                                            onMouseEnter={() => setIsVolumeHovered(true)}
+                                            onMouseLeave={() => setIsVolumeHovered(false)}
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            <button onClick={toggleMute} className="hover:text-secondary-hover transition-colors cursor-pointer">
+                                                {isMuted || currentVolume === 0 ? <VolumeX className='w-6 h-6' /> : (currentVolume < 0.5 ? <Volume1 className='w-6 h-6' /> : <Volume2 className='w-6 h-6' />)}
+                                            </button>
+                                            {/* Volume Slider Container */}
+                                            <div className={`h-6 flex items-center transition-all duration-300 ease-in-out overflow-hidden shrink-0 ${isVolumeHovered ? 'w-24 opacity-100' : 'w-0 opacity-0'}`}>
+                                                <div className="group/slider h-full w-full relative flex items-center cursor-pointer">
+                                                    <input
+                                                        type="range"
+                                                        min="0"
+                                                        max="1"
+                                                        step="0.05"
+                                                        value={isMuted ? 0 : currentVolume}
+                                                        onChange={handleUserVolumeChange}
+                                                        className="absolute w-full h-full opacity-0 cursor-pointer z-10"
+                                                    />
+                                                    <div className="w-full h-1 bg-surface-hover rounded-full overflow-hidden">
+                                                        <div className="h-full bg-primary rounded-full transition-all duration-100"
+                                                            style={{ width: `${(isMuted ? 0 : currentVolume) * 100}%` }} />
+                                                    </div>
+                                                    <div
+                                                        className="absolute w-3 h-3 bg-text-main rounded-full opacity-0 group-hover/slider:opacity-100 transition-opacity pointer-events-none"
+                                                        style={{ left: `${(isMuted ? 0 : currentVolume) * 100}%`, transform: 'translateX(-50%)' }}
+                                                    />
                                                 </div>
-                                                <div
-                                                    className="absolute w-3 h-3 bg-text-main rounded-full opacity-0 group-hover/slider:opacity-100 transition-opacity pointer-events-none"
-                                                    style={{ left: `${(isMuted ? 0 : currentVolume) * 100}%`, transform: 'translateX(-50%)' }}
-                                                />
                                             </div>
                                         </div>
+                                        <span className="text-xs font-medium font-mono">
+                                            {formatDuration(currentTime)} / {formatDuration(videoDuration)}
+                                        </span>
                                     </div>
-                                    <span className="text-xs font-medium font-mono">
-                                        {formatDuration(currentTime)} / {formatDuration(videoDuration)}
-                                    </span>
                                 </div>
-                            </div>
-                        </div>
+                            </div>)}
                     </div>
                 )}
                 {(!isPlaying && !isHovering) || !videoFile ? (
