@@ -1,4 +1,4 @@
-# Streamify
+# 📺 Streamify | Full-Stack Video Platform
 
 <p align="center">
     <img src="frontend/public/streamify_logo.png" height="240px"><br>
@@ -12,169 +12,45 @@
 
 ## 🎯 Project Overview
 
-Streamify is a production-ready video streaming platform that enables users to upload, manage, and share video content while providing viewers with an engaging experience through features like comments, likes, and subscriptions. The platform is designed with scalability, security, and user experience as core priorities.
+Streamify is built to handle the full lifecycle of digital video—from secure creator uploads and Cloudinary-powered processing to real-time user engagement and channel analytics.
 
-### Key Highlights
-
-- **Full-Stack Architecture**: Decoupled frontend and backend for optimal performance and maintainability
-- **Cloud-Based Media Storage**: Leverages Cloudinary for efficient video and image hosting
-- **Real-Time Analytics**: Comprehensive dashboard with channel statistics and insights
-- **Secure Authentication**: JWT-based authentication with refresh token rotation
-- **Responsive Design**: Mobile-first approach with TailwindCSS and custom design system
-- **Advanced Search**: Full-text search with MongoDB text indexing
-- **Email Integration**: SendGrid-powered email notifications for password recovery
-
+## 🚀 Core Capabilities
+- **Secure Auth**: JWT-based authentication with Refresh Token rotation and SendGrid password recovery.
+- **Video Lifecycle**: Drag-and-drop uploads, custom thumbnails, and draft/publish workflows.
+- **Engagement Engine**: Subscription models, commenting, and like/unlike functionality.
+- **Creator Dashboard**: Real-time analytics for views, subscribers, and video-level performance.
+- **Advanced Discovery**: Full-text search with MongoDB indexing and chronological watch history.
+  
 ---
 
-## 🏗️ Architecture
+## 🏗️ System Architecture
 
 ```
 Streamify/
-├── frontend/          # React + Vite application
-│   ├── src/
-│   │   ├── components/    # Reusable UI components
-│   │   ├── pages/         # Route-based page components
-│   │   ├── services/      # API integration layer
-│   │   ├── features/      # Redux slices
-│   │   ├── store/         # Redux store configuration
-│   │   └── utils/         # Helper functions and utilities
-│   └── public/            # Static assets
-│
-└── backend/           # Node.js + Express API
-    └── src/
-        ├── controllers/   # Request handlers
-        ├── models/        # MongoDB schemas
-        ├── routes/        # API route definitions
-        ├── middlewares/   # Authentication & file upload
-        ├── utils/         # Cloudinary, email, error handling
-        └── db/            # Database connection
+├── frontend/     # Vite + React 19 (Hosted on Vercel)
+└── backend/      # Node.js + Express + MongoDB (Hosted on Render)
+
 ```
----
-
-## 🚀 Core Features
-
-### User Management
-- **Authentication & Authorization**
-  - Secure registration with email validation
-  - Login with username or email
-  - JWT-based access and refresh tokens
-  - Password reset via email with time-limited tokens
-  - Automatic token refresh mechanism
-  
-- **Profile Management**
-  - Customizable user profiles with avatar and cover images
-  - Channel descriptions and metadata
-  - Watch history tracking
-  - Account settings management
-
-### Video Management
-- **Content Creation**
-  - Video upload with automatic duration extraction
-  - Custom thumbnail upload support
-  - Draft and publish workflow
-  - Studio interface for content management
-
-- **Video Operations**
-  - Update video details and thumbnails
-  - Toggle publish/unpublish status
-  - Delete videos with automatic cloud cleanup
-  - View count tracking (page-specific)
-  - Video search with full-text indexing
-
-### Social Features
-- **Engagement**
-  - Like/unlike videos and comments
-  - Subscribe/unsubscribe to channels
-  - Subscriber count tracking
-  
-- **Content Organization**
-  - Watch history with chronological ordering
-  - Liked videos collection
-
-### Analytics & Dashboard
-- **Channel Statistics**
-  - Total views across all videos
-  - Total subscribers count
-  - Total videos published
-  - Total likes received
-  - Video-level analytics (views, likes, comments)
-
-- **Content Management Dashboard**
-  - Video performance metrics
-  - Quick edit and delete actions
-  - Publish status management
-  - Subscriber list with detailed information
-
-### Search & Discovery
-- **Advanced Search**
-  - Full-text search across video titles and descriptions
-  - Search by channel/creator name
-  - Pagination support
-  - Real-time search results
-
 ---
 
 ## 🛠️ Technology Stack
 
-### Frontend
-- **Framework**: React 19.2.0
-- **Build Tool**: Vite 7.2.4
-- **Routing**: React Router DOM 7.12.0
-- **State Management**: Redux Toolkit 2.11.2
-- **Styling**: TailwindCSS 4.1.18
-- **Animations**: Framer Motion 12.33.0
-- **Forms**: React Hook Form 7.71.1
-- **HTTP Client**: Axios 1.13.2
-- **Icons**: Lucide React 0.562.0
+## 🛠️ Technology Stack
 
-### Backend
-- **Runtime**: Node.js
-- **Framework**: Express 5.2.1
-- **Database**: MongoDB with Mongoose 9.1.1
-- **Authentication**: JSON Web Tokens (jsonwebtoken 9.0.3)
-- **Password Hashing**: bcrypt 6.0.0
-- **File Upload**: Multer 2.0.2
-- **Cloud Storage**: Cloudinary 2.8.0
-- **Email Service**: SendGrid (@sendgrid/mail 8.1.6)
-- **Validation**: Validator 13.15.26
-- **Pagination**: mongoose-aggregate-paginate-v2 1.1.4
-
-### Development Tools
-- **Code Quality**: Prettier
-- **Process Management**: Nodemon
-- **Environment Variables**: dotenv
+| Layer | Technologies |
+| :--- | :--- |
+| **Frontend** | ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) ![Redux](https://img.shields.io/badge/Redux-593D88?style=for-the-badge&logo=redux&logoColor=white) ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white) ![Framer](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white) |
+| **Backend** | ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white) ![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB) ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white) ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens) |
+| **Media & Services** | ![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=for-the-badge&logo=Cloudinary&logoColor=white) ![SendGrid](https://img.shields.io/badge/SendGrid-00B2E3?style=for-the-badge&logo=SendGrid&logoColor=white) ![Multer](https://img.shields.io/badge/Multer-grey?style=for-the-badge) |
+| **Deployment** | ![Vercel](https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white) ![Render](https://img.shields.io/badge/Render-%46E3B7.svg?style=for-the-badge&logo=render&logoColor=white) ![Atlas](https://img.shields.io/badge/MongoDB_Atlas-white?style=for-the-badge&logo=mongodb&logoColor=47A248) |
 
 ---
 
 ## 🔐 Security Features
 
-- **Password Security**: Bcrypt hashing with salt rounds
-- **Token Management**: Separate access and refresh tokens with automatic rotation
-- **CORS Protection**: Configured origin whitelisting
-- **Input Validation**: Server-side validation for all user inputs
-- **Email Verification**: Secure password reset with time-limited tokens
-- **Authentication Middleware**: Protected routes with JWT verification
-- **File Upload Security**: Type and size validation for media uploads
-
----
-
-## 🎨 Design System
-
-The frontend implements a custom design system with:
-- **Color Scheme**: Electric Blue theme
-- **Typography**: Modern, readable font hierarchy
-- **Components**: Reusable, accessible UI components
-- **Animations**: Smooth transitions and micro-interactions
-- **Responsive Layout**: Mobile-first design approach
----
-
-## 📈 Performance Optimizations
-
-- **Database Indexing**: Optimized queries with MongoDB indexes
-- **Aggregation Pipelines**: Efficient data retrieval with MongoDB aggregation
-- **Pagination**: Server-side pagination for large datasets
-- **Lazy Loading**: Component and route-based code splitting
-- **Image Optimization**: Cloudinary transformations for responsive images
+- **State-of-the-Art Auth**: HttpOnly cookies and salt-round Bcrypt hashing.
+- **Database Efficiency**: Complex data retrieval via MongoDB Aggregation Pipelines.
+- **Optimized Delivery**: Lazy loading, code splitting, and Cloudinary CDN transformations.
 
 ---
 
@@ -186,7 +62,7 @@ This project is **proprietary software** and is not open source. All rights rese
 
 ## 👨‍💻 Author
 
-**VasuBhakt**
+**VasuBhakt** Built with the MERN stack and a focus on scalable system design.
 
 ---
 
