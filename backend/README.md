@@ -1,6 +1,6 @@
 # Streamify Backend
 
-A robust Node.js backend API for the Streamify video streaming platform. Built with Express, MongoDB, Cloudinary, and JWT authentication.
+A robust Node.js backend API for the Streamify video streaming platform. Built with Express, MongoDB, Cloudinary, and JWT authentication, and hosted on Render.
 
 > **Note:** This is proprietary software and is not open source. All rights reserved.
 
@@ -62,6 +62,7 @@ Production-ready Express.js application handling authentication, video managemen
 - **Email**: SendGrid (@sendgrid/mail 8.1.6)
 - **Validation**: validator 13.15.26
 - **Pagination**: mongoose-aggregate-paginate-v2 1.1.4
+- **Hosting & CI/CD**: Render
 
 ---
 
