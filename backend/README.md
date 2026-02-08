@@ -55,14 +55,13 @@ Production-ready Express.js application handling authentication, video managemen
 
 ## 🛠️ Technology Stack
 
-- **Runtime**: Node.js with Express 5.2.1
-- **Database**: MongoDB with Mongoose 9.1.1
-- **Authentication**: JWT (jsonwebtoken 9.0.3) + bcrypt 6.0.0
-- **File Upload**: Multer 2.0.2 + Cloudinary 2.8.0
-- **Email**: SendGrid (@sendgrid/mail 8.1.6)
-- **Validation**: validator 13.15.26
-- **Pagination**: mongoose-aggregate-paginate-v2 1.1.4
-- **Hosting & CI/CD**: Render
+| Category | Tools & Technologies |
+| :--- | :--- |
+| **Runtime & Framework** | ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white) ![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB) |
+| **Database** | ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white) ![Mongoose](https://img.shields.io/badge/Mongoose-880000?style=for-the-badge&logo=mongoose&logoColor=white) |
+| **Auth & Security** | ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens) ![Bcrypt](https://img.shields.io/badge/Bcrypt-37474F?style=for-the-badge) |
+| **Media & Mail** | ![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=for-the-badge&logo=Cloudinary&logoColor=white) ![SendGrid](https://img.shields.io/badge/SendGrid-00B2E3?style=for-the-badge&logo=SendGrid&logoColor=white) ![Multer](https://img.shields.io/badge/Multer-grey?style=for-the-badge) |
+| **Infrastructure** | ![Render](https://img.shields.io/badge/Render-%46E3B7.svg?style=for-the-badge&logo=render&logoColor=white) ![Atlas](https://img.shields.io/badge/MongoDB_Atlas-white?style=for-the-badge&logo=mongodb&logoColor=47A248) |
 
 ---
 
