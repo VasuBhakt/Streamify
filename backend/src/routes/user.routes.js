@@ -12,7 +12,8 @@ import {
     getWatchHistory,
     forgotPassword,
     resetPassword,
-    updateAccountDetails
+    updateAccountDetails,
+    deleteAccount
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT, getOptionalUser } from "../middlewares/auth.middleware.js";
@@ -41,6 +42,7 @@ router.route("/cover-image").patch(verifyJWT, upload.single("coverImage"), updat
 router.route("/c/:username").get(getOptionalUser, getUserChannelProfile);
 router.route("/history").get(verifyJWT, getWatchHistory);
 router.route("/refresh-token").post(refreshAccessToken);
+router.route("/delete-account").delete(verifyJWT, deleteAccount);
 
 
 export default router

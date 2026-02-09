@@ -3,6 +3,10 @@ import APIError from "../utils/ApiError.js";
 import APIResponse from "../utils/ApiResponse.js";
 import validator from "validator";
 import { User } from "../models/user.model.js";
+import { Video } from "../models/video.model.js";
+import { Comment } from "../models/comment.model.js";
+import { Like } from "../models/like.model.js";
+import { Subscription } from "../models/subscription.model.js";
 import { uploadOnCloudinary } from "../utils/Cloudinary.js";
 import jwt from "jsonwebtoken"
 import mongoose from "mongoose";
@@ -650,6 +654,33 @@ const resetPassword = asyncHandler(async (req, res) => {
 
 });
 
+const deleteAccount = asyncHandler(async (req, res) => {
+    const userId = req.user?._id;
+    if (!userId) {
+        throw new APIError(401, "Unauthorized");
+    }
+    await Promise.all([
+        Video.deleteMany(
+            { owner: userId }
+        ),
+        Comment.deleteMany(
+            { owner: userId }
+        ),
+        Like.deleteMany(
+            { likedBy: userId }
+        ),
+        Subscription.deleteMany(
+            { subscriber: userId }
+        )
+    ]);
+    await User.findByIdAndDelete(userId);
+    return res
+        .status(200)
+        .json(
+            new APIResponse(200, {}, "Account deleted successfully")
+        )
+})
+
 
 export {
     registerUser,
@@ -664,5 +695,6 @@ export {
     getUserChannelProfile,
     getWatchHistory,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    deleteAccount
 };

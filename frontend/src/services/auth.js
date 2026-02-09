@@ -87,6 +87,16 @@ export class AuthService {
             throw error;
         }
     }
+
+    async deleteAccount() {
+        try {
+            const response = await axios.delete("/users/delete-account");
+            return response.data;
+        } catch (error) {
+            console.log("AuthService :: deleteAccount :: error", error);
+            throw error;
+        }
+    }
 }
 
 const authService = new AuthService();

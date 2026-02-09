@@ -1,23 +1,28 @@
 import { useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import userService from "../services/user";
-import { login } from "../features/authSlice";
+import { login, logout } from "../features/authSlice";
 import Container from "../components/container/Container";
 import Input from "../components/input/Input";
 import Button from "../components/button/Button";
 import { Loader2, Camera, Lock, User, Mail, Image as ImageIcon, Info, Eye, EyeOff } from "lucide-react";
 import tw from "../utils/tailwindUtil";
+import authService from "../services/auth";
+import { useNavigate } from "react-router-dom";
 
 const Settings = () => {
     const user = useSelector((state) => state.auth.userData);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [fullName, setFullName] = useState(user?.fullName || "");
     const [email, setEmail] = useState(user?.email || "");
+    const [password, setPassword] = useState("");
     const [description, setDescription] = useState(user?.description || "");
     const [loading, setLoading] = useState(false);
     const [avatarLoading, setAvatarLoading] = useState(false);
     const [coverLoading, setCoverLoading] = useState(false);
+    const [deleteAccountLoading, setDeleteAccountLoading] = useState(false);
 
     const avatarInputRef = useRef();
     const coverInputRef = useRef();
@@ -72,6 +77,24 @@ const Settings = () => {
             alert("Cover image upload failed.");
         } finally {
             setCoverLoading(false);
+        }
+    };
+
+    const handleDeleteAccount = async () => {
+        try {
+            let confirm = window.confirm("Are you sure you want to delete your account?");
+            if (!confirm) return;
+            setDeleteAccountLoading(true);
+            const response = await authService.deleteAccount();
+            if (response?.success) {
+                dispatch(logout());
+                navigate("/");
+                alert("Account deleted successfully!");
+            }
+        } catch (error) {
+            alert("Failed to delete account.");
+        } finally {
+            setDeleteAccountLoading(false);
         }
     };
 
@@ -179,6 +202,17 @@ const Settings = () => {
                                     </Button>
                                 </div>
                             </form>
+                        </section>
+                        <section className="bg-surface/10 rounded-3xl p-8 border border-border/40">
+                            <h2 className="text-xl font-bold text-text-main mb-8 flex items-center gap-2">
+                                <span className="w-1.5 h-6 bg-error rounded-full" />
+                                Security
+                            </h2>
+                            <div className="pt-4">
+                                <Button variant="danger" onClick={handleDeleteAccount} className="w-full md:w-auto px-10 rounded-2xl font-bold py-3" disabled={deleteAccountLoading}>
+                                    {deleteAccountLoading ? <Loader2 size={20} className="animate-spin" /> : "Delete Account"}
+                                </Button>
+                            </div>
                         </section>
                     </div>
                 </div>
