@@ -16,7 +16,8 @@ Production-ready Express.js application handling authentication, video managemen
 
 ### 🔐 **User Service**
 - Register/login with JWT (access + refresh tokens)
-- Password reset via email (SendGrid)
+- Email verification for user registration (Brevo)
+- Password reset via email (Brevo)
 - Profile management (avatar, cover image, account details)
 - Watch history tracking (last 50 videos)
 - Login with username or email
@@ -68,6 +69,7 @@ Production-ready Express.js application handling authentication, video managemen
 ## 🔐 Security Features
 
 - **Password Hashing**: bcrypt with 10 salt rounds
+- **Email Verification**: Time-limited SHA-256 hashed tokens (3hrs) for preventing fake emails
 - **JWT Tokens**: Separate access (15min) and refresh (7d) tokens
 - **HttpOnly Cookies**: Secure token storage
 - **Password Reset**: Time-limited SHA-256 hashed tokens (30min)
@@ -82,7 +84,6 @@ Production-ready Express.js application handling authentication, video managemen
 - **MongoDB Indexing**: Text indexes on video title/description
 - **Aggregation Pipelines**: Efficient data retrieval
 - **Pagination**: Server-side pagination for large datasets
-- **Cloudinary CDN**: Optimized media delivery
 
 ---
 
