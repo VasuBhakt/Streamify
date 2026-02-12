@@ -20,7 +20,7 @@ Single-page application (SPA) delivering a premium video streaming experience wi
 - **Lucide Icons**: Consistent and clean iconography
 
 ### 🎬 Video Experience
-- **Custom Player**: Playback controls, volume, and progress seeking
+- **Custom Player**: Playback controls including playback rate and looping, volume, and progress seeking
 - **Lazy Loading**: Optimized thumbnail delivery via Cloudinary
 - **Studio Mode**: Drag-and-drop video/thumbnail uploads
 - **Metadata Editor**: Manage titles, descriptions, and publish status
