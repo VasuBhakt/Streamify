@@ -33,6 +33,9 @@
   /* Emerald 500 */
   --color-warning: #f59e0b;
   /* Amber 500 */
+
+  /* Animations */
+  --animate-spin-slow: spin 4s linear infinite;
 }
 
 @layer base {

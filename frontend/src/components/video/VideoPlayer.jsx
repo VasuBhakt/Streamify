@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Play, Pause, Volume1, Volume2, VolumeX } from 'lucide-react';
+import { Play, Pause, Volume1, Volume2, VolumeX, Settings, Repeat, Check } from 'lucide-react';
 import tw from '../../utils/tailwindUtil';
 import { formatDuration, timeAgo, formatViews } from '../../utils/format';
 
@@ -21,6 +21,9 @@ function VideoPlayer({ video, className }) {
     const [isHovering, setIsHovering] = useState(false);
     const [currentVolume, setCurrentVolume] = useState(1.0);
     const [isVolumeHovered, setIsVolumeHovered] = useState(false);
+    const [isPlaybackRateVisible, setIsPlaybackRateVisible] = useState(false);
+    const [playbackRate, setPlaybackRate] = useState(1.0);
+    const [isLooping, setIsLooping] = useState(false);
 
     useEffect(() => {
         if (duration) setVideoDuration(duration);
@@ -28,13 +31,20 @@ function VideoPlayer({ video, className }) {
 
     useEffect(() => {
         if (videoRef.current) {
-            if (currentTime === videoDuration) {
+            if (currentTime >= videoDuration && !isLooping) {
                 setIsPlaying(false);
                 setCurrentTime(0);
             }
         }
-    }, [videoDuration, currentTime])
+    }, [videoDuration, currentTime, isLooping])
 
+    useEffect(() => {
+        if (videoRef.current) {
+            videoRef.current.playbackRate = playbackRate;
+        }
+    }, [playbackRate]);
+
+    const playBackRates = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0];
     const togglePlay = (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -101,6 +111,18 @@ function VideoPlayer({ video, className }) {
         }
     }
 
+    const togglePlaybackRate = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsPlaybackRateVisible(!isPlaybackRateVisible);
+    }
+
+    const toggleLoop = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsLooping(!isLooping);
+    }
+
     return (
         <div className={tw("group w-full flex flex-col gap-3 cursor-pointer", className)}
             onMouseEnter={() => setIsHovering(true)}
@@ -117,6 +139,8 @@ function VideoPlayer({ video, className }) {
                         onTimeUpdate={handleTimeUpdate}
                         onLoadedMetadata={handleLoadedMetadata}
                         onVolumeChange={handleVolumeChange}
+                        playbackRate={playbackRate}
+                        loop={isLooping}
                         onClick={togglePlay}
                     />
                 ) : (
@@ -200,6 +224,53 @@ function VideoPlayer({ video, className }) {
                                     <span className="text-xs font-medium font-mono">
                                         {formatDuration(currentTime)} / {formatDuration(videoDuration)}
                                     </span>
+                                </div>
+                                {/* Right Side Controls */}
+                                <div className="flex items-center gap-4 relative">
+                                    {/* Loop Toggle */}
+                                    <button
+                                        onClick={toggleLoop}
+                                        className={tw("hover:text-primary transition-colors cursor-pointer", isLooping ? "text-primary" : "text-text-main")}
+                                        title="Loop Video"
+                                    >
+                                        <Repeat className={tw("w-5 h-5", isLooping && "animate-spin-slow")} />
+                                    </button>
+
+                                    {/* Playback Rate Control */}
+                                    <div className="relative">
+                                        <button
+                                            onClick={togglePlaybackRate}
+                                            className="hover:text-primary transition-colors cursor-pointer flex items-center gap-1"
+                                            title="Playback Speed"
+                                        >
+                                            <Settings className="w-5 h-5" />
+                                            <span className="text-xs font-bold w-6">{playbackRate}x</span>
+                                        </button>
+
+                                        {isPlaybackRateVisible && (
+                                            <div className="absolute bottom-full right-0 mb-4 bg-background/95 backdrop-blur-md rounded-lg overflow-hidden border border-surface-hover shadow-2xl min-w-[120px] z-50">
+                                                <div className="py-1">
+                                                    {playBackRates.map((rate) => (
+                                                        <button
+                                                            key={rate}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setPlaybackRate(rate);
+                                                                setIsPlaybackRateVisible(false);
+                                                            }}
+                                                            className={tw(
+                                                                "w-full px-4 py-2 text-xs text-left hover:bg-surface-hover transition-colors flex items-center justify-between",
+                                                                playbackRate === rate ? "text-primary font-bold bg-primary/10" : "text-text-main"
+                                                            )}
+                                                        >
+                                                            {rate}x
+                                                            {playbackRate === rate && <Check className="w-3 h-3" />}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>
