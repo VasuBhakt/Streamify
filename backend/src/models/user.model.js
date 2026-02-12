@@ -62,6 +62,16 @@ const userSchema = new Schema({
     },
     forgotPasswordTokenExpiry: {
         type: Date,
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
+    verifyToken: {
+        type: String,
+    },
+    verifyTokenExpiry: {
+        type: Date,
     }
 }, { timestamps: true })
 
@@ -110,5 +120,22 @@ userSchema.methods.generateForgotPasswordToken = function () {
 
     return resetToken;
 }
+
+userSchema.methods.generateVerifyToken = function () {
+    const verificationToken = crypto.randomBytes(20).toString('hex');
+
+    this.verifyToken = crypto
+        .createHash('sha256')
+        .update(verificationToken)
+        .digest('hex');
+
+    this.verifyTokenExpiry = Date.now() + 3 * 60 * 60 * 1000; // 3 hours
+
+    return verificationToken;
+}
+
+// TTL index to delete unverified accounts after 3 hours
+// This index will only apply to documents that have verifyTokenExpiry
+userSchema.index({ verifyTokenExpiry: 1 }, { expireAfterSeconds: 0 });
 
 export const User = model("User", userSchema)

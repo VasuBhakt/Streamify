@@ -19,6 +19,7 @@ import Subscriptions from './pages/Subscriptions.jsx'
 import Register from './pages/Register.jsx'
 import Channel from './pages/Channel.jsx'
 import Landing from './pages/Landing.jsx'
+import VerifyEmail from './pages/VerifyEmail.jsx'
 import Support from './pages/Support.jsx'
 import ForgotPassword from './pages/ForgotPassword.jsx'
 import ResetPassword from './pages/ResetPassword.jsx'
@@ -63,6 +64,13 @@ const router = createBrowserRouter([
         element:
           <AuthLayout auth={false}>
             <ResetPassword />
+          </AuthLayout>
+      },
+      {
+        path: "verify-email/:token",
+        element:
+          <AuthLayout auth={false}>
+            <VerifyEmail />
           </AuthLayout>
       },
       {

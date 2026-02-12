@@ -13,7 +13,8 @@ import {
     forgotPassword,
     resetPassword,
     updateAccountDetails,
-    deleteAccount
+    deleteAccount,
+    verifyEmail
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT, getOptionalUser } from "../middlewares/auth.middleware.js";
@@ -31,6 +32,7 @@ router.route("/register").post(
 router.route("/login").post(loginUser);
 router.route("/forgot-password").post(forgotPassword);
 router.route("/reset-password/:token").post(resetPassword);
+router.route("/verify-email/:token").get(verifyEmail);
 
 // secured routes
 router.route("/logout").post(verifyJWT, logoutUser);

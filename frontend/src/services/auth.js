@@ -97,6 +97,16 @@ export class AuthService {
             throw error;
         }
     }
+
+    async verifyEmail(token) {
+        try {
+            const response = await axios.get(`/users/verify-email/${token}`);
+            return response.data;
+        } catch (error) {
+            console.error("AuthService :: verifyEmail :: error", error);
+            throw error;
+        }
+    }
 }
 
 const authService = new AuthService();

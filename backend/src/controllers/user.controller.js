@@ -132,7 +132,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
     // if user exists throw error
     if (existingUser) {
-        throw new APIError(409, "User already exists")
+        throw new APIError(409, "User already exists. Make sure you have verified your email.")
     }
 
     // check for local image file paths
@@ -159,24 +159,90 @@ const registerUser = asyncHandler(async (req, res) => {
         username: username.toLowerCase(),
         email: email.toLowerCase(),
         avatar: avatar.secure_url,
-        coverImage: (coverImage) ? coverImage.secure_url : "", // if ccoverImage is not provided then return empty string
+        coverImage: (coverImage) ? coverImage.secure_url : "",
         password: password,
         description: ""
     })
 
-    // remove password and refresh token from response object and check if user has been created, one extra db call
-    const createdUser = await User.findById(user._id).select("-password -refreshToken")
+    if (!user) {
+        throw new APIError(500, "Something went wrong while registering the user")
+    }
 
-    // if user creation fails throw error
-    if (!createdUser) {
-        throw new APIError(500, "Creation of user failed")
+    // Generate verification token
+    const verificationToken = user.generateVerifyToken();
+    await user.save({ validateBeforeSave: false });
+
+    // Send verification email
+    const verifyUrl = `${process.env.CORS_ORIGIN}/verify-email/${verificationToken}`;
+
+    const message = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333; border: 1px solid #e5e7eb; border-radius: 8px; padding: 24px;">
+            <h2 style="color: #4F46E5; margin-bottom: 16px;">Welcome to Streamify!</h2>
+            <p style="font-size: 16px; line-height: 1.5;">Thank you for joining our community. To get started, please verify your email address by clicking the button below:</p>
+            <div style="text-align: center; margin: 32px 0;">
+                <a href="${verifyUrl}" style="display: inline-block; background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">Verify Email Address</a>
+            </div>
+            <p style="font-size: 14px; color: #666;">This link is valid for <strong>3 hours</strong>. For security reasons, unverified accounts will be automatically deleted after this period.</p>
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 24px 0;" />
+            <p style="font-size: 12px; color: #999;">If you didn't create an account, we recommend you to not click the link and ignore this email.</p>
+        </div>
+    `;
+
+    try {
+        await sendEmail({
+            email: user.email,
+            subject: "Verify your Streamify account",
+            message: message
+        });
+    } catch (error) {
+        // If email fails, we should probably delete the user to allow them to try again
+        await User.findByIdAndDelete(user._id);
+        throw new APIError(500, "User registered but verification email could not be sent. Please try again after 3 hours.");
     }
 
     // success response
     return res.status(201).json(
-        new APIResponse(201, createdUser, "User registered successfully")
+        new APIResponse(201, {
+            username: user.username,
+            email: user.email,
+            id: user._id
+        }, "Registration successful! Please verify your email within 3 hours. A link has been sent to your email address.")
     )
 })
+
+const verifyEmail = asyncHandler(async (req, res) => {
+    const { token } = req.params;
+
+    if (!token) {
+        throw new APIError(400, "Verification token is required");
+    }
+
+    // Hash the token to compare with DB
+    const hashedToken = crypto
+        .createHash('sha256')
+        .update(token)
+        .digest('hex');
+
+    // Find user with valid token and not expired
+    const user = await User.findOne({
+        verifyToken: hashedToken,
+        verifyTokenExpiry: { $gt: Date.now() }
+    });
+
+    if (!user) {
+        throw new APIError(400, "Verification link is invalid or has expired. Please register again.");
+    }
+
+    // Mark as verified and clear verification fields
+    user.isVerified = true;
+    user.verifyToken = undefined;
+    user.verifyTokenExpiry = undefined;
+    await user.save({ validateBeforeSave: false });
+
+    return res.status(200).json(
+        new APIResponse(200, {}, "Email verified successfully! You can now log in.")
+    );
+});
 
 const loginUser = asyncHandler(async (req, res) => {
     // get user details from frontend
@@ -206,6 +272,11 @@ const loginUser = asyncHandler(async (req, res) => {
 
     if (!user) {
         throw new APIError(404, "User not found")
+    }
+
+    // Check if user is verified
+    if (!user.isVerified) {
+        throw new APIError(403, "Please verify your email address before logging in. Check your inbox for the verification link.")
     }
 
     const isPasswordCorrect = await user.isPasswordCorrect(password)
@@ -696,5 +767,6 @@ export {
     getWatchHistory,
     forgotPassword,
     resetPassword,
-    deleteAccount
+    deleteAccount,
+    verifyEmail
 };
