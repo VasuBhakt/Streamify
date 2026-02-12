@@ -15,7 +15,7 @@
 Streamify is built to handle the full lifecycle of digital video—from secure creator uploads and Cloudinary-powered processing to real-time user engagement and channel analytics.
 
 ## 🚀 Core Capabilities
-- **Secure Auth**: JWT-based authentication with Refresh Token rotation and Brevo password recovery.
+- **Secure Auth**: JWT-based authentication with Refresh Token rotation and Brevo password recovery and email verification.
 - **Video Lifecycle**: Drag-and-drop uploads, custom thumbnails, and draft/publish workflows.
 - **Engagement Engine**: Subscription models, commenting, and like/unlike functionality.
 - **Creator Dashboard**: Real-time analytics for views, subscribers, and video-level performance.
@@ -50,8 +50,7 @@ Streamify/
 
 - **State-of-the-Art Auth**: HttpOnly cookies and salt-round Bcrypt hashing.
 - **Database Efficiency**: Complex data retrieval via MongoDB Aggregation Pipelines.
-- **Optimized Delivery**: Lazy loading, code splitting, and Cloudinary CDN transformations.
-
+- **Optimized Delivery**: Lazy loading, code splitting
 ---
 
 ## 📝 License
