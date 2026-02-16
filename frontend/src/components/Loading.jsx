@@ -69,9 +69,10 @@ const Loading = ({ fullScreen = true, message = "Loading Streamify..." }) => {
                 <motion.p
                     animate={{ opacity: [0.5, 1, 0.5] }}
                     transition={{ duration: 1.5, repeat: Infinity }}
-                    className="text-sm text-text-muted font-medium uppercase tracking-widest"
+                    className="text-sm text-text-muted font-medium uppercase tracking-widest text-center"
                 >
-                    {message}
+                    {message}<br />
+                    <span className="text-xs text-text-muted">If you are loading for the first time, it may take some time. Please be patient!</span>
                 </motion.p>
             </motion.div>
         </div>
