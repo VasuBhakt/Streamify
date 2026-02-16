@@ -12,6 +12,7 @@ import jwt from "jsonwebtoken"
 import mongoose from "mongoose";
 import crypto from "crypto";
 import { sendEmail } from "../utils/mail.js";
+import { IMAGE_SIZE_LIMIT } from "../constants.js";
 
 const generateAccessAndRefreshToken = async (userId) => {
     try {
@@ -142,6 +143,14 @@ const registerUser = asyncHandler(async (req, res) => {
     // if avatar is not provided throw error
     if (!avatarLocalPath) {
         throw new APIError(400, "Avatar is required")
+    }
+
+    if (req.files?.avatar[0]?.size > IMAGE_SIZE_LIMIT) {
+        throw new APIError(400, "Avatar is too large! Maximum size allowed is 10MB.")
+    }
+
+    if (coverImageLocalPath && req.files?.coverImage[0]?.size > IMAGE_SIZE_LIMIT) {
+        throw new APIError(400, "Cover image is too large! Maximum size allowed is 10MB.")
     }
 
     // upload to cloudinary
@@ -418,7 +427,11 @@ const updateAvatar = asyncHandler(async (req, res) => {
     const avatarLocalFilePath = req.file?.path
 
     if (!avatarLocalFilePath) {
-        throw new APIError(404, "Bad Request")
+        throw new APIError(400, "Avatar file is required")
+    }
+
+    if (req.file?.size > IMAGE_SIZE_LIMIT) {
+        throw new APIError(400, "Avatar is too large! Maximum size allowed is 10MB.")
     }
 
     const avatar = await uploadOnCloudinary(avatarLocalFilePath, "avatar", req.user.username)
@@ -451,6 +464,10 @@ const updateCoverImage = asyncHandler(async (req, res) => {
 
     if (!coverImageLocalFilePath) {
         throw new APIError(404, "Bad Request")
+    }
+
+    if (req.file?.size > IMAGE_SIZE_LIMIT) {
+        throw new APIError(400, "Cover image is too large! Maximum size allowed is 10MB.")
     }
 
     const coverImage = await uploadOnCloudinary(coverImageLocalFilePath, "coverImage", req.user.username)
@@ -532,6 +549,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
         // data to be provided
         {
             $project: {
+                _id: 1,
                 fullName: 1,
                 username: 1,
                 description: 1,

@@ -5,6 +5,7 @@ import APIResponse from "../utils/ApiResponse.js";
 import APIError from "../utils/ApiError.js";
 import { uploadVideoOnCloudinary, uploadImageOnCloudinary, deleteVideoFromCloudinary } from "../utils/Cloudinary.js";
 import mongoose from "mongoose";
+import { VIDEO_SIZE_LIMIT, IMAGE_SIZE_LIMIT } from "../constants.js";
 
 const getAllVideos = asyncHandler(async (req, res) => {
     // take query parameters
@@ -115,9 +116,18 @@ const publishVideo = asyncHandler(async (req, res) => {
     if (!videoLocalPath) {
         throw new APIError(400, "Video is required")
     }
+
+    if (req.files?.video[0]?.size > VIDEO_SIZE_LIMIT) {
+        throw new APIError(400, "Video file is too large! Maximum size allowed is 100MB.")
+    }
+
     // if thumbnail is not present throw error
     if (!thumbnailLocalPath) {
         throw new APIError(400, "Thumbnail is required")
+    }
+
+    if (req.files?.thumbnail[0]?.size > IMAGE_SIZE_LIMIT) {
+        throw new APIError(400, "Thumbnail is too large! Maximum size allowed is 10MB.")
     }
     const videoPublicId = new mongoose.Types.ObjectId()
 
@@ -325,6 +335,9 @@ const updateVideo = asyncHandler(async (req, res) => {
     const newThumbnailLocalPath = req.files?.thumbnail?.[0]?.path;
 
     if (newVideoLocalPath) {
+        if (req.files?.video[0]?.size > VIDEO_SIZE_LIMIT) {
+            throw new APIError(400, "Video file is too large! Maximum size allowed is 100MB.")
+        }
         const videoFile = await uploadVideoOnCloudinary(newVideoLocalPath, video._id);
         if (!videoFile) {
             throw new APIError(500, "Video upload failed");
@@ -334,6 +347,9 @@ const updateVideo = asyncHandler(async (req, res) => {
     }
 
     if (newThumbnailLocalPath) {
+        if (req.files?.thumbnail[0]?.size > IMAGE_SIZE_LIMIT) {
+            throw new APIError(400, "Thumbnail is too large! Maximum size allowed is 10MB.")
+        }
         const thumbnailFile = await uploadImageOnCloudinary(newThumbnailLocalPath, `${video._id}_thumbnail`);
         if (!thumbnailFile) {
             throw new APIError(500, "Thumbnail upload failed");

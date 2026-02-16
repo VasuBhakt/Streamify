@@ -387,13 +387,14 @@ const VideoDetail = () => {
                             <div className="space-y-8">
                                 {comments.map((comment, index) => {
                                     const isOwner = user?._id === comment.ownerDetails?._id;
+                                    const isOwnerOfVideo = user?._id === video.ownerDetails?._id;
                                     const commentProps = {
                                         comment,
                                         onUpdate: updateComment,
                                         onDelete: deleteComment,
                                         onLike: handleToggleCommentLike,
                                         isEditable: isOwner,
-                                        isDeletable: isOwner
+                                        isDeletable: isOwner || isOwnerOfVideo
                                     };
 
                                     if (comments.length === index + 1) {

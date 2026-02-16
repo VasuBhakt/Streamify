@@ -143,15 +143,31 @@ const deleteComment = asyncHandler(async (req, res) => {
     if (!commentId) {
         throw new APIError(400, "Comment ID is required");
     }
-    const comment = await Comment.findOneAndDelete({
-        _id: commentId,
-        video: videoId,
-        owner: req.user._id
-    })
+
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+        throw new APIError(404, "Comment not found");
+    }
+
+    const video = await Video.findById(videoId);
+    if (!video) {
+        throw new APIError(404, "Video not found");
+    }
+
+    // Check if user is the comment owner OR the video owner
+    const isCommentOwner = comment.owner.toString() === req.user._id.toString();
+    const isVideoOwner = video.owner.toString() === req.user._id.toString();
+
+    if (!isCommentOwner && !isVideoOwner) {
+        throw new APIError(403, "You do not have permission to delete this comment");
+    }
+
+    await Comment.findByIdAndDelete(commentId);
+
     return res
         .status(200)
         .json(
-            new APIResponse(200, comment, "Comment deleted successfully")
+            new APIResponse(200, { commentId }, "Comment deleted successfully")
         )
 })
 

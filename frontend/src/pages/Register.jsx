@@ -5,6 +5,7 @@ import authService from "../services/auth.js";
 import Button from "../components/button/Button";
 import Input from "../components/input/Input";
 import { User, Mail, Lock, Camera, Image as ImageIcon, X, Eye, EyeOff, CheckCircle, ArrowRight } from "lucide-react";
+import { MAX_IMAGE_SIZE } from "../constants.js";
 
 function Register() {
     const [error, setError] = useState("");
@@ -94,7 +95,10 @@ function Register() {
 
                             <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10">
                                 <p className="text-xs text-text-secondary leading-relaxed italic">
-                                    "This is how your channel will appear to others. A great cover and avatar help in building your brand identity on Streamify."
+                                    This is how your channel will appear to others. A great cover and avatar help in building your brand identity on Streamify.
+                                </p>
+                                <p className="text-xs text-text-secondary leading-relaxed italic">
+                                    Maximum size allowed for images is 10MB.
                                 </p>
                             </div>
                         </div>
@@ -185,7 +189,12 @@ function Register() {
                                     type="file"
                                     accept="image/*"
                                     icon={Camera}
-                                    {...register("avatar", { required: "Avatar is required" })}
+                                    {...register("avatar", {
+                                        required: "Avatar is required",
+                                        validate: {
+                                            lessThan10MB: files => files[0]?.size < MAX_IMAGE_SIZE || "Avatar must be less than 10MB"
+                                        }
+                                    })}
                                     error={errors.avatar?.message}
                                     className="cursor-pointer file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
                                 />
@@ -195,7 +204,12 @@ function Register() {
                                     type="file"
                                     accept="image/*"
                                     icon={ImageIcon}
-                                    {...register("coverImage")}
+                                    {...register("coverImage", {
+                                        validate: {
+                                            lessThan10MB: files => !files[0] || files[0]?.size < MAX_IMAGE_SIZE || "Cover image must be less than 10MB"
+                                        }
+                                    })}
+                                    error={errors.coverImage?.message}
                                     className="cursor-pointer file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
                                 />
                             </div>

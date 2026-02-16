@@ -21,6 +21,7 @@ import {
 import tw from "../utils/tailwindUtil";
 import VideoPlayer from "../components/video/VideoPlayer";
 import Loading from "../components/Loading";
+import { MAX_IMAGE_SIZE, MAX_VIDEO_SIZE } from "../constants";
 
 const Studio = () => {
     const { videoId } = useParams();
@@ -70,16 +71,30 @@ const Studio = () => {
     const handleVideoSelect = (e) => {
         const file = e.target.files[0];
         if (file) {
+            // 100MB limit
+            if (file.size > MAX_VIDEO_SIZE) {
+                setStatus({ type: "error", message: "Video file is too large! Maximum size allowed is 100MB." });
+                e.target.value = ""; // Clear input
+                return;
+            }
             setVideoFile(file);
             setVideoPreview(URL.createObjectURL(file));
+            setStatus({ type: null, message: "" });
         }
     };
 
     const handleThumbnailSelect = (e) => {
         const file = e.target.files[0];
         if (file) {
+            // 10MB limit
+            if (file.size > MAX_IMAGE_SIZE) {
+                setStatus({ type: "error", message: "Thumbnail is too large! Maximum size allowed is 10MB." });
+                e.target.value = ""; // Clear input
+                return;
+            }
             setThumbnailFile(file);
             setThumbnailPreview(URL.createObjectURL(file));
+            setStatus({ type: null, message: "" });
         }
     };
 
@@ -262,11 +277,13 @@ const Studio = () => {
                                         <div className="text-center">
                                             <p className="text-text-main font-bold">Import your footage</p>
                                             <p className="text-xs text-text-secondary mt-1">MP4, WebM or OGG files</p>
+
                                         </div>
                                     </div>
                                 </div>
                             )}
                             <input type="file" ref={videoInputRef} accept="video/*" className="hidden" onChange={handleVideoSelect} />
+                            <p className="text-xs text-text-secondary mt-2 ml-3">Max file size: 100MB</p>
                         </div>
 
                         {/* Thumbnail Preview */}
@@ -303,6 +320,7 @@ const Studio = () => {
                                 )}
                                 <input type="file" ref={thumbnailInputRef} accept="image/*" className="hidden" onChange={handleThumbnailSelect} />
                             </div>
+                            <p className="text-xs text-text-secondary mt-2 ml-3">Max file size: 10MB</p>
                         </div>
                     </div>
 

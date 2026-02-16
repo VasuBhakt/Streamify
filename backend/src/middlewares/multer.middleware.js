@@ -1,5 +1,6 @@
 import multer from "multer";
 import os from "os";
+import { VIDEO_SIZE_LIMIT } from "../constants.js";
 
 const storage = multer.diskStorage({ // disk storage instead of memory storage
     destination: function (req, file, cb) {
@@ -12,5 +13,8 @@ const storage = multer.diskStorage({ // disk storage instead of memory storage
 })
 
 export const upload = multer({
-    storage: storage
+    storage: storage,
+    limits: {
+        fileSize: VIDEO_SIZE_LIMIT
+    }
 })

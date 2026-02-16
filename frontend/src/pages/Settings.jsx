@@ -9,6 +9,7 @@ import { Loader2, Camera, Lock, User, Mail, Image as ImageIcon, Info, Eye, EyeOf
 import tw from "../utils/tailwindUtil";
 import authService from "../services/auth";
 import { useNavigate } from "react-router-dom";
+import { MAX_IMAGE_SIZE } from "../constants";
 
 const Settings = () => {
     const user = useSelector((state) => state.auth.userData);
@@ -48,6 +49,13 @@ const Settings = () => {
         const file = e.target.files[0];
         if (!file) return;
 
+        // 10MB limit
+        if (file.size > MAX_IMAGE_SIZE) {
+            alert("Avatar is too large! Maximum size allowed is 10MB.");
+            e.target.value = ""; // Clear input
+            return;
+        }
+
         try {
             setAvatarLoading(true);
             const response = await userService.updateUserAvatar(file);
@@ -65,6 +73,13 @@ const Settings = () => {
     const handleCoverChange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
+
+        // 10MB limit
+        if (file.size > MAX_IMAGE_SIZE) {
+            alert("Cover image is too large! Maximum size allowed is 10MB.");
+            e.target.value = ""; // Clear input
+            return;
+        }
 
         try {
             setCoverLoading(true);
@@ -138,7 +153,7 @@ const Settings = () => {
                                 </div>
                                 <div className="text-center">
                                     <h3 className="font-bold text-text-main">Profile Picture</h3>
-                                    <p className="text-xs text-text-muted mt-1 uppercase tracking-wider">Recommended: 800x800px</p>
+                                    <p className="text-xs text-text-muted mt-1 uppercase tracking-wider">Max file size: 10MB</p>
                                 </div>
                             </div>
 
@@ -167,7 +182,7 @@ const Settings = () => {
                                 </div>
                                 <div className="mt-4">
                                     <h3 className="font-bold text-text-main text-sm">Banner Image</h3>
-                                    <p className="text-xs text-text-muted mt-0.5">This will appear at the top of your channel.</p>
+                                    <p className="text-xs text-text-muted mt-0.5">This will appear at the top of your channel (Max file size 10MB).</p>
                                 </div>
                             </div>
                         </section>
