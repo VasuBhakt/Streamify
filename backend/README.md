@@ -28,6 +28,7 @@ Production-ready Express.js application handling authentication, video managemen
 - Pagination and sorting (date, views, relevance)
 - View tracking and watch history integration
 - Draft/publish status management
+- Fail-safe video processing pipeline using BullMQ workers with automatic retries.
 
 ### 💬 **Comment Service**
 - Add, edit, delete comments on videos
@@ -63,6 +64,7 @@ Production-ready Express.js application handling authentication, video managemen
 | **Auth & Security** | ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens) ![Bcrypt](https://img.shields.io/badge/Bcrypt-37474F?style=for-the-badge) |
 | **Media & Mail** | ![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=for-the-badge&logo=Cloudinary&logoColor=white) ![Brevo](https://img.shields.io/badge/Brevo-6358DE?style=for-the-badge&logo=brevo&logoColor=white) ![Multer](https://img.shields.io/badge/Multer-grey?style=for-the-badge) |
 | **Infrastructure** | ![Render](https://img.shields.io/badge/Render-%46E3B7.svg?style=for-the-badge&logo=render&logoColor=white) ![Atlas](https://img.shields.io/badge/MongoDB_Atlas-white?style=for-the-badge&logo=mongodb&logoColor=47A248) |
+| **Queueing and Caching** | ![BullMQ](https://img.shields.io/badge/BullMQ-FF4500?style=for-the-badge&logo=bull&logoColor=white) ![Redis](https://img.shields.io/badge/Redis-FF4438?style=for-the-badge&logo=redis&logoColor=white) |
 
 ---
 
@@ -84,7 +86,8 @@ Production-ready Express.js application handling authentication, video managemen
 - **MongoDB Indexing**: Text indexes on video title/description
 - **Aggregation Pipelines**: Efficient data retrieval
 - **Pagination**: Server-side pagination for large datasets
-
+- **Asynchronous Queuing**: Offloaded video uploads and email triggers to **BullMQ** to prevent request timeouts
+- **Caching**: Integrated **Redis** to cache frequent queries and manage real-time job states.
 ---
 
 ## 📝 License
