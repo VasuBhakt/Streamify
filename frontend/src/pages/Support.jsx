@@ -20,7 +20,7 @@ const Support = () => {
         }
     };
 
-    const techStack = ["React", "Redux Toolkit", "Node.js", "MongoDB", "Express", "TailwindCSS", "Framer Motion", "Cloudinary", "Brevo"]
+    const techStack = ["React", "Redux Toolkit", "Node.js", "MongoDB", "Express", "TailwindCSS", "Framer Motion", "Cloudinary", "Brevo", "Redis", "BullMQ"]
 
     return (
         <div className="min-h-full w-full bg-background-page p-6 md:p-12 lg:p-16">

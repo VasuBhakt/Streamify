@@ -18,7 +18,6 @@ const Settings = () => {
 
     const [fullName, setFullName] = useState(user?.fullName || "");
     const [email, setEmail] = useState(user?.email || "");
-    const [password, setPassword] = useState("");
     const [description, setDescription] = useState(user?.description || "");
     const [loading, setLoading] = useState(false);
     const [avatarLoading, setAvatarLoading] = useState(false);
