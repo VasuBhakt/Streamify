@@ -3,7 +3,8 @@ import conf from "../conf/conf.js";
 
 const axiosInstance = axios.create({
     baseURL: conf.backendURL,
-    withCredentials: true
+    withCredentials: true,
+    timeout: 30000
 });
 
 axiosInstance.interceptors.response.use(

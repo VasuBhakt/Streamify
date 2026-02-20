@@ -16,6 +16,17 @@ connectDB()
         console.log("MONGODB connection failed !!!", err);
     })
 
+process.on("unhandledRejection", (err) => {
+    console.log(`Error: ${err.message}`);
+    // Close server & exit process
+    // server.close(() => process.exit(1));
+});
+
+process.on("uncaughtException", (err) => {
+    console.log(`Uncaught Exception: ${err.message}`);
+    process.exit(1);
+});
+
 
 
 
