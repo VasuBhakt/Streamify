@@ -123,7 +123,7 @@ const Studio = () => {
 
         try {
             setLoading(true);
-            setStatus({ type: "loading", message: videoId ? "Updating your creative..." : "Uploading to the multiverse..." });
+            setStatus({ type: "loading", message: videoId ? "Updating your creative..." : "Uploading to the multiverse...this may take a few minutes, sorry for the delay!" });
 
             let response;
             if (videoId) {

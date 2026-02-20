@@ -6,6 +6,8 @@ import APIError from "../utils/ApiError.js";
 import { uploadVideoOnCloudinary, uploadImageOnCloudinary, deleteVideoFromCloudinary } from "../utils/Cloudinary.js";
 import mongoose from "mongoose";
 import { VIDEO_SIZE_LIMIT, IMAGE_SIZE_LIMIT } from "../constants.js";
+import { Comment } from "../models/comment.model.js";
+import { Like } from "../models/like.model.js";
 
 const getAllVideos = asyncHandler(async (req, res) => {
     // take query parameters
@@ -208,7 +210,10 @@ const getVideoById = asyncHandler(async (req, res) => {
         {
             $match: {
                 _id: new mongoose.Types.ObjectId(videoId),
-                isPublished: true
+                $or: [
+                    { isPublished: true },
+                    { owner: req.user?._id }
+                ]
             }
         },
         {
@@ -316,9 +321,14 @@ const updateVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params;
     // get video from db
     const video = await Video.findById(videoId);
+    const userId = req.user?._id;
     // if video is not there, throw error
     if (!video) {
         throw new APIError(404, "Video not found");
+    }
+
+    if (!userId || userId.toString() !== video.owner.toString()) {
+        throw new APIError(401, "Unauthorized");
     }
     // get update details from body
     const { title, description, isPublished } = req.body;
@@ -373,16 +383,25 @@ const updateVideo = asyncHandler(async (req, res) => {
 const deleteVideo = asyncHandler(async (req, res) => {
     // get videoId from params
     const { videoId } = req.params;
+    const userId = req.user?._id;
     // get video from db
     const video = await Video.findById(videoId);
     // if video is not there, throw error
     if (!video) {
         throw new APIError(404, "Video not found");
     }
+
+    if (!userId || userId.toString() !== video.owner.toString()) {
+        throw new APIError(401, "Unauthorized");
+    }
     // delete video from cloudinary
     const deletedVideo = await deleteVideoFromCloudinary((video._id).toString());
     // delete video from db
     await video.deleteOne();
+    // delete comments
+    const deleteComments = await Comment.deleteMany({ video: videoId });
+    // delete likes
+    const deleteLikes = await Like.deleteMany({ video: videoId });
     return res
         .status(200)
         .json(
