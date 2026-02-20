@@ -132,7 +132,6 @@ const Dashboard = () => {
                             <thead>
                                 <tr className="bg-surface/50 border-b border-border">
                                     <th className="px-6 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-text-muted">Video</th>
-                                    <th className="px-6 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-text-muted">Status</th>
                                     <th className="px-6 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-text-muted">Visibility</th>
                                     <th className="px-6 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-text-muted text-center">Stats</th>
                                     <th className="px-6 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-text-muted text-center">Date</th>
@@ -188,24 +187,6 @@ const Dashboard = () => {
                                                             #{video._id.slice(-8).toUpperCase()}
                                                         </span>
                                                     </div>
-                                                </div>
-                                            </td>
-
-                                            {/* STATUS */}
-                                            <td className="px-6 py-5">
-                                                <div className={tw(
-                                                    "inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all",
-                                                    video.status === "processing" && "bg-primary/10 text-primary border-primary/20 animate-pulse",
-                                                    video.status === "completed" && "bg-success/10 text-success border-success/20",
-                                                    video.status === "failed" && "bg-error/10 text-error border-error/20"
-                                                )}>
-                                                    <div className={tw(
-                                                        "w-1.5 h-1.5 rounded-full shrink-0",
-                                                        video.status === "processing" && "bg-primary",
-                                                        video.status === "completed" && "bg-success",
-                                                        video.status === "failed" && "bg-error"
-                                                    )} />
-                                                    {video.status}
                                                 </div>
                                             </td>
 
