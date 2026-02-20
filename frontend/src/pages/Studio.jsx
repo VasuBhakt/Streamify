@@ -123,7 +123,7 @@ const Studio = () => {
 
         try {
             setLoading(true);
-            setStatus({ type: "loading", message: videoId ? "Updating your creative..." : "Uploading to the multiverse...this may take a few minutes, sorry for the delay!" });
+            setStatus({ type: "loading", message: videoId ? "Updating ..." : "Uploading ...this may take a few minutes, sorry for the delay!" });
 
             let response;
             if (videoId) {
@@ -148,10 +148,10 @@ const Studio = () => {
             }
 
             if (response?.success) {
-                setStatus({ type: "success", message: videoId ? "Changes saved successfully!" : "Video published successfully!" });
+                setStatus({ type: "success", message: `${videoId ? "Changes being processed" : "Video is being processed,"} You should see the changes in a few minutes.` });
                 setTimeout(() => {
                     navigate("/dashboard");
-                }, 2000);
+                }, 3000);
             }
         } catch (error) {
             console.error(error);

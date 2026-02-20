@@ -6,94 +6,97 @@ import APIError from "../utils/ApiError.js";
 import { uploadVideoOnCloudinary, uploadImageOnCloudinary, deleteVideoFromCloudinary } from "../utils/Cloudinary.js";
 import mongoose from "mongoose";
 import { VIDEO_SIZE_LIMIT, IMAGE_SIZE_LIMIT } from "../constants.js";
-import { Comment } from "../models/comment.model.js";
-import { Like } from "../models/like.model.js";
+import { addVideoJob } from "../queues/video.queue.js";
+import { getCachedData, invalidateCache } from "../utils/Cache.js";
+import fs from "fs";
 
 const getAllVideos = asyncHandler(async (req, res) => {
-    // take query parameters
-    const { page = 1, limit = 10, query, sortBy, sortType } = req.query;
+    const { page = 1, limit = 10, query, sortBy = "createdAt", sortType = "desc" } = req.query;
 
-    // aggregation pipelines
-    const pipelines = []
+    const cacheKey = `videos:feed:${page}:${limit}:${query || "all"}:${sortBy}:${sortType}`;
 
-    pipelines.push({
-        $match: {
-            isPublished: true
-        }
-    })
-
-    // joining for search by username or full name
-    pipelines.push({
-        $lookup: {
-            from: "users",
-            localField: "owner",
-            foreignField: "_id",
-            as: "ownerDetails",
-            pipeline: [
-                {
-                    $project: {
-                        username: 1,
-                        fullName: 1,
-                        avatar: 1,
-                        _id: 1
-                    }
-                }
-            ]
-        }
-    });
-
-    pipelines.push({
-        $unwind: {
-            path: "$ownerDetails",
-        }
-    })
-
-    // Search logic (Moved after lookup to allow searching by owner details)
-    if (query) {
-        // Intelligent multi-keyword search
-        const keywords = query.trim().split(/\s+/).map(k => ({
-            $or: [
-                { title: { $regex: k, $options: "i" } },
-                { description: { $regex: k, $options: "i" } },
-                { "ownerDetails.username": { $regex: k, $options: "i" } },
-                { "ownerDetails.fullName": { $regex: k, $options: "i" } }
-            ]
-        }));
+    const result = await getCachedData(cacheKey, 300, async () => {
+        const pipelines = [];
 
         pipelines.push({
             $match: {
-                $and: keywords
+                isPublished: true
             }
         });
-    }
 
+        // joining for search by username or full name
+        pipelines.push({
+            $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "ownerDetails",
+                pipeline: [
+                    {
+                        $project: {
+                            username: 1,
+                            fullName: 1,
+                            avatar: 1,
+                            _id: 1
+                        }
+                    }
+                ]
+            }
+        });
 
-    pipelines.push({
-        $lookup: {
-            from: "likes",
-            localField: "_id",
-            foreignField: "video",
-            as: "likes"
+        pipelines.push({
+            $unwind: {
+                path: "$ownerDetails",
+            }
+        })
+
+        // Search logic (Moved after lookup to allow searching by owner details)
+        if (query) {
+            // Intelligent multi-keyword search
+            const keywords = query.trim().split(/\s+/).map(k => ({
+                $or: [
+                    { title: { $regex: k, $options: "i" } },
+                    { description: { $regex: k, $options: "i" } },
+                    { "ownerDetails.username": { $regex: k, $options: "i" } },
+                    { "ownerDetails.fullName": { $regex: k, $options: "i" } }
+                ]
+            }));
+
+            pipelines.push({
+                $match: {
+                    $and: keywords
+                }
+            });
         }
+
+        pipelines.push({
+            $lookup: {
+                from: "likes",
+                localField: "_id",
+                foreignField: "video",
+                as: "likes"
+            }
+        });
+
+        pipelines.push({
+            $addFields: {
+                likesCount: { $size: "$likes" }
+            }
+        });
+
+        const videoAggregate = Video.aggregate(pipelines);
+
+        const options = {
+            page: parseInt(page),
+            limit: parseInt(limit),
+            sort: {
+                [sortBy]: sortType === "asc" ? 1 : -1
+            }
+        };
+
+        return await Video.aggregatePaginate(videoAggregate, options);
     });
 
-    pipelines.push({
-        $addFields: {
-            likesCount: { $size: "$likes" }
-        }
-    });
-
-    const videoAggregate = Video.aggregate(pipelines);
-
-    const options = {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        sort: {
-            [sortBy || "createdAt"]: sortType === "asc" ? 1 : -1
-        }
-    };
-
-    const result = await Video.aggregatePaginate(videoAggregate, options);
     return res
         .status(200)
         .json(
@@ -102,17 +105,14 @@ const getAllVideos = asyncHandler(async (req, res) => {
 })
 
 const publishVideo = asyncHandler(async (req, res) => {
-    // get title and description from frontend
     const { title, description, isPublished = true } = req.body;
-    // validate title and description
-    if (
-        [title, description].some((field) => !field || field?.trim() === "")
-    ) {
-        throw new APIError(400, "Title and description are required")
+
+    if ([title, description].some((field) => !field || field?.trim() === "")) {
+        throw new APIError(400, "Title and description are required");
     }
-    // get video local path
-    const videoLocalPath = req.files?.video[0]?.path;
-    const thumbnailLocalPath = req.files?.thumbnail[0]?.path;
+
+    const videoLocalPath = req.files?.video?.[0]?.path;
+    const thumbnailLocalPath = req.files?.thumbnail?.[0]?.path;
 
     // if video local path is not present throw error
     if (!videoLocalPath) {
@@ -131,42 +131,47 @@ const publishVideo = asyncHandler(async (req, res) => {
     if (req.files?.thumbnail[0]?.size > IMAGE_SIZE_LIMIT) {
         throw new APIError(400, "Thumbnail is too large! Maximum size allowed is 10MB.")
     }
-    const videoPublicId = new mongoose.Types.ObjectId()
 
-    // upload video to cloudinary
-    const videoFile = await uploadVideoOnCloudinary(videoLocalPath, videoPublicId);
-    const thumbnailFile = await uploadImageOnCloudinary(thumbnailLocalPath, `${videoPublicId}_thumbnail`);
-    // if video upload fails throw error
-    if (!videoFile) {
-        throw new APIError(500, "Video upload failed")
-    }
-    // if thumbnail upload fails throw error
-    if (!thumbnailFile) {
-        throw new APIError(500, "Thumbnail upload failed")
-    }
-    // create video object
+    const videoPublicId = new mongoose.Types.ObjectId();
+
+    // 1. CREATE VIDEO RECORD IMMEDIATELY (So user sees "Processing" in Dashboard)
     const video = await Video.create({
         _id: videoPublicId,
-        videoFile: videoFile.secure_url,
-        thumbnail: thumbnailFile.secure_url,
-        title: title,
-        description: description,
-        duration: videoFile.duration,
-        isPublished: isPublished,
-        owner: req.user._id
-    })
+        title,
+        description,
+        isPublished: false, // Default to false until processed
+        owner: req.user._id,
+        videoFile: "pending", // Placeholders
+        thumbnail: "pending",
+        duration: 0,
+        status: "processing"
+    });
 
-    // return 
+    // 2. HAND OFF TO QUEUE
+    const job = await addVideoJob("upload", {
+        videoLocalPath,
+        thumbnailLocalPath,
+        title,
+        description,
+        isPublished,
+        userId: req.user._id,
+        videoPublicId: videoPublicId.toString(),
+        userEmail: req.user.email // Pass email for failure notification
+    });
+
+    // Invalidate the first few pages of relevant feed caches
+    await invalidateCache(`videos:feed:1:10:all:createdAt:desc`);
+
     return res
-        .status(200)
+        .status(202)
         .json(
             new APIResponse(
-                200,
-                video,
-                "Video published successfully"
+                202,
+                { jobId: job.id, videoId: videoPublicId },
+                "Video upload started in background. You will see it in your dashboard as 'processing'."
             )
-        )
-})
+        );
+});
 
 const getVideoById = asyncHandler(async (req, res) => {
     const { videoId } = req.params;
@@ -316,6 +321,7 @@ const getVideoById = asyncHandler(async (req, res) => {
         );
 })
 
+
 const updateVideo = asyncHandler(async (req, res) => {
     // get videoId from params
     const { videoId } = req.params;
@@ -330,17 +336,12 @@ const updateVideo = asyncHandler(async (req, res) => {
     if (!userId || userId.toString() !== video.owner.toString()) {
         throw new APIError(401, "Unauthorized");
     }
-    // get update details from body
+
     const { title, description, isPublished } = req.body;
-    // update details
     video.title = title || video.title;
     video.description = description || video.description;
+    if (isPublished !== undefined) video.isPublished = isPublished;
 
-    if (isPublished !== undefined) {
-        video.isPublished = isPublished;
-    }
-
-    // get local paths for video and thumbnail
     const newVideoLocalPath = req.files?.video?.[0]?.path;
     const newThumbnailLocalPath = req.files?.thumbnail?.[0]?.path;
 
@@ -354,6 +355,7 @@ const updateVideo = asyncHandler(async (req, res) => {
         }
         video.videoFile = videoFile.secure_url;
         video.duration = videoFile.duration;
+        if (fs.existsSync(newVideoLocalPath)) fs.unlinkSync(newVideoLocalPath);
     }
 
     if (newThumbnailLocalPath) {
@@ -365,9 +367,16 @@ const updateVideo = asyncHandler(async (req, res) => {
             throw new APIError(500, "Thumbnail upload failed");
         }
         video.thumbnail = thumbnailFile.secure_url;
+        if (fs.existsSync(newThumbnailLocalPath)) fs.unlinkSync(newThumbnailLocalPath);
     }
 
     await video.save({ validateBeforeSave: false });
+
+    // Cache cleanup
+    await Promise.all([
+        invalidateCache(`video:${videoId}`),
+        invalidateCache(`videos:feed:1:10:all:createdAt:desc`)
+    ]);
 
     return res
         .status(200)
@@ -394,14 +403,25 @@ const deleteVideo = asyncHandler(async (req, res) => {
     if (!userId || userId.toString() !== video.owner.toString()) {
         throw new APIError(401, "Unauthorized");
     }
-    // delete video from cloudinary
-    const deletedVideo = await deleteVideoFromCloudinary((video._id).toString());
-    // delete video from db
+
+    // 1. Delete the video object immediately so it disappears from UI
+    // We keep the data we need for the worker first
+    const videoDataForWorker = {
+        videoId: video._id,
+        videoPublicId: video._id.toString()
+    };
+
     await video.deleteOne();
-    // delete comments
-    const deleteComments = await Comment.deleteMany({ video: videoId });
-    // delete likes
-    const deleteLikes = await Like.deleteMany({ video: videoId });
+
+    // 2. Queue the heavy lifting (Cloudinary, Likes, Comments)
+    await addVideoJob("delete", videoDataForWorker);
+
+    // 3. Clear Cache immediately
+    await Promise.all([
+        invalidateCache(`video:${videoId}`),
+        invalidateCache(`videos:feed:1:10:all:createdAt:desc`)
+    ]);
+
     return res
         .status(200)
         .json(
@@ -413,4 +433,4 @@ const deleteVideo = asyncHandler(async (req, res) => {
         )
 })
 
-export { getAllVideos, publishVideo, getVideoById, updateVideo, deleteVideo }
+export { getAllVideos, publishVideo, getVideoById, updateVideo, deleteVideo };

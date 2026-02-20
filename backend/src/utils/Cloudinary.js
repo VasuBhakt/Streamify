@@ -1,5 +1,4 @@
 import { v2 as cloudinary } from "cloudinary"
-import { response } from "express";
 import fs from "fs"
 
 cloudinary.config({
@@ -32,7 +31,6 @@ const uploadOnCloudinary = async (localFilePath, desc, username) => {
 const uploadVideoOnCloudinary = async (localFilePath, publicId) => {
     try {
         if (!localFilePath) return null;
-        // for large videos
         const response = await cloudinary.uploader.upload(localFilePath, {
             resource_type: "video",
             public_id: publicId,
@@ -40,11 +38,9 @@ const uploadVideoOnCloudinary = async (localFilePath, publicId) => {
             invalidate: true
         })
         console.log(`File uploaded successfully on Cloudinary! ${response.public_id}`);
-        fs.unlinkSync(localFilePath);
         return response;
     } catch (error) {
-        fs.unlinkSync(localFilePath);
-        console.log(error);
+        console.log("Cloudinary Video Upload Error:", error);
         return null;
     }
 }
@@ -59,11 +55,9 @@ const uploadImageOnCloudinary = async (localFilePath, publicId) => {
             invalidate: true
         })
         console.log(`File uploaded successfully on Cloudinary! ${response.public_id}`);
-        fs.unlinkSync(localFilePath);
         return response;
     } catch (error) {
-        fs.unlinkSync(localFilePath);
-        console.log(error);
+        console.log("Cloudinary Image Upload Error:", error);
         return null;
     }
 }

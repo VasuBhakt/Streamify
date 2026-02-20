@@ -34,12 +34,21 @@ const videoSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User",
         required: true
+    },
+    status: {
+        type: String,
+        enum: ["processing", "completed", "failed"],
+        default: "processing"
     }
 }, { timestamps: true })
 
 videoSchema.index({ title: "text", description: "text" });
 
 videoSchema.plugin(mongooseAggregatePaginate)
-
+// ttl for un-uploaded videos
+videoSchema.index({ createdAt: 1 }, {
+    expireAfterSeconds: 420,
+    partialFilterExpression: { $or: [{ "status": "processing" }, { "status": "failed" }] }
+});
 
 export const Video = model("Video", videoSchema);
