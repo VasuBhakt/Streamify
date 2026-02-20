@@ -16,6 +16,8 @@ Streamify is built to handle the full lifecycle of digital video—from secure c
 
 ## 🚀 Core Capabilities
 - **Secure Auth**: JWT-based authentication with Refresh Token rotation and Brevo password recovery and email verification.
+- **Asynchronous Task Orchestration (BullMQ)**: Background workers for high-latency tasks like video processing and email triggers to keep the API non-blocking.
+- **Data Caching** - High-speed caching layer using Redis to reduce database load and manage real-time job states for the upload pipeline.
 - **Video Lifecycle**: Drag-and-drop uploads, custom thumbnails, and draft/publish workflows.
 - **Engagement Engine**: Subscription models, commenting, and like/unlike functionality.
 - **Creator Dashboard**: Real-time analytics for views, subscribers, and video-level performance.
