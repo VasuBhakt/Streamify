@@ -46,7 +46,7 @@ Streamify/
 
 ---
 
-## 🔐 Features
+## ⚡ Features
 
 - **State-of-the-Art Auth**: HttpOnly cookies and salt-round Bcrypt hashing.
 - **Database Efficiency**: Complex data retrieval via MongoDB Aggregation Pipelines.
