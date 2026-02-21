@@ -7,6 +7,7 @@ import { Like } from "../models/like.model.js";
 import fs from "fs";
 import { invalidateCache } from "../utils/Cache.js";
 import { sendEmail } from "../utils/mail.js";
+import APIError from "../utils/ApiError.js";
 
 const videoWorker = new Worker(
     "video-processing",
@@ -14,14 +15,14 @@ const videoWorker = new Worker(
         try {
             switch (job.name) {
                 case "upload": {
-                    const { videoLocalPath, thumbnailLocalPath, title, description, isPublished, userId, videoPublicId } = job.data;
+                    const { videoLocalPath, thumbnailLocalPath, title, isPublished, videoPublicId } = job.data;
                     console.log(`Processing UPLOAD job ${job.id} for video: ${title}`);
 
                     const videoFile = await uploadVideoOnCloudinary(videoLocalPath, videoPublicId);
                     const thumbnailFile = await uploadImageOnCloudinary(thumbnailLocalPath, `${videoPublicId}_thumbnail`);
 
                     if (!videoFile || !thumbnailFile) {
-                        throw new Error("Cloudinary upload failed");
+                        throw new APIError(500, "Cloudinary upload failed");
                     }
 
                     // Update the existing record we created in the controller
@@ -43,21 +44,59 @@ const videoWorker = new Worker(
                 }
 
                 case "delete": {
-                    const { videoId, videoPublicId } = job.data;
-                    console.log(`Processing DELETE job ${job.id} for videoId: ${videoId}`);
+                    const { videoPublicId } = job.data;
+                    console.log(`Processing DELETE job ${job.id} for videoId: ${videoPublicId}`);
 
                     // 1. Delete from Cloudinary
                     await deleteVideoFromCloudinary(videoPublicId);
 
                     // 2. Clear related data and cache
                     await Promise.all([
-                        Comment.deleteMany({ video: videoId }),
-                        Like.deleteMany({ video: videoId }),
-                        invalidateCache(`video:${videoId}`),
+                        Comment.deleteMany({ video: videoPublicId }),
+                        Like.deleteMany({ video: videoPublicId }),
+                        invalidateCache(`video:${videoPublicId}`),
                         invalidateCache(`videos:feed:1:10:all:createdAt:desc`)
                     ]);
 
                     console.log(`Delete job ${job.id} completed.`);
+                    break;
+                }
+
+                case "patch": {
+                    const { videoLocalPath, thumbnailLocalPath, videoPublicId, title, description, isPublished } = job.data;
+                    console.log(`Processing PATCH job ${job.id} for video: ${videoPublicId}`);
+
+                    const updateData = {};
+                    if (title) updateData.title = title;
+                    if (description) updateData.description = description;
+                    if (isPublished !== undefined) updateData.isPublished = isPublished;
+
+                    if (videoLocalPath) {
+                        const videoFile = await uploadVideoOnCloudinary(videoLocalPath, videoPublicId);
+                        if (!videoFile) throw new APIError(500, "Video update failed on Cloudinary");
+                        updateData.videoFile = videoFile.secure_url;
+                        updateData.duration = videoFile.duration || 0;
+                    }
+
+                    if (thumbnailLocalPath) {
+                        const thumbnailFile = await uploadImageOnCloudinary(thumbnailLocalPath, `${videoPublicId}_thumbnail`);
+                        if (!thumbnailFile) throw new APIError(500, "Thumbnail update failed on Cloudinary");
+                        updateData.thumbnail = thumbnailFile.secure_url;
+                    }
+
+                    updateData.status = "completed";
+
+                    await Video.findByIdAndUpdate(videoPublicId, updateData);
+
+                    await Promise.all([
+                        invalidateCache(`video:${videoPublicId}`),
+                        invalidateCache(`videos:feed:1:10:all:createdAt:desc`)
+                    ]);
+
+                    if (videoLocalPath && fs.existsSync(videoLocalPath)) fs.unlinkSync(videoLocalPath);
+                    if (thumbnailLocalPath && fs.existsSync(thumbnailLocalPath)) fs.unlinkSync(thumbnailLocalPath);
+
+                    console.log(`Patch job ${job.id} completed.`);
                     break;
                 }
 
@@ -79,12 +118,12 @@ videoWorker.on("completed", (job) => {
 videoWorker.on("failed", async (job, err) => {
     console.error(`Job ${job.id} (${job.name}) failed: ${err.message}`);
 
-    // Clean up files after ALL retries have failed for upload jobs
-    if (job.name === "upload") {
+    // Clean up files after ALL retries have failed for upload or patch jobs
+    if (job.name === "upload" || job.name === "patch") {
         const { videoLocalPath, thumbnailLocalPath, videoPublicId, title, userEmail } = job.data;
 
         if (job.attemptsMade >= job.opts.attempts) {
-            console.log(`Max retries reached for upload job ${job.id}. Cleaning up and notifying user...`);
+            console.log(`Max retries reached for ${job.name} job ${job.id}. Cleaning up and notifying user...`);
 
             // 1. Mark status as failed in DB
             await Video.findByIdAndUpdate(videoPublicId, { status: "failed" });

@@ -323,9 +323,9 @@ const getVideoById = asyncHandler(async (req, res) => {
 
 
 const updateVideo = asyncHandler(async (req, res) => {
-    // get videoId from params
     const { videoId } = req.params;
-    // get video from db
+    const { title, description, isPublished } = req.body;
+
     const video = await Video.findById(videoId);
     const userId = req.user?._id;
     // if video is not there, throw error
@@ -337,57 +337,67 @@ const updateVideo = asyncHandler(async (req, res) => {
         throw new APIError(401, "Unauthorized");
     }
 
-    const { title, description, isPublished } = req.body;
-    video.title = title || video.title;
-    video.description = description || video.description;
-    if (isPublished !== undefined) video.isPublished = isPublished;
-
     const newVideoLocalPath = req.files?.video?.[0]?.path;
     const newThumbnailLocalPath = req.files?.thumbnail?.[0]?.path;
 
-    if (newVideoLocalPath) {
-        if (req.files?.video[0]?.size > VIDEO_SIZE_LIMIT) {
-            throw new APIError(400, "Video file is too large! Maximum size allowed is 100MB.")
-        }
-        const videoFile = await uploadVideoOnCloudinary(newVideoLocalPath, video._id);
-        if (!videoFile) {
-            throw new APIError(500, "Video upload failed");
-        }
-        video.videoFile = videoFile.secure_url;
-        video.duration = videoFile.duration;
-        if (fs.existsSync(newVideoLocalPath)) fs.unlinkSync(newVideoLocalPath);
+    // If no files are provided, perform a simple synchronous update
+    if (!newVideoLocalPath && !newThumbnailLocalPath) {
+        video.title = title || video.title;
+        video.description = description || video.description;
+        if (isPublished !== undefined) video.isPublished = isPublished;
+
+        await video.save({ validateBeforeSave: false });
+        await invalidateCache(`video:${videoId}`);
+        await invalidateCache(`videos:feed:1:10:all:createdAt:desc`);
+
+        return res
+            .status(200)
+            .json(new APIResponse(200, video, "Video details updated successfully"));
     }
 
-    if (newThumbnailLocalPath) {
-        if (req.files?.thumbnail[0]?.size > IMAGE_SIZE_LIMIT) {
-            throw new APIError(400, "Thumbnail is too large! Maximum size allowed is 10MB.")
-        }
-        const thumbnailFile = await uploadImageOnCloudinary(newThumbnailLocalPath, `${video._id}_thumbnail`);
-        if (!thumbnailFile) {
-            throw new APIError(500, "Thumbnail upload failed");
-        }
-        video.thumbnail = thumbnailFile.secure_url;
-        if (fs.existsSync(newThumbnailLocalPath)) fs.unlinkSync(newThumbnailLocalPath);
+    // Checking file sizes before queuing
+    if (newVideoLocalPath && req.files.video[0].size > VIDEO_SIZE_LIMIT) {
+        if (fs.existsSync(newVideoLocalPath)) fs.unlinkSync(newVideoLocalPath);
+        throw new APIError(400, "Video file is too large! Maximum size allowed is 100MB.");
     }
+
+    if (newThumbnailLocalPath && req.files.thumbnail[0].size > IMAGE_SIZE_LIMIT) {
+        if (fs.existsSync(newThumbnailLocalPath)) fs.unlinkSync(newThumbnailLocalPath);
+        throw new APIError(400, "Thumbnail is too large! Maximum size allowed is 10MB.");
+    }
+
+    // If files ARE provided, mark as processing and hand off to queue
+    video.status = "processing";
+    if (title) video.title = title;
+    if (description) video.description = description;
+    if (isPublished !== undefined) video.isPublished = isPublished;
 
     await video.save({ validateBeforeSave: false });
 
-    // Cache cleanup
+    const job = await addVideoJob("patch", {
+        videoPublicId: video._id.toString(),
+        videoLocalPath: newVideoLocalPath,
+        thumbnailLocalPath: newThumbnailLocalPath,
+        title,
+        description,
+        isPublished
+    });
+
     await Promise.all([
         invalidateCache(`video:${videoId}`),
         invalidateCache(`videos:feed:1:10:all:createdAt:desc`)
     ]);
 
     return res
-        .status(200)
+        .status(202)
         .json(
             new APIResponse(
-                200,
-                video,
-                "Video updated successfully"
+                202,
+                { jobId: job.id, videoId: video._id },
+                "Video update started in background. Changes will reflect shortly."
             )
-        )
-})
+        );
+});
 
 const deleteVideo = asyncHandler(async (req, res) => {
     // get videoId from params
@@ -407,7 +417,6 @@ const deleteVideo = asyncHandler(async (req, res) => {
     // 1. Delete the video object immediately so it disappears from UI
     // We keep the data we need for the worker first
     const videoDataForWorker = {
-        videoId: video._id,
         videoPublicId: video._id.toString()
     };
 
