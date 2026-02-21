@@ -37,8 +37,6 @@ Streamify/
 
 ## 🛠️ Technology Stack
 
-## 🛠️ Technology Stack
-
 | Layer | Technologies |
 | :--- | :--- |
 | **Frontend** | ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) ![Redux](https://img.shields.io/badge/Redux-593D88?style=for-the-badge&logo=redux&logoColor=white) ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white) ![Framer](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white) |
@@ -48,11 +46,12 @@ Streamify/
 
 ---
 
-## 🔐 Security Features
+## 🔐 Features
 
 - **State-of-the-Art Auth**: HttpOnly cookies and salt-round Bcrypt hashing.
 - **Database Efficiency**: Complex data retrieval via MongoDB Aggregation Pipelines.
 - **Optimized Delivery**: Lazy loading, code splitting
+- **Asynchronous Task Orchestration**: Background workers for resource-intensive operations
 ---
 
 ## 📝 License
