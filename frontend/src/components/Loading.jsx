@@ -73,7 +73,7 @@ const Loading = ({ fullScreen = true, message = "Loading Streamify..." }) => {
                 >
                     {message}<br />
                     <span className="text-xs text-text-muted">If you are loading for the first time, it may take some time.</span>
-                    <span className="text-xs text-text-muted">We ask for your patience!</span>
+                    <span className="text-xs text-text-muted"> We ask for your patience!</span>
                 </motion.p>
             </motion.div>
         </div>
