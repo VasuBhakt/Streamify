@@ -5,10 +5,10 @@ const redisConfig = {
     port: process.env.REDIS_PORT,
     password: process.env.REDIS_PASSWORD,
     maxRetriesPerRequest: null, // Required for BullMQ
-    commandTimeout: 5000,       // Fail commands if they take > 5s
-    connectTimeout: 10000,      // Fail connection if it takes > 10s
+    commandTimeout: 60000,       // Fail commands if they take > 1m
+    connectTimeout: 100000,      // Fail connection if it takes > 1m 40s
     retryStrategy(times) {
-        const delay = Math.min(times * 50, 2000);
+        const delay = Math.min(times * 50, 10000);
         return delay;
     }
 };
