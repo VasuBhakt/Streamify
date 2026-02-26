@@ -1,6 +1,6 @@
 import redisConnection from "../config/redisConfig.js";
 
-export const getCachedData = async (key, ttl = 3600, fetchFn) => {
+export const getCachedData = async (key, ttl = 300, fetchFn) => {
     try {
         const cachedData = await redisConnection.get(key);
 

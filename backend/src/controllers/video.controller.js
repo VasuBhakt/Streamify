@@ -3,7 +3,6 @@ import { Video } from "../models/video.model.js";
 import { User } from "../models/user.model.js";
 import APIResponse from "../utils/ApiResponse.js";
 import APIError from "../utils/ApiError.js";
-import { uploadVideoOnCloudinary, uploadImageOnCloudinary, deleteVideoFromCloudinary } from "../utils/Cloudinary.js";
 import mongoose from "mongoose";
 import { VIDEO_SIZE_LIMIT, IMAGE_SIZE_LIMIT } from "../constants.js";
 import { addVideoJob } from "../queues/video.queue.js";
@@ -15,7 +14,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
 
     const cacheKey = `videos:feed:${page}:${limit}:${query || "all"}:${sortBy}:${sortType}`;
 
-    const result = await getCachedData(cacheKey, 300, async () => {
+    const result = await getCachedData(cacheKey, 120, async () => {
         const pipelines = [];
 
         pipelines.push({
