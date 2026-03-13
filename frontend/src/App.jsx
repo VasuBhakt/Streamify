@@ -25,8 +25,7 @@ function App() {
                     dispatch(logout());
                 }
             })
-            .catch((error) => {
-                console.log("App :: useEffect :: getCurrentUser :: error", error);
+            .catch(() => {
                 dispatch(logout());
             })
     }, [])

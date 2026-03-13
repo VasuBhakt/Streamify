@@ -53,8 +53,8 @@ export class AuthService {
             const response = await axios.get("/users/current-user");
             return response.data;
         } catch (error) {
-            console.log("AuthService :: getCurrentuser :: error", error);
-            throw error;
+            // Return null to avoid throwing an error when no user is logged in
+            return null;
         }
     }
 
